@@ -38,7 +38,7 @@ public class MailClient {
         try {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(user);
-            message.setText("Bonjour, \n ceci est mon premier mail depuis javamail ...");
+            message.setText("UUUUUUUUUUUUUUWWWWWWWWWWWWWWWWWWWWWUUUUUUUUUUUUUUUUUU\n\nUWU from java mail ...");
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destination));
             message.setSubject("mon premier email ..");
             System.out.println("Try send");
@@ -192,12 +192,12 @@ public class MailClient {
     public static void main(String[] args) {
 
         // String host = "outlook.office365.com";//change accordingly
-        String username = "";
-        String password = "";// change accordingly
+        String username = "remcaulier@gmail.com";
+        String password = "mkto hcpb tzbd smux";// change accordingly
         // sendmessage(username, password);
 
 
-        sendmessage(username, password, "remcaulier@gmail.com");
+        sendmessage(username, password, "contact@saussesylva.in");
         //sendmessagewithattachement(username, password, username, path);
 
         System.out.println("message sent ...");
