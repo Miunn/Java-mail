@@ -16,7 +16,7 @@ public class HTTPClient {
     public static void main(String[] args) {
 
         try {
-            URL url = new URL("http://127.0.0.1:8080/service");
+            URL url = new URL("http://127.0.0.1:8080/register");
             // URL url = new URL("https://www.google.com");
 
             URLConnection urlConn = url.openConnection();
