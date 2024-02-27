@@ -29,6 +29,14 @@ public class PKGApi {
 
             server.createContext("/register", new HttpHandler() {
                 public void handle(HttpExchange he) throws IOException {
+                    if (!he.getRequestMethod().equals("POST")) {
+                        he.sendResponseHeaders(405, 31);
+                        OutputStream os = he.getResponseBody();
+                        os.write("{\"error\": \"Method not allowed\"}".getBytes());
+                        os.close();
+                        return;
+                    }
+
                     try {
                         JsonObject requestBody = Json.createReader(he.getRequestBody()).readObject();                        
 
