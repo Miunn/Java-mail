@@ -27,51 +27,55 @@ public class PKGApi {
         try {
             HttpServer server = HttpServer.create(s, 1000);
 
-            server.createContext("/register", new HttpHandler() {
-                public void handle(HttpExchange he) throws IOException {
-                    if (!he.getRequestMethod().equals("POST")) {
-                        he.sendResponseHeaders(405, 31);
-                        OutputStream os = he.getResponseBody();
-                        os.write("{\"error\": \"Method not allowed\"}".getBytes());
-                        os.close();
-                        return;
-                    }
-
-                    try {
-                        JsonObject requestBody = Json.createReader(he.getRequestBody()).readObject();                        
-
-                        Client newClient = registerNewClient(requestBody.getString("identity"));
-
-                        he.getResponseHeaders().set("Content-Type", "application/json");
-                        he.sendResponseHeaders(200, newClient.getClientPublicJSON().toString().getBytes().length);
-                        
-                        OutputStream os = he.getResponseBody();
-                        os.write(newClient.getClientPublicJSON().toString().getBytes());
-                        os.close();
-                    } catch (JsonException e) {
-                        he.sendResponseHeaders(400, 41);
-                        OutputStream os = he.getResponseBody();
-                        os.write("{\"error\": \"Unable to parse request body\"}".getBytes());
-                        os.close();
-                    } catch (ClientAlreadyExistsException e) {
-                        he.sendResponseHeaders(403, 32);
-                        OutputStream os = he.getResponseBody();
-                        os.write("{\"error\": \"User already exists\"}".getBytes());
-                        os.close();
-                    } catch (NullPointerException e) {
-                        he.sendResponseHeaders(400, 47);
-                        OutputStream os = he.getResponseBody();
-                        os.write("{\"error\": \"Body identity attribute is missing\"}".getBytes());
-                        os.close();
-                    }
-                }
-            });
+            server.createContext("/register", handleRegisterRequest());
 
             server.start();
             System.out.println("Server listening");
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public HttpHandler handleRegisterRequest() {
+        return new HttpHandler() {
+            public void handle(HttpExchange he) throws IOException {
+                if (!he.getRequestMethod().equals("POST")) {
+                    he.sendResponseHeaders(405, 31);
+                    OutputStream os = he.getResponseBody();
+                    os.write("{\"error\": \"Method not allowed\"}".getBytes());
+                    os.close();
+                    return;
+                }
+        
+                try {
+                    JsonObject requestBody = Json.createReader(he.getRequestBody()).readObject();                        
+        
+                    Client newClient = registerNewClient(requestBody.getString("identity"));
+        
+                    he.getResponseHeaders().set("Content-Type", "application/json");
+                    he.sendResponseHeaders(200, newClient.getClientPublicJSON().toString().getBytes().length);
+                    
+                    OutputStream os = he.getResponseBody();
+                    os.write(newClient.getClientPublicJSON().toString().getBytes());
+                    os.close();
+                } catch (JsonException e) {
+                    he.sendResponseHeaders(400, 41);
+                    OutputStream os = he.getResponseBody();
+                    os.write("{\"error\": \"Unable to parse request body\"}".getBytes());
+                    os.close();
+                } catch (ClientAlreadyExistsException e) {
+                    he.sendResponseHeaders(403, 32);
+                    OutputStream os = he.getResponseBody();
+                    os.write("{\"error\": \"User already exists\"}".getBytes());
+                    os.close();
+                } catch (NullPointerException e) {
+                    he.sendResponseHeaders(400, 47);
+                    OutputStream os = he.getResponseBody();
+                    os.write("{\"error\": \"Body identity attribute is missing\"}".getBytes());
+                    os.close();
+                }
+            }
+        };
     }
 
     private Client registerNewClient(String identity) throws ClientAlreadyExistsException {
