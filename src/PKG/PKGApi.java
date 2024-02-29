@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonException;
@@ -28,6 +29,7 @@ public class PKGApi {
             HttpServer server = HttpServer.create(s, 1000);
 
             server.createContext("/register", handleRegisterRequest());
+            server.createContext("/get", handleGetClientRequest());
 
             server.start();
             System.out.println("Server listening");
@@ -46,15 +48,15 @@ public class PKGApi {
                     os.close();
                     return;
                 }
-        
+
                 try {
-                    JsonObject requestBody = Json.createReader(he.getRequestBody()).readObject();                        
-        
+                    JsonObject requestBody = Json.createReader(he.getRequestBody()).readObject();
+
                     Client newClient = registerNewClient(requestBody.getString("identity"));
-        
+
                     he.getResponseHeaders().set("Content-Type", "application/json");
                     he.sendResponseHeaders(200, newClient.getClientPublicJSON().toString().getBytes().length);
-                    
+
                     OutputStream os = he.getResponseBody();
                     os.write(newClient.getClientPublicJSON().toString().getBytes());
                     os.close();
@@ -78,6 +80,63 @@ public class PKGApi {
         };
     }
 
+    public HttpHandler handleGetClientRequest() {
+        return new HttpHandler() {
+            public void handle(HttpExchange he) throws IOException {
+                if (!he.getRequestMethod().equals("GET")) {
+                    he.sendResponseHeaders(405, 31);
+                    OutputStream os = he.getResponseBody();
+                    os.write("{\"error\": \"Method not allowed\"}".getBytes());
+                    os.close();
+                    return;
+                }
+
+                Map<String, String> args = parseUriArgs(he.getRequestURI().getQuery());
+
+                if (!args.containsKey("client")) {
+                    he.sendResponseHeaders(400, "{\"error\": \"Missing client arguement\"}".getBytes().length);
+                    OutputStream os = he.getResponseBody();
+                    os.write("{\"error\": \"Missing client arguement\"}".getBytes());
+                    os.close();
+                    return;
+                }
+
+                Client client = clients.get(args.get("client"));
+                if (client == null) {
+                    he.sendResponseHeaders(404, "{\"error\": \"Client not found\"}".getBytes().length);
+                    OutputStream os = he.getResponseBody();
+                    os.write("{\"error\": \"Client not found\"}".getBytes());
+                    os.close();
+                    return;
+                }
+
+                he.sendResponseHeaders(200, client.getClientPublicJSON().toString().getBytes().length);
+                OutputStream os = he.getResponseBody();
+                os.write(client.getClientPublicJSON().toString().getBytes());
+                os.close();
+            }
+        };
+    }
+
+    private Map<String, String> parseUriArgs(String query) {
+        Map<String, String> map = new HashMap<>();
+
+        if (query == null) {
+            return map;
+        }
+
+        for (String param : query.split("&")) {
+            String[] entry = param.split("=");
+            if (entry.length > 1) {
+                map.put(entry[0], entry[1]);
+            } else {
+                map.put(entry[0], "");
+            }
+        }
+        
+        return map;
+    }
+
     private Client registerNewClient(String identity) throws ClientAlreadyExistsException {
         if (clients.get(identity) != null) {
             throw new ClientAlreadyExistsException();
@@ -87,4 +146,5 @@ public class PKGApi {
         clients.put(identity, newClient);
         return newClient;
     }
+
 }
