@@ -129,7 +129,7 @@ public class MailClient {
         Properties properties = new Properties();
 
         // server setting (it can be pop3 too
-        properties.put("mail.imap.host", "smtp.gmail.com");
+        properties.put("mail.imap.host", "outlook.office365.com");
         properties.put("mail.imap.port", "993");
         properties.setProperty("mail.imap.socketFactory.class",
                 "javax.net.ssl.SSLSocketFactory");
