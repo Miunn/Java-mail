@@ -1,23 +1,19 @@
 package PKG;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.util.Base64;
 
-import javax.crypto.Cipher;
 import javax.json.Json;
 import javax.json.JsonObject;
+
+import it.unisa.dia.gas.jpbc.Element;
+import it.unisa.dia.gas.jpbc.Pairing;
+import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory;
 
 public class Client {
 
     private String identity;
-    private PrivateKey privateKey;
-    private PublicKey publicKey;
+    private Element privateKey;
+    private Element publicKey;
 
     Client(String identity) {
         this.identity = identity;
@@ -28,30 +24,26 @@ public class Client {
         return identity;
     }
 
-    public PublicKey getPublicKey() {
+    public Element getPublicKey() {
         return this.publicKey;
     }
 
-    public PrivateKey getPrivateKey() {
+    public Element getPrivateKey() {
         return this.privateKey;
     }
 
     public JsonObject getClientPublicJSON() {
         return Json.createObjectBuilder()
                     .add("identity", this.identity)
-                    .add("pk", Base64.getEncoder().encodeToString(this.publicKey.getEncoded()))
+                    .add("pk", Base64.getEncoder().encodeToString(this.publicKey.toBytes()))
                     .build();
     }
 
     private void generateKeyPair() {
-        try {
-            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("ElGamal", "BC");
-            keyPairGen.initialize(128);
-            KeyPair keyPair = keyPairGen.genKeyPair();
-            this.privateKey = keyPair.getPrivate();
-            this.publicKey = keyPair.getPublic();
-        } catch (NoSuchAlgorithmException|NoSuchProviderException e) {
-            e.printStackTrace();
-        }
+        Pairing p = PairingFactory.getPairing("params.properties");
+        Element generator = p.getG1().newRandomElement();
+        this.privateKey = p.getZr().newRandomElement();
+
+        this.publicKey = generator.duplicate().mulZn(this.privateKey);
     }
 }
