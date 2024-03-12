@@ -129,7 +129,7 @@ public class MailClient {
         Properties properties = new Properties();
 
         // server setting (it can be pop3 too
-        properties.put("mail.imap.host", "outlook.office365.com");
+        properties.put("mail.imap.host", "smtp.gmail.com");
         properties.put("mail.imap.port", "993");
         properties.setProperty("mail.imap.socketFactory.class",
                 "javax.net.ssl.SSLSocketFactory");
@@ -224,24 +224,19 @@ public class MailClient {
         // String host = "outlook.office365.com";//change accordingly
         String username = "yann.verkimpe@gmail.com";
         String password = "kzhm yjdg bhbz efeu";
-        String destination = "remcaulier@gmail.com";
-        // String destination = "yann.verkimpe@gmail.com";
+        // String destination = "remcaulier@gmail.com";
+        String destination = "yann.verkimpe@gmail.com";
 
         // Ne pas être connecter à Eduroam pour envoyer les mails
         // sendmessage(username, password, destination);
 
         String path = "C:/Users/yannv/Downloads/remzer.jpeg";
 
-        sendmessagewithattachement(username, password, destination, path);
+        // sendmessagewithattachement(username, password, destination, path);
 
         System.out.println("message sent ...");
 
-        /*Scanner sc = new Scanner(System.in);
-        System.out.println("type something ....");
 
-        sc.nextLine();
-
-        downloadEmailAttachments(username, password);*/
-
+        downloadEmailAttachments(username, password);
     }
 }
