@@ -1,5 +1,6 @@
 package PKG;
 
+import java.security.SecureRandom;
 import java.util.Base64;
 
 import javax.json.Json;
@@ -14,6 +15,7 @@ public class Client {
     private String identity;
     private Element privateKey;
     private Element publicKey;
+    private String challengeCode;
 
     Client(String identity) {
         this.identity = identity;
@@ -30,6 +32,28 @@ public class Client {
 
     public Element getPrivateKey() {
         return this.privateKey;
+    }
+
+    public void generateChallengeCode() {
+        SecureRandom secureRandom = new SecureRandom();
+
+        byte[] codeVerifier = new byte[64];
+        secureRandom.nextBytes(codeVerifier);
+        this.challengeCode = Base64.getEncoder().encodeToString(codeVerifier);
+    }
+
+    public boolean validateChallenge(String code) {
+        boolean r = this.challengeCode.equals(code);
+
+        if (r) {
+            this.challengeCode = null;
+        }
+
+        return r;
+    }
+
+    public String getToken() {
+        return this.challengeCode;
     }
 
     public JsonObject getClientPublicJSON() {

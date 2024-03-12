@@ -30,6 +30,71 @@ public class PKGApi {
 
             server.createContext("/register", handleRegisterRequest());
             server.createContext("/get", handleGetClientRequest());
+            server.createContext("/challenge", handleChallengeRequest());
+            server.createContext("/validate", handleValidateRequest());
+            server.createContext("/sk", new HttpHandler() {
+                public void handle(HttpExchange he) throws IOException {
+                    if (!he.getRequestMethod().equals("GET")) {
+                        writeMethodNotAllowed(he);
+                        return;
+                    }
+    
+                    Map<String, String> args = parseUriArgs(he.getRequestURI().getQuery());
+    
+                    if (!args.containsKey("client")) {
+                        he.sendResponseHeaders(400, "{\"error\": \"Missing client arguement\"}".getBytes().length);
+                        OutputStream os = he.getResponseBody();
+                        os.write("{\"error\": \"Missing client arguement\"}".getBytes());
+                        os.close();
+                        return;
+                    }
+    
+                    Client client = clients.get(args.get("client"));
+                    
+                    if (client == null) {
+                        writeClientNotFound(he);
+                        return;
+                    }
+
+                    byte[] payload = ("{\"sk\": \""+client.getPrivateKey().toString()+"\"}").getBytes();
+                    he.sendResponseHeaders(200, payload.length);
+                    OutputStream os = he.getResponseBody();
+                    os.write(payload);
+                    os.close();
+                }
+            });
+
+            server.createContext("/token", new HttpHandler() {
+                public void handle(HttpExchange he) throws IOException {
+                    if (!he.getRequestMethod().equals("GET")) {
+                        writeMethodNotAllowed(he);
+                        return;
+                    }
+    
+                    Map<String, String> args = parseUriArgs(he.getRequestURI().getQuery());
+    
+                    if (!args.containsKey("client")) {
+                        he.sendResponseHeaders(400, "{\"error\": \"Missing client arguement\"}".getBytes().length);
+                        OutputStream os = he.getResponseBody();
+                        os.write("{\"error\": \"Missing client arguement\"}".getBytes());
+                        os.close();
+                        return;
+                    }
+    
+                    Client client = clients.get(args.get("client"));
+                    
+                    if (client == null) {
+                        writeClientNotFound(he);
+                        return;
+                    }
+
+                    byte[] payload = ("{\"token\": \""+client.getToken()+"\"}").getBytes();
+                    he.sendResponseHeaders(200, payload.length);
+                    OutputStream os = he.getResponseBody();
+                    os.write(payload);
+                    os.close();
+                }
+            });
 
             server.start();
             System.out.println("Server listening");
@@ -42,10 +107,7 @@ public class PKGApi {
         return new HttpHandler() {
             public void handle(HttpExchange he) throws IOException {
                 if (!he.getRequestMethod().equals("POST")) {
-                    he.sendResponseHeaders(405, 31);
-                    OutputStream os = he.getResponseBody();
-                    os.write("{\"error\": \"Method not allowed\"}".getBytes());
-                    os.close();
+                    writeMethodNotAllowed(he);
                     return;
                 }
 
@@ -84,10 +146,7 @@ public class PKGApi {
         return new HttpHandler() {
             public void handle(HttpExchange he) throws IOException {
                 if (!he.getRequestMethod().equals("GET")) {
-                    he.sendResponseHeaders(405, 31);
-                    OutputStream os = he.getResponseBody();
-                    os.write("{\"error\": \"Method not allowed\"}".getBytes());
-                    os.close();
+                    writeMethodNotAllowed(he);
                     return;
                 }
 
@@ -103,10 +162,7 @@ public class PKGApi {
 
                 Client client = clients.get(args.get("client"));
                 if (client == null) {
-                    he.sendResponseHeaders(404, "{\"error\": \"Client not found\"}".getBytes().length);
-                    OutputStream os = he.getResponseBody();
-                    os.write("{\"error\": \"Client not found\"}".getBytes());
-                    os.close();
+                    writeClientNotFound(he);
                     return;
                 }
 
@@ -116,6 +172,118 @@ public class PKGApi {
                 os.close();
             }
         };
+    }
+
+    public HttpHandler handleChallengeRequest() {
+        return new HttpHandler() {
+            public void handle(HttpExchange he) throws IOException {
+                if (!he.getRequestMethod().equals("GET")) {
+                    writeMethodNotAllowed(he);
+                    return;
+                }
+
+                Map<String, String> args = parseUriArgs(he.getRequestURI().getQuery());
+
+                if (!args.containsKey("client")) {
+                    he.sendResponseHeaders(400, "{\"error\": \"Missing client arguement\"}".getBytes().length);
+                    OutputStream os = he.getResponseBody();
+                    os.write("{\"error\": \"Missing client arguement\"}".getBytes());
+                    os.close();
+                    return;
+                }
+
+                Client client = clients.get(args.get("client"));
+                if (client == null) {
+                    writeClientNotFound(he);
+                    return;
+                }
+                
+                client.generateChallengeCode();
+
+                ///////////////////
+                // SEND THE MAIL //
+                ///////////////////
+
+                he.sendResponseHeaders(204, -1);
+            }
+        };
+    }
+
+    public HttpHandler handleValidateRequest() {
+        return new HttpHandler() {
+            public void handle(HttpExchange he) throws IOException {
+                if (!he.getRequestMethod().equals("POST")) {
+                    writeMethodNotAllowed(he);
+                    return;
+                }
+
+                Map<String, String> args = parseUriArgs(he.getRequestURI().getQuery());
+
+                if (!args.containsKey("client")) {
+                    he.sendResponseHeaders(400, "{\"error\": \"Missing client arguement\"}".getBytes().length);
+                    OutputStream os = he.getResponseBody();
+                    os.write("{\"error\": \"Missing client arguement\"}".getBytes());
+                    os.close();
+                    return;
+                }
+
+                Client client = clients.get(args.get("client"));
+                
+                if (client == null) {
+                    writeClientNotFound(he);
+                    return;
+                }
+
+                try {
+                    JsonObject requestBody = Json.createReader(he.getRequestBody()).readObject();
+
+                    String token = requestBody.getString("token");
+
+                    if (!client.validateChallenge(token)) {
+                        byte[] payload = "{\"error\": \"Wrong token\"}".getBytes();
+                        he.getResponseHeaders().set("Content-Type", "application/json");
+                        he.sendResponseHeaders(400, payload.length);    
+                        OutputStream os = he.getResponseBody();
+                        os.write(payload);
+                        os.close();
+                        return;
+                    }
+
+                    byte[] payload = ("{\"sk\": \""+client.getPrivateKey().toString()+"\"}").getBytes();
+                    he.getResponseHeaders().set("Content-Type", "application/json");
+                    he.sendResponseHeaders(200, payload.length);
+                    OutputStream os = he.getResponseBody();
+                    os.write(payload);
+                    os.close();
+                } catch (JsonException e) {
+                    he.sendResponseHeaders(400, 41);
+                    OutputStream os = he.getResponseBody();
+                    os.write("{\"error\": \"Unable to parse request body\"}".getBytes());
+                    os.close();
+                } catch (NullPointerException e) {
+                    he.sendResponseHeaders(400, 47);
+                    OutputStream os = he.getResponseBody();
+                    os.write("{\"error\": \"Body identity attribute is missing\"}".getBytes());
+                    os.close();
+                }
+            }
+        };
+    }
+
+    private void writeMethodNotAllowed(HttpExchange he) throws IOException {
+        he.getResponseHeaders().set("Content-Type", "application/json");
+        he.sendResponseHeaders(405, 31);
+        OutputStream os = he.getResponseBody();
+        os.write("{\"error\": \"Method not allowed\"}".getBytes());
+        os.close();
+    }
+
+    private void writeClientNotFound(HttpExchange he) throws IOException {
+        he.getResponseHeaders().set("Content-Type", "application/json");
+        he.sendResponseHeaders(404, "{\"error\": \"Client not found\"}".getBytes().length);
+        OutputStream os = he.getResponseBody();
+        os.write("{\"error\": \"Client not found\"}".getBytes());
+        os.close();
     }
 
     private Map<String, String> parseUriArgs(String query) {
