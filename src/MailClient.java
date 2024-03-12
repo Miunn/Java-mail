@@ -1,5 +1,7 @@
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Scanner;
+
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -38,9 +40,19 @@ public class MailClient {
         try {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(user);
-            message.setText("Bonjour, \n ceci est mon premier mail depuis javamail ...");
+            //message.setText("Testitautest");
+            Scanner sc= new Scanner(System.in);
+            System.out.print("Text to be sent : ");
+            String text = sc.nextLine();
+            message.setText(text);
+
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destination));
-            message.setSubject("mon premier email ..");
+            //message.setSubject("mon premier email ..");
+            System.out.print("Subject of the mail : ");
+            String subject = sc.nextLine();
+            message.setSubject(subject);
+            sc.close();
+
             System.out.println("Try send");
 
             Transport.send(message);
@@ -192,12 +204,14 @@ public class MailClient {
     public static void main(String[] args) {
 
         // String host = "outlook.office365.com";//change accordingly
-        String username = "";
-        String password = "";// change accordingly
+        String username = "yann.verkimpe@gmail.com";
+        String password = "kzhm yjdg bhbz efeu";// change accordingly
         // sendmessage(username, password);
 
 
         sendmessage(username, password, "remcaulier@gmail.com");
+
+
         //sendmessagewithattachement(username, password, username, path);
 
         System.out.println("message sent ...");
