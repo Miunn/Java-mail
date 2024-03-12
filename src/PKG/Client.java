@@ -3,10 +3,13 @@ package PKG;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.util.Base64;
 
+import javax.crypto.Cipher;
 import javax.json.Json;
 import javax.json.JsonObject;
 
@@ -42,12 +45,12 @@ public class Client {
 
     private void generateKeyPair() {
         try {
-            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
-            keyPairGen.initialize(2048);
+            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("ElGamal", "BC");
+            keyPairGen.initialize(128);
             KeyPair keyPair = keyPairGen.genKeyPair();
             this.privateKey = keyPair.getPrivate();
             this.publicKey = keyPair.getPublic();
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException|NoSuchProviderException e) {
             e.printStackTrace();
         }
     }
