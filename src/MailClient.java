@@ -10,6 +10,10 @@ import javax.mail.Session;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Address;
 import javax.mail.Flags;
 import javax.mail.Multipart;
@@ -40,17 +44,19 @@ public class MailClient {
         try {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(user);
-            //message.setText("Testitautest");
+            // message.setSubject("mon premier email ..");
             Scanner sc= new Scanner(System.in);
+            System.out.print("Subject of the mail : ");
+            String subject = sc.nextLine();
+            message.setSubject(subject);
+
+            // message.setText("Testitautest");
             System.out.print("Text to be sent : ");
             String text = sc.nextLine();
             message.setText(text);
 
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destination));
-            //message.setSubject("mon premier email ..");
-            System.out.print("Subject of the mail : ");
-            String subject = sc.nextLine();
-            message.setSubject(subject);
+            
             sc.close();
 
             System.out.println("Try send");
@@ -72,7 +78,7 @@ public class MailClient {
 
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");
-        properties.put("mail.smtp.host", "smtp.outlook.com");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
         properties.put("mail.smtp.port", "587");
         Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -84,13 +90,25 @@ public class MailClient {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(user);
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(destination));
-            message.setSubject("mon premier email avec piece jointe..");
+            // message.setSubject("mon premier email avec piece jointe..");
+            Scanner sc= new Scanner(System.in);
+            System.out.print("Subject of the mail : ");
+            String subject = sc.nextLine();
+            message.setSubject(subject);
+
+
 
             Multipart myemailcontent = new MimeMultipart();
             MimeBodyPart bodypart = new MimeBodyPart();
-            bodypart.setText("ceci est un test de mail avec piece jointe ...");
+            // bodypart.setText("ceci est un test de mail avec piece jointe ...");
+            System.out.print("Text to be sent : ");
+            String text = sc.nextLine();
+            bodypart.setText(text);
+            sc.close();
 
             MimeBodyPart attachementfile = new MimeBodyPart();
+            DataSource source = new FileDataSource(attachement_path);
+            attachementfile.setDataHandler(new DataHandler(source));
             attachementfile.attachFile(attachement_path);
             myemailcontent.addBodyPart(bodypart);
             myemailcontent.addBodyPart(attachementfile);
@@ -111,7 +129,7 @@ public class MailClient {
         Properties properties = new Properties();
 
         // server setting (it can be pop3 too
-        properties.put("mail.imap.host", "outlook.office365.com");
+        properties.put("mail.imap.host", "smtp.gmail.com");
         properties.put("mail.imap.port", "993");
         properties.setProperty("mail.imap.socketFactory.class",
                 "javax.net.ssl.SSLSocketFactory");
@@ -205,14 +223,16 @@ public class MailClient {
 
         // String host = "outlook.office365.com";//change accordingly
         String username = "yann.verkimpe@gmail.com";
-        String password = "kzhm yjdg bhbz efeu";// change accordingly
-        // sendmessage(username, password);
+        String password = "kzhm yjdg bhbz efeu";
+        String destination = "remcaulier@gmail.com";
+        // String destination = "yann.verkimpe@gmail.com";
 
+        // Ne pas être connecter à Eduroam pour envoyer les mails
+        // sendmessage(username, password, destination);
 
-        sendmessage(username, password, "remcaulier@gmail.com");
+        String path = "C:/Users/yannv/Downloads/remzer.jpeg";
 
-
-        //sendmessagewithattachement(username, password, username, path);
+        sendmessagewithattachement(username, password, destination, path);
 
         System.out.println("message sent ...");
 
