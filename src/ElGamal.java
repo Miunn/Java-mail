@@ -27,7 +27,7 @@ public class ElGamal {
                 Element V = pk.duplicate().mulZn(r);
                 V.add(K);
 
-                byte[] cipherText = AESCrypto.encryptMail(data, K.toBytes());
+                byte[] cipherText = AESCrypto.encrypt(data, K.toBytes());
 
                 return new ElGamalCipherText(K, V, cipherText);
 
@@ -38,13 +38,13 @@ public class ElGamal {
         return null;
     }
 
-    public static String decryptMail(ElGamalCipherText cipherText, Element sk) { // TODO: return String ???
+    public static String decryptMail(ElGamalCipherText cipherText, Element sk) {
         try {
             Element u_p = cipherText.u().duplicate().mulZn(sk);
 
             Element plain = cipherText.v().duplicate().sub(u_p); //clef symmetrique retrouvée
 
-            return AESCrypto.decryptMail(cipherText.cipherText(), plain.toBytes());
+            return AESCrypto.decrypt(cipherText.cipherText(), plain.toBytes());
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException |
                  BadPaddingException | UnsupportedEncodingException ex) {
             Logger.getLogger(ElGamal.class.getName()).log(Level.SEVERE, null, ex);

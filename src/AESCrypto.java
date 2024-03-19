@@ -15,7 +15,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class AESCrypto {
 
-    public static byte[] encryptMail(byte[] data, byte[] key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException{
+    public static byte[] encrypt(byte[] data, byte[] key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException{
         //méthode de chiffrement AES d'un message m en utilisant la clef key
 
         Cipher cipher= Cipher.getInstance(Constants.AES_Padding);
@@ -29,7 +29,7 @@ public class AESCrypto {
     }
 
 
-    public static String decryptMail(byte[] cipherText, byte[] key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException{
+    public static String decrypt(byte[] cipherText, byte[] key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException{
 
         Cipher cipher= Cipher.getInstance(Constants.AES_Padding);
         MessageDigest digest=MessageDigest.getInstance(Constants.Digest_Alg);
