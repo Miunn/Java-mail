@@ -14,13 +14,9 @@ import java.net.http.HttpClient;
 
 public class PkgHandler {
 
-    public static String requestPKG(String endpoint) {
+    public static String requestPKG(String endpoint, HashMap<String,String> arguments) {
         try {
-            Map<String,String> arguments = new HashMap<>();
-            arguments.put(Constants.ID_param, "");
-            arguments.put(Constants.SK_param, "");
             StringJoiner sj = new StringJoiner("&");
-
             for(Map.Entry<String,String> entry : arguments.entrySet())
                 sj.add(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) + "="
                         + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
