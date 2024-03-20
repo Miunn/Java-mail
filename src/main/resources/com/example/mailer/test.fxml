@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.mailer.ControllerMailer">
+
+
+<HBox spacing="20" alignment="CENTER" styleClass="btn-section" >
+    <Button onAction="#onNewMsgBtnClick" text="Nouveau message" styleClass="btn-style"/>
+</HBox>
+
+<HBox VBox.vgrow="ALWAYS">
+
+    <VBox fx:id="vbox3" HBox.hgrow="ALWAYS" visible="false" managed="false">
+        <Button text="Envoyer" styleClass="btn-style-new"/>
+    </VBox>
+
+    <VBox fx:id="newMsgVbox" HBox.hgrow="ALWAYS" spacing="20" styleClass="column-left" >
+        <HBox alignment="CENTER">
+            <Label text="Nouveau message" styleClass="titleMessage"></Label>
+        </HBox>
+
+        <VBox spacing="5">
+            <Label text="Mail du destinataire" styleClass="titrePerso"></Label>
+            <TextField styleClass="textField"></TextField>
+        </VBox>
+
+        <VBox spacing="5">
+            <Label text="Objet" styleClass="titrePerso"></Label>
+            <TextField styleClass="textField"></TextField>
+        </VBox>
+
+        <HBox alignment="CENTER_LEFT" spacing="5">
+            <Button styleClass="btn-style-new">
+                <graphic>
+                    <ImageView fitWidth="10" fitHeight="10">
+                        <Image url="@../../../../resources/test.jpg"></Image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Label text="nompj.png"></Label>
+        </HBox>
+
+        <VBox VBox.vgrow="ALWAYS" spacing="5">
+            <Label text="Message" styleClass="titrePerso"></Label>
+            <TextArea VBox.vgrow="ALWAYS" styleClass="textArea,textField"></TextArea>
+        </VBox>
+
+        <HBox spacing="5">
+            <Button text="Transférer un message" styleClass="btn-style-new"/>
+            <Button text="Répondre" styleClass="btn-style-new"/>
+            <Button text="Supprimer" styleClass="btn-style-new"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Envoyer" styleClass="btn-style-new"/>
+        </HBox>
+    </VBox>
+
+
+    <VBox HBox.hgrow="ALWAYS" styleClass="column-right" >
+
+
+        <ScrollPane
+                    fitToWidth="true"
+                    fitToHeight="true">
+            <VBox fx:id="mailList" spacing="10"/>
+        </ScrollPane>
+
+    </VBox>
+
+
+
+
+
+
+</HBox>
+
+</VBox>

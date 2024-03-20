@@ -1,0 +1,74 @@
+.btn-section{
+    -fx-background-color: #392E2C;
+    -fx-pref-height: 80px;
+}
+
+.btn-style{
+    -fx-background-color: #FFAE9D;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 16px;
+}
+
+.btn-style-new{
+    -fx-background-color: rgba(255, 255, 255, 0);
+    -fx-border-color: #faf2EA;
+    -fx-font-size: 13px;
+    -fx-padding: 3px 8px;
+    -fx-border-width: 2px;
+    -fx-border-style: solid;
+    -fx-border-radius: 1px;
+}
+
+.column-left {
+    -fx-background-color: #CCAEA4;
+    -fx-pref-width: 600px;
+    -fx-padding: 30px ;
+}
+
+.column-right {
+    -fx-pref-width: 50px;
+    -fx-background-color: #604E4A;
+    -fx-padding: 20px 20px;
+}
+
+.btn-add-msg{
+    -fx-font-size: 15px;
+    -fx-background-color: #f3f3f3; /* Couleur de fond */
+    -fx-text-fill: #444444; /* Couleur du texte */
+    -fx-padding: 10px 20px; /* Padding: haut/bas gauche/droite */
+    -fx-background-radius: 10;
+    -fx-font-family: "Lato";
+}
+
+.titleMessage{
+    -fx-font-size: 22px;
+    -fx-text-fill: #392E2C;
+    -fx-font-weight: bold;
+}
+
+.textField{
+    -fx-background-color: #faf2EA;
+    -fx-pref-height: 30px;
+    -fx-font-size: 14px;
+}
+
+.textArea{
+    -fx-control-inner-background : #faf2EA;
+    -fx-fit-to-height: true;
+}
+
+.titrePerso{
+    -fx-font-size: 14px;
+}
+
+.messageBox{
+    -fx-background-color: #FFAE9D;
+    -fx-background-radius: 5px;
+    -fx-padding: 2px;
+}
+
+#vbox3{
+    -fx-background-color: #ff2b00;
+    -fx-pref-width: 600px;
+    -fx-padding: 30px ;
+}
