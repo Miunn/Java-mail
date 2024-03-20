@@ -15,7 +15,7 @@ public class ControllerMailer implements Initializable {
     @FXML
     private VBox newMsgVbox;
     @FXML
-    private VBox vbox3;
+    private VBox openMsgVbox;
     @FXML
     private VBox mailList;
 
@@ -35,28 +35,41 @@ public class ControllerMailer implements Initializable {
     }
 
     private VBox createMailBox(Mail mail) {
-        VBox mailBox = new VBox();
+        VBox mailBox = new VBox(3);
         Label titleLabel = new Label(mail.getTitle());
-        Label senderLabel = new Label("Expéditeur: " + mail.getSender());
+        Label senderLabel = new Label(mail.getSender());
         Label messageLabel = new Label(mail.getMessage());
 
-        titleLabel.getStyleClass().add("mailBox-labels");
-        senderLabel.getStyleClass().add("mailBox-labels");
-        messageLabel.getStyleClass().add("mailBox-labels");
+        titleLabel.getStyleClass().add("mailBox-subject");
+        senderLabel.getStyleClass().add("mailBox-sender");
+        messageLabel.getStyleClass().add("mailBox-message");
 
         mailBox.setOnMouseClicked(event -> {
-            onNewMsgBtnClick();
+            openMessage(mail);
         });
-        mailBox.getChildren().addAll(titleLabel, senderLabel, messageLabel);
+        mailBox.getChildren().addAll(senderLabel,titleLabel, messageLabel);
         return mailBox;
     }
 
-    // New Mail Button logic
     @FXML
-    protected void onNewMsgBtnClick() {
-        newMsgVbox.setVisible(!newMsgVbox.isVisible());
-        newMsgVbox.setManaged(newMsgVbox.isVisible());
-        vbox3.setVisible(!vbox3.isVisible());
-        vbox3.setManaged(vbox3.isVisible());
+    protected void newMessage() {
+        if(!newMsgVbox.isVisible()){
+            newMsgVbox.setVisible(!newMsgVbox.isVisible());
+            newMsgVbox.setManaged(newMsgVbox.isVisible());
+            openMsgVbox.setVisible(!openMsgVbox.isVisible());
+            openMsgVbox.setManaged(openMsgVbox.isVisible());
+        }
+    }
+
+    @FXML
+    protected void openMessage(Mail mail) {
+        if(newMsgVbox.isVisible()){ //Affichage interface message recu + maj infos
+            newMsgVbox.setVisible(!newMsgVbox.isVisible());
+            newMsgVbox.setManaged(newMsgVbox.isVisible());
+            openMsgVbox.setVisible(!openMsgVbox.isVisible());
+            openMsgVbox.setManaged(openMsgVbox.isVisible());
+        }else{ //maj infos
+
+        }
     }
 }

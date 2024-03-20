@@ -9,43 +9,73 @@
 }
 
 .btn-style{
-    -fx-background-color: #FFAE9D;
+    -fx-background-color: transparent;
     -fx-font-size: 14px;
-    -fx-padding: 8px 16px;
+    -fx-padding: 8px 20px;
+    -fx-text-fill: rgb(68, 124, 218);
 }
 
-.btn-style:hover, .btn-section:hover, .btn-style-new:hover, .btn-add-msg:hover, .mailBox:hover {
+.btn-style-blue{
+    -fx-background-color: rgb(68, 124, 218);
+    -fx-font-size: 14px;
+    -fx-padding: 8px 20px;
+    -fx-text-fill: white;
+}
+
+.btn-style:hover, .btn-section:hover, .btn-style-blue:hover, .mailBox:hover {
     -fx-cursor: hand;
 }
 
-.btn-style-new{
-    -fx-background-color: rgba(255, 255, 255, 0);
-    -fx-border-color: #faf2EA;
-    -fx-font-size: 13px;
-    -fx-padding: 3px 8px;
-    -fx-border-width: 2px;
-    -fx-border-style: solid;
-    -fx-border-radius: 1px;
+.column-right {
+    -fx-background-color: rgb(235,235,235);
+    -fx-pref-width: 500px;
 }
 
 .column-left {
-    -fx-background-color: #CCAEA4;
-    -fx-pref-width: 600px;
-    -fx-padding: 30px ;
+    -fx-pref-width: 100px;
+    -fx-background-color: rgb(230,230,230);
 }
 
-.column-right {
-    -fx-pref-width: 50px;
-    -fx-background-color: #604E4A;
+.zoneBtn{
+    -fx-padding: 4px 10px;
+    -fx-background-color: rgb(230,230,230);
+    -fx-border-width: 0px 0px 1px 0px;
+    -fx-border-style: solid;
+    -fx-border-color: rgb(210, 210, 210);
 }
 
-.btn-add-msg{
-    -fx-font-size: 15px;
-    -fx-background-color: #f3f3f3; /* Couleur de fond */
-    -fx-text-fill: #444444; /* Couleur du texte */
-    -fx-padding: 10px 20px; /* Padding: haut/bas gauche/droite */
-    -fx-background-radius: 10;
-    -fx-font-family: "Lato";
+#bottomNewMsg{
+    -fx-padding: 7px;
+    -fx-background-color: rgb(230, 230, 230);
+    -fx-border-width: 0px 1px 1px 1px;
+    -fx-border-style: solid;
+    -fx-border-color: rgb(210, 210, 210);
+}
+
+#containerNewMsg{
+    -fx-padding: 10px;
+}
+
+
+.blocNewMsg{
+    -fx-background-color: rgb(245,245,245);
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-padding: 7px;
+    -fx-border-color: rgb(210, 210, 210);
+}
+
+.borderNoTop{
+    -fx-border-width: 0px 1px 1px 1px;
+}
+
+.borderNoBottom{
+    -fx-border-width: 1px 1px 0px 1px;
+}
+
+.blocBlue{
+    -fx-background-color: rgba(86, 175, 239, 0.53);
+    -fx-padding: 5px 30px;
 }
 
 .titleMessage{
@@ -55,14 +85,16 @@
 }
 
 .textField{
-    -fx-background-color: #faf2EA;
+    -fx-background-color: transparent;
     -fx-pref-height: 30px;
-    -fx-font-size: 14px;
+    -fx-font-size: 13px;
 }
 
 .textArea{
-    -fx-control-inner-background : #faf2EA;
+    -fx-control-inner-background : transparent;
     -fx-fit-to-height: true;
+    -fx-text-fill: #444444;
+    -fx-font-size: 13px;
 }
 
 .titrePerso{
@@ -70,19 +102,32 @@
 }
 
 .mailBox{
-    -fx-background-color: #604E4A;
-    -fx-padding: 2px 5px 2px 5px;
-    -fx-border-width:0px 0px 1px 0px;
-    -fx-border-color: #FAF2EA;
+    -fx-background-color: rgb(245,245,245);
+    -fx-padding: 10px 30px;
+    -fx-border-width:0px 0px 1.5px 0px;
+    -fx-border-color: #dcdcdc;
 }
 
-.mailBox-labels{
-    -fx-text-fill: #FAF2EA;
+.mailBox-sender{
+    -fx-text-fill: #0c0c0c;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
 }
 
-#vbox3{
+.mailBox-message{
+    -fx-text-fill: #262626;
+    -fx-font-size: 14px;
+}
+
+.mailBox-subject{
+    -fx-text-fill: rgb(64, 128, 246);
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+#openMsgVbox{
     -fx-background-color: #ff2b00;
-    -fx-pref-width: 600px;
+    -fx-pref-width: 500px;
     -fx-padding: 30px ;
 }
 
