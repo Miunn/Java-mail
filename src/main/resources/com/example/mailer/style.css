@@ -1,12 +1,21 @@
+*:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
 .btn-section{
     -fx-background-color: #392E2C;
-    -fx-pref-height: 80px;
+    -fx-pref-height: 100px;
 }
 
 .btn-style{
     -fx-background-color: #FFAE9D;
     -fx-font-size: 14px;
     -fx-padding: 8px 16px;
+}
+
+.btn-style:hover, .btn-section:hover, .btn-style-new:hover, .btn-add-msg:hover, .mailBox:hover {
+    -fx-cursor: hand;
 }
 
 .btn-style-new{

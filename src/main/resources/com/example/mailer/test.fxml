@@ -51,7 +51,7 @@
 
         <VBox VBox.vgrow="ALWAYS" spacing="5">
             <Label text="Message" styleClass="titrePerso"></Label>
-            <TextArea VBox.vgrow="ALWAYS" styleClass="textArea,textField"></TextArea>
+            <TextArea VBox.vgrow="ALWAYS" styleClass="textArea,textField" focusTraversable="false"></TextArea>
         </VBox>
 
         <HBox spacing="5">
@@ -67,7 +67,7 @@
     <VBox HBox.hgrow="ALWAYS" styleClass="column-right" >
 
 
-        <ScrollPane
+        <ScrollPane focusTraversable="false"
                     fitToWidth="true"
                     fitToHeight="true"
                     styleClass="scroll-pane-mail">

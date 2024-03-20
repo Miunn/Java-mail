@@ -13,12 +13,9 @@ import java.util.List;
 
 public class ControllerMailer implements Initializable {
     @FXML
-    private Label welcomeText;
-    @FXML
     private VBox newMsgVbox;
     @FXML
     private VBox vbox3;
-
     @FXML
     private VBox mailList;
 
@@ -47,6 +44,9 @@ public class ControllerMailer implements Initializable {
         senderLabel.getStyleClass().add("mailBox-labels");
         messageLabel.getStyleClass().add("mailBox-labels");
 
+        mailBox.setOnMouseClicked(event -> {
+            onNewMsgBtnClick();
+        });
         mailBox.getChildren().addAll(titleLabel, senderLabel, messageLabel);
         return mailBox;
     }
