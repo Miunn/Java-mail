@@ -28,7 +28,6 @@
 .column-right {
     -fx-pref-width: 50px;
     -fx-background-color: #604E4A;
-    -fx-padding: 20px 20px;
 }
 
 .btn-add-msg{
@@ -61,14 +60,22 @@
     -fx-font-size: 14px;
 }
 
-.messageBox{
-    -fx-background-color: #FFAE9D;
-    -fx-background-radius: 5px;
-    -fx-padding: 2px;
+.mailBox{
+    -fx-background-color: #604E4A;
+    -fx-padding: 2px 5px 2px 5px;
+    -fx-border-width:0px 0px 1px 0px;
+    -fx-border-color: #FAF2EA;
+}
+
+.mailBox-labels{
+    -fx-text-fill: #FAF2EA;
 }
 
 #vbox3{
     -fx-background-color: #ff2b00;
     -fx-pref-width: 600px;
     -fx-padding: 30px ;
+}
+
+.scroll-pane-mail{
 }

@@ -31,15 +31,22 @@ public class ControllerMailer implements Initializable {
         }
         for (Mail mail : mails) {
             VBox mailBox = createMailBox(mail);
+            mailBox.getStyleClass().add("mailBox");
             mailList.getChildren().add(mailBox);
+
         }
     }
 
     private VBox createMailBox(Mail mail) {
-        VBox mailBox = new VBox(5);
+        VBox mailBox = new VBox();
         Label titleLabel = new Label(mail.getTitle());
         Label senderLabel = new Label("Expéditeur: " + mail.getSender());
         Label messageLabel = new Label(mail.getMessage());
+
+        titleLabel.getStyleClass().add("mailBox-labels");
+        senderLabel.getStyleClass().add("mailBox-labels");
+        messageLabel.getStyleClass().add("mailBox-labels");
+
         mailBox.getChildren().addAll(titleLabel, senderLabel, messageLabel);
         return mailBox;
     }
