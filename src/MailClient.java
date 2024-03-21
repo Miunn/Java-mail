@@ -218,25 +218,4 @@ public class MailClient {
             ex.printStackTrace();
         }
     }
-
-    public static void main(String[] args) {
-
-        // String host = "outlook.office365.com";//change accordingly
-        String username = "yann.verkimpe@gmail.com";
-        String password = "kzhm yjdg bhbz efeu";
-        // String destination = "remcaulier@gmail.com";
-        String destination = "yann.verkimpe@gmail.com";
-
-        // Ne pas être connecter à Eduroam pour envoyer les mails
-        // sendmessage(username, password, destination);
-
-        String path = "C:/Users/yannv/Downloads/remzer.jpeg";
-
-        // sendmessagewithattachement(username, password, destination, path);
-
-        System.out.println("message sent ...");
-
-
-        downloadEmailAttachments(username, password);
-    }
 }
