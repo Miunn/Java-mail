@@ -1,13 +1,12 @@
+import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.Scanner;
 
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
-import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,11 +25,67 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-public class MailClient {
+public class Mail {
+    private String object;
+    private String msg;
+    private String date_envoie;
+    private String[] pj;
+    private boolean msg_vu;
+    private String destinataire;
+    private String expediteur;
+    private Message message;
 
-    public static void sendmessage(String user, String password, String destination) {
+    // Constructeur Mail reçu avec pièces jointes
+    public Mail(String object_, String sender, String msg_, String date, String[] attachements, boolean seen, String destinataire_, Message message_){
+        this.object = object_;
+        this.msg = msg_;
+        this.date_envoie = date;
+        this.pj = attachements;
+        this.msg_vu = seen;
+        this.destinataire = destinataire_;
+        this.expediteur = sender;
+        this.message = message_;
+    }
+
+    // Constructeur Mail reçu sans pièces jointes
+    public Mail(String object_, String sender, String msg_, String date, boolean seen, String destinataire_, Message message_){
+        this.object = object_;
+        this.msg = msg_;
+        this.date_envoie = date;
+        this.pj = new String[0];
+        this.msg_vu = seen;
+        this.destinataire = destinataire_;
+        this.expediteur = sender;
+        this.message = message_;
+    }
+
+    // Contructeur mail à envoyer avec pièces jointes
+    public Mail(String expediteur_, String destinataire_, String[] attachements){
+        this.object = "";
+        this.msg = "";
+        this.date_envoie = "";
+        this.pj = attachements;
+        this.destinataire = destinataire_;
+        this.expediteur = expediteur_;
+        this.msg_vu = false;
+    }
+
+    // Constructeur mail à envoyer sans pièces jointes
+    public Mail(String expediteur_, String destinaire_){
+        this.object = "";
+        this.msg = "";
+        this.date_envoie = "";
+        this.pj = new String[0];
+        this.destinataire = destinaire_;
+        this.expediteur = expediteur_;
+        this.msg_vu = false;
+    }
+
+    /*
+     * Envoie un mail sans pièces jointes
+     */
+    public static void sendmessage(String user, String password, String destination, String subject, String text) {
         Properties properties = new Properties();
-        // Mail mail = new Mail(user, destination);
 
         properties.put("mail.smtp.host", "smtp.gmail.com");
         properties.put("mail.smtp.port", "587");
@@ -45,23 +100,14 @@ public class MailClient {
         try {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(user);
-            Scanner sc= new Scanner(System.in);
-            System.out.print("Subject of the mail : ");
-            String subject = sc.nextLine();
             message.setSubject(subject);
-
-            System.out.print("Text to be sent : ");
-            String text = sc.nextLine();
             message.setText(text);
-
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destination));
-            
-            sc.close();
 
-            System.out.println("Try send");
+            System.out.println("Message en cours d'envoie");
 
             Transport.send(message);
-            System.out.println("Sent");
+            System.out.println("Message envoyé");
 
         } catch (NoSuchProviderException e) {
             e.printStackTrace();
@@ -71,8 +117,9 @@ public class MailClient {
 
     }
 
+    // Envoie de message avec pièces jointes
     public static void sendmessagewithattachement(String user, String password, String destination,
-            String attachement_path) {
+            String attachement_path, String subject, String text) {
         Properties properties = new Properties();
 
         properties.put("mail.smtp.auth", "true");
@@ -89,21 +136,11 @@ public class MailClient {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(user);
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(destination));
-            // message.setSubject("mon premier email avec piece jointe..");
-            Scanner sc= new Scanner(System.in);
-            System.out.print("Subject of the mail : ");
-            String subject = sc.nextLine();
             message.setSubject(subject);
-
-
 
             Multipart myemailcontent = new MimeMultipart();
             MimeBodyPart bodypart = new MimeBodyPart();
-            // bodypart.setText("ceci est un test de mail avec piece jointe ...");
-            System.out.print("Text to be sent : ");
-            String text = sc.nextLine();
             bodypart.setText(text);
-            sc.close();
 
             MimeBodyPart attachementfile = new MimeBodyPart();
             DataSource source = new FileDataSource(attachement_path);
@@ -121,11 +158,15 @@ public class MailClient {
         } catch (IOException ex) {
             Logger.getLogger(MailClient.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
-    public static void downloadEmailAttachments(String userName, String password) {
+    /*
+     * Permet de récupérer tous les mails de la boîte de réception de user
+     */
+    public static Mail[] get_list_mail(String userName, String password) {
         Properties properties = new Properties();
+        Mail[] list_mail = new Mail[0]; 
+
 
         // server setting (it can be pop3 too
         properties.put("mail.imap.host", "smtp.gmail.com");
@@ -151,6 +192,7 @@ public class MailClient {
             Message[] arrayMessages = folderInbox.getMessages();
 
             for (int i = 0; i < arrayMessages.length; i++) {
+                Mail mail;
                 Message message = arrayMessages[i];
                 Address[] fromAddress = message.getFrom();
                 String from = fromAddress[0].toString();
@@ -171,10 +213,7 @@ public class MailClient {
                         if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
                             // this part is attachment
                             String fileName = part.getFileName();
-                            attachFiles += fileName + ", ";
-                            part.saveFile("Myfiles" + File.separator + fileName); // le dossier Myfiles à créer dans
-                                                                                  // votre projet
-
+                            attachFiles += fileName + "/";
                         } else {
                             // this part may be the message content
                             messageContent = part.getContent().toString();
@@ -192,18 +231,17 @@ public class MailClient {
                     }
                 }
 
-                // print out details of each message
-                System.out.println("Message #" + (i + 1) + ":");
-                System.out.println("message seen ?:" + message_seen);
-                System.out.println("\t From: " + from);
-                System.out.println("\t Subject: " + subject);
-                System.out.println("\t Sent Date: " + sentDate);
-                System.out.println("\t Message: " + messageContent);
-                System.out.println("\t Attachments: " + attachFiles);
-                System.out.println("\t check Myfiles folder to access the attachement file ..");
+                if(attachFiles == ""){
+                    mail = new Mail(subject, from, messageContent, sentDate, message_seen, userName, message);
+                }
+                else{
+                    String[] attachements = attachFiles.split("/");
+                    mail = new Mail(subject, from, messageContent, sentDate, attachements, message_seen, userName, message);
+                } 
 
+                list_mail[i] = mail;
             }
-
+            
             // disconnect
             folderInbox.close(false);
             store.close();
@@ -216,26 +254,152 @@ public class MailClient {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+        return list_mail;
     }
 
-    public static void main(String[] args) {
+    /*
+     * Fonction pour télécharger les pièces jointes du mail m dans le chemin path
+     */
+    public void downloadEmailAttachments(Mail m, String path){
+        Message msg = m.get_message();
+        
+        try {
+            String contentType;
+            contentType = msg.getContentType();
 
-        // String host = "outlook.office365.com";//change accordingly
-        String username = "yann.verkimpe@gmail.com";
-        String password = "kzhm yjdg bhbz efeu";
-        // String destination = "remcaulier@gmail.com";
-        String destination = "yann.verkimpe@gmail.com";
+            if(contentType.contains("multipart")) {
+                        // content may contain attachments
+                        Multipart multiPart = (Multipart) message.getContent();
+                        int numberOfParts = multiPart.getCount();
+                        for (int partCount = 0; partCount < numberOfParts; partCount++) {
+                            MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
+                            if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
+                                // this part is attachment
+                                String fileName = part.getFileName();
+                                part.saveFile(path + File.separator + fileName);
+                            }
+                        }}
+        } catch (NoSuchProviderException ex) {
+            System.out.println("No provider for imap.");
+            ex.printStackTrace();
+        } catch (MessagingException ex) {
+            System.out.println("Could not connect to the message store");
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }   
 
-        // Ne pas être connecter à Eduroam pour envoyer les mails
-        // sendmessage(username, password, destination);
+    // Getter & Setter
+    /*
+     * Retourne l'object du mail
+     */
+    public String get_object(){
+        return object;
+    }
 
-        String path = "C:/Users/yannv/Downloads/remzer.jpeg";
+    /*
+     * Set l'object du mail
+     */
+    public void set_object(String object_){
+        this.object = object_;
+    }
 
-        // sendmessagewithattachement(username, password, destination, path);
+    /*
+     * Retourne le message du mail
+     */
+    public String get_contenu(){
+        return msg;
+    }
 
-        System.out.println("message sent ...");
+    /*
+     * Set le message du mail
+     */
+    public void set_contenu(String msg_){
+        this.msg = msg_;
+    }
 
-        // Download toutes les pièces jointes dans l'accusé de réception
-        downloadEmailAttachments(username, password);
+    /*
+     * Retourne la date d'envoie du mail
+     */
+    public String get_date(){
+        return date_envoie;
+    }
+
+    /*
+     * Set la date d'envoie du mail
+     */
+    public void set_date(String date){
+        this.date_envoie = date;
+    }
+
+    /*
+     * Retourne la liste des pièces jointes
+     */
+    public String[] get_attachements(){
+        return pj;
+    }
+
+    /*
+     * Set les pièces jointes 
+     */
+    public void set_attachements(String[] attachements){
+        this.pj = attachements;
+    }
+
+    /*
+     * Retourne si le message a été vu 
+     */
+    public boolean get_seen(){
+        return msg_vu;
+    }
+
+    /*
+     * Set si le message a été vu ou non
+     */
+    public void set_seen(boolean seen){
+        this.msg_vu = seen;
+    }
+
+    /*
+     * Retourne le destinataire du mail
+     */
+    public String get_destinataire(){
+        return destinataire;
+    }
+
+    /*
+     * Set le destinataire du mail
+     */
+    public void set_destinataire(String destinataire_){
+        this.destinataire = destinataire_;
+    }
+
+    /*
+     * Retourne l'expéditeur du mail
+     */
+    public String get_expediteur(){
+        return expediteur;
+    }
+
+    /*
+     * Set l'expéditeur du mail
+     */
+    public void set_expediteur(String expediteur_){
+        this.expediteur = expediteur_;
+    }
+
+    /*
+     * Retourne le message à l'état originel
+     */
+    public Message get_message(){
+        return message;
+    }
+
+    /*
+     * Set le message à l'état originel du mail
+     */
+    public void set_message(Message message_){
+        this.message = message_;
     }
 }
