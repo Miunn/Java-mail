@@ -18,14 +18,39 @@ import java.net.http.HttpClient;
 
 public class PkgHandler {
 
+    public static String confirmIdentity() {
+        if(Context.CONNECTED) {
+            HashMap<String,String> params = new HashMap<>();
+            params.put("client", Context.ID);
+
+            return requestPKG(Constants.CHALLENGE_ENDPOINT, params);
+        } else {
+            notConnectedError();
+            return null;
+        }
+    }
+
+    public static String getPK(String id) {
+        if(Context.CONNECTED) {
+            HashMap<String,String> params = new HashMap<>();
+            params.put("client", id);
+
+            return requestPKG(Constants.PK_ENDPOINT, params);
+        } else {
+            notConnectedError();
+            return null;
+        }
+    }
+
     public static String getSK() {
         if(Context.CONNECTED) {
             HashMap<String,String> params = new HashMap<>();
-            params.put("ID", Context.ID);
-            return requestPKG(Constants.SK_ENDPOINT, params);
+            params.put("client", Context.ID);
+            params.put("token", Context.CHALLENGE_TOKEN);
+
+            return requestPKG(Constants.SK_ENDPOINT, params);// TODO: parser le json pour récuperer sk
         } else {
-            // TODO: page de connexion
-            System.out.println("Vous n'êtes pas connecté");
+            notConnectedError();
             return null;
         }
     }
@@ -39,7 +64,6 @@ public class PkgHandler {
                         + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
 
             byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
-            int length = out.length;
 
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -57,5 +81,10 @@ public class PkgHandler {
             throw new RuntimeException(e);
         }
         return null;
+    }
+
+    public static void notConnectedError() {
+        // TODO: afficher la page de connexion
+        System.out.println("Veuillez vous connecter pour effectuer cette action");
     }
 }
