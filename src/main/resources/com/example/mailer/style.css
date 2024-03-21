@@ -52,10 +52,19 @@
     -fx-border-color: rgb(210, 210, 210);
 }
 
-#containerNewMsg{
+.containerNewMsg{
     -fx-padding: 10px;
 }
 
+.containerViewMsg{
+    -fx-padding: 10px;
+}
+
+
+.containerViewInfos{
+    -fx-padding: 10px 10px 10px 20px;
+    -fx-background-color: rgb(245,245,245);
+}
 
 .blocNewMsg{
     -fx-background-color: rgb(245,245,245);
@@ -78,11 +87,6 @@
     -fx-padding: 5px 30px;
 }
 
-.titleMessage{
-    -fx-font-size: 22px;
-    -fx-text-fill: #392E2C;
-    -fx-font-weight: bold;
-}
 
 .textField{
     -fx-background-color: transparent;
@@ -110,13 +114,13 @@
 
 .mailBox-sender{
     -fx-text-fill: #0c0c0c;
-    -fx-font-size: 14px;
+    -fx-font-size: 13.5px;
     -fx-font-weight: bold;
 }
 
 .mailBox-message{
     -fx-text-fill: #262626;
-    -fx-font-size: 14px;
+    -fx-font-size: 12px;
 }
 
 .mailBox-subject{
@@ -126,9 +130,27 @@
 }
 
 #openMsgVbox{
-    -fx-background-color: #ff2b00;
+    -fx-background-color: rgb(235,235,235);
     -fx-pref-width: 500px;
-    -fx-padding: 30px ;
+}
+
+.titreMessage{
+    -fx-padding: 5px 15px 15px 15px;
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+}
+
+.senderMessage{
+    -fx-text-fill: rgb(64, 128, 246);
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 10px 10px 0px;
+}
+
+.msgMessage{
+    -fx-text-fill: rgb(24, 24, 24);
+    -fx-font-size: 13px;
+    -fx-padding: 0px 10px 10px 0px;
 }
 
 .scroll-pane-mail{

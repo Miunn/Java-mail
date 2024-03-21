@@ -34,15 +34,30 @@
     </VBox>
 
     <VBox fx:id="openMsgVbox" HBox.hgrow="ALWAYS" visible="false" managed="false">
-        <Button text="Envoyer"/>
+        <HBox styleClass="zoneBtn">
+            <Button text="Répondre" styleClass="btn-style"/>
+            <Button text="Transférer" styleClass="btn-style"/>
+            <Button text="Supprimer" styleClass="btn-style"/>
+        </HBox>
+        <VBox styleClass="containerViewMsg">
+            <VBox styleClass="titreMessage">
+                <Label fx:id="titreMessage"></Label>
+            </VBox>
+            <VBox styleClass="containerViewInfos" VBox.vgrow="ALWAYS">
+                <Label fx:id="senderMessage" styleClass="senderMessage"></Label>
+                <Label fx:id="msgMessage" styleClass="msgMessage" wrapText="true"></Label>
+            </VBox>
+        </VBox>
+
+
     </VBox>
 
     <VBox fx:id="newMsgVbox" HBox.hgrow="ALWAYS" styleClass="column-right" >
         <HBox styleClass="zoneBtn">
             <Button text="+ Envoyer" styleClass="btn-style"/>
-            <Button text="Pièce jointe" styleClass="btn-style"/>
+            <Button fx:id="btnPJ" text="Pièce jointe" styleClass="btn-style"/>
         </HBox>
-        <VBox fx:id="containerNewMsg" VBox.vgrow="ALWAYS">
+        <VBox styleClass="containerNewMsg" VBox.vgrow="ALWAYS">
             <HBox styleClass="blocNewMsg" alignment="CENTER_LEFT">
                 <Label text="A" styleClass="blocBlue"></Label>
                 <TextField styleClass="textField" promptText="Destinataire"></TextField>
@@ -52,8 +67,11 @@
             </HBox>
             <HBox styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT" prefHeight="300">
                 <TextArea VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" styleClass="textArea"
-                          focusTraversable="false" promptText="Message">
+                          focusTraversable="false" promptText="Message" wrapText="true">
                 </TextArea>
+            </HBox>
+            <HBox fx:id="fileContainer" styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT" visible="false">
+                <Label fx:id="fileName"></Label>
             </HBox>
             <HBox fx:id="bottomNewMsg">
                 <Button text="Envoyer" styleClass="btn-style-blue"/>
