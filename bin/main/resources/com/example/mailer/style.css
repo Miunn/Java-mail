@@ -1,0 +1,135 @@
+*:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.btn-section{
+    -fx-background-color: #392E2C;
+    -fx-pref-height: 100px;
+}
+
+.btn-style{
+    -fx-background-color: transparent;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 20px;
+    -fx-text-fill: rgb(68, 124, 218);
+}
+
+.btn-style-blue{
+    -fx-background-color: rgb(68, 124, 218);
+    -fx-font-size: 14px;
+    -fx-padding: 8px 20px;
+    -fx-text-fill: white;
+}
+
+.btn-style:hover, .btn-section:hover, .btn-style-blue:hover, .mailBox:hover {
+    -fx-cursor: hand;
+}
+
+.column-right {
+    -fx-background-color: rgb(235,235,235);
+    -fx-pref-width: 500px;
+}
+
+.column-left {
+    -fx-pref-width: 100px;
+    -fx-background-color: rgb(230,230,230);
+}
+
+.zoneBtn{
+    -fx-padding: 4px 10px;
+    -fx-background-color: rgb(230,230,230);
+    -fx-border-width: 0px 0px 1px 0px;
+    -fx-border-style: solid;
+    -fx-border-color: rgb(210, 210, 210);
+}
+
+#bottomNewMsg{
+    -fx-padding: 7px;
+    -fx-background-color: rgb(230, 230, 230);
+    -fx-border-width: 0px 1px 1px 1px;
+    -fx-border-style: solid;
+    -fx-border-color: rgb(210, 210, 210);
+}
+
+#containerNewMsg{
+    -fx-padding: 10px;
+}
+
+
+.blocNewMsg{
+    -fx-background-color: rgb(245,245,245);
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-padding: 7px;
+    -fx-border-color: rgb(210, 210, 210);
+}
+
+.borderNoTop{
+    -fx-border-width: 0px 1px 1px 1px;
+}
+
+.borderNoBottom{
+    -fx-border-width: 1px 1px 0px 1px;
+}
+
+.blocBlue{
+    -fx-background-color: rgba(86, 175, 239, 0.53);
+    -fx-padding: 5px 30px;
+}
+
+.titleMessage{
+    -fx-font-size: 22px;
+    -fx-text-fill: #392E2C;
+    -fx-font-weight: bold;
+}
+
+.textField{
+    -fx-background-color: transparent;
+    -fx-pref-height: 30px;
+    -fx-font-size: 13px;
+}
+
+.textArea{
+    -fx-control-inner-background : transparent;
+    -fx-fit-to-height: true;
+    -fx-text-fill: #444444;
+    -fx-font-size: 13px;
+}
+
+.titrePerso{
+    -fx-font-size: 14px;
+}
+
+.mailBox{
+    -fx-background-color: rgb(245,245,245);
+    -fx-padding: 10px 30px;
+    -fx-border-width:0px 0px 1.5px 0px;
+    -fx-border-color: #dcdcdc;
+}
+
+.mailBox-sender{
+    -fx-text-fill: #0c0c0c;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.mailBox-message{
+    -fx-text-fill: #262626;
+    -fx-font-size: 14px;
+}
+
+.mailBox-subject{
+    -fx-text-fill: rgb(64, 128, 246);
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+#openMsgVbox{
+    -fx-background-color: #ff2b00;
+    -fx-pref-width: 500px;
+    -fx-padding: 30px ;
+}
+
+.scroll-pane-mail{
+}

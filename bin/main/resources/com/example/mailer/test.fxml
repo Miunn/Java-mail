@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.mailer.ControllerMailer">
+
+<!--
+<HBox spacing="20" alignment="CENTER" styleClass="btn-section" >
+    <Button onAction="#onNewMsgBtnClick" text="Nouveau message" styleClass="btn-style"/>
+</HBox>
+-->
+<HBox VBox.vgrow="ALWAYS">
+
+
+    <VBox HBox.hgrow="ALWAYS" styleClass="column-left" >
+        <HBox styleClass="zoneBtn">
+            <Button text="+ Nouveau message" onAction="#newMessage" styleClass="btn-style"/>
+        </HBox>
+        <ScrollPane focusTraversable="false"
+                    fitToWidth="true"
+                    fitToHeight="true"
+                    styleClass="scroll-pane-mail">
+            <VBox fx:id="mailList" spacing="0"/>
+        </ScrollPane>
+
+    </VBox>
+
+    <VBox fx:id="openMsgVbox" HBox.hgrow="ALWAYS" visible="false" managed="false">
+        <Button text="Envoyer"/>
+    </VBox>
+
+    <VBox fx:id="newMsgVbox" HBox.hgrow="ALWAYS" styleClass="column-right" >
+        <HBox styleClass="zoneBtn">
+            <Button text="+ Envoyer" styleClass="btn-style"/>
+            <Button text="Pièce jointe" styleClass="btn-style"/>
+        </HBox>
+        <VBox fx:id="containerNewMsg" VBox.vgrow="ALWAYS">
+            <HBox styleClass="blocNewMsg" alignment="CENTER_LEFT">
+                <Label text="A" styleClass="blocBlue"></Label>
+                <TextField styleClass="textField" promptText="Destinataire"></TextField>
+            </HBox>
+            <HBox styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT">
+                <TextField styleClass="textField" promptText="Objet"></TextField>
+            </HBox>
+            <HBox styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT" prefHeight="300">
+                <TextArea VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" styleClass="textArea"
+                          focusTraversable="false" promptText="Message">
+                </TextArea>
+            </HBox>
+            <HBox fx:id="bottomNewMsg">
+                <Button text="Envoyer" styleClass="btn-style-blue"/>
+            </HBox>
+            <!--
+
+
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <Button styleClass="btn-style-new">
+                    <graphic>
+                        <ImageView fitWidth="10" fitHeight="10">
+                            <Image url="@../../../../resources/test.jpg"></Image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Label text="nompj.png"></Label>
+            </HBox>
+
+
+            -->
+        </VBox>
+
+    </VBox>
+
+
+
+
+
+
+
+</HBox>
+
+</VBox>
