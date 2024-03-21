@@ -161,7 +161,7 @@ public class Mail {
         } catch (MessagingException e) {
             e.printStackTrace();
         } catch (IOException ex) {
-            Logger.getLogger(MailClient.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Mail.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
