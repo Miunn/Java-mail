@@ -1,4 +1,8 @@
-import org.bouncycastle.util.encoders.Base64;
+package PKG;
+
+import app.Context;
+import utils.Constants;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -13,6 +17,19 @@ import java.util.logging.Logger;
 import java.net.http.HttpClient;
 
 public class PkgHandler {
+
+    public static String getSK() {
+        if(Context.CONNECTED) {
+            HashMap<String,String> params = new HashMap<>();
+            params.put("ID", Context.ID);
+            return requestPKG(Constants.SK_ENDPOINT, params);
+        } else {
+            // TODO: page de connexion
+            System.out.println("Vous n'êtes pas connecté");
+            return null;
+        }
+    }
+
 
     public static String requestPKG(String endpoint, HashMap<String,String> arguments) {
         try {
