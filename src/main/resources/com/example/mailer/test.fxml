@@ -8,6 +8,8 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.text.Text?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.mailer.ControllerMailer">
@@ -45,13 +47,13 @@
                     <Image url="@../../../Images/respond.png"/>
                 </image>
             </ImageView>
-            <Button text="Répondre" styleClass="btn-style"/>
+            <Button onAction="#respondMail" text="Répondre" styleClass="btn-style"/>
             <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
                 <image>
                     <Image url="@../../../Images/transfert.png"/>
                 </image>
             </ImageView>
-            <Button text="Transférer" styleClass="btn-style"/>
+            <Button onAction="#transfertMail" text="Transférer" styleClass="btn-style"/>
             <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
                 <image>
                     <Image url="@../../../Images/del.png"/>
@@ -87,17 +89,28 @@
             </ImageView>
             <Button fx:id="btnPJ" text="Pièce jointe" styleClass="btn-style"/>
         </HBox>
-        <VBox styleClass="containerNewMsg" VBox.vgrow="ALWAYS">
-            <HBox styleClass="blocNewMsg" alignment="CENTER_LEFT">
+        <VBox styleClass="containerNewMsg" HBox.hgrow="ALWAYS">
+            <HBox HBox.hgrow="ALWAYS" styleClass="blocNewMsg" alignment="CENTER_LEFT">
                 <Label text="A" styleClass="blocBlue"></Label>
-                <TextField styleClass="textField" promptText="Destinataire"></TextField>
+                <TextField fx:id="newMsgDest" HBox.hgrow="ALWAYS" styleClass="textField" promptText="Destinataire"></TextField>
             </HBox>
-            <HBox styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT">
-                <TextField styleClass="textField" promptText="Objet"></TextField>
+            <HBox HBox.hgrow="ALWAYS" styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT">
+                <TextField fx:id="newMsgTitle" HBox.hgrow="ALWAYS" styleClass="textField" promptText="Objet"></TextField>
             </HBox>
+            <VBox fx:id="objRespContainer" styleClass="objRespContainer" HBox.hgrow="ALWAYS" visible="false" managed="false">
+                <ScrollPane fx:id="scroll" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" fitToHeight="false" fitToWidth="true">
+                    <Label fx:id="objResp" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" wrapText="true" text="Une interface web est une interface homme-machine constituée de pages web
+                    et permettant dans certains cas d'utiliser des applications web.Une interface web est une interface homme-machine constituée de pages web
+                    et permettant dans certains cas d'utiliser des applications web.Une interface web est une interface homme-machine constituée de pages web
+                    et permettant dans certains cas d'utiliser des applications web.Une interface web est une interface homme-machine constituée de pages web
+                    et permettant dans certains cas d'utiliser des applications web.Une interface web est une interface homme-machine constituée de pages web
+                    et permettant dans certains cas d'utiliser des applications web.Une interface web est une interface homme-machine constituée de pages web
+                    et permettant dans certains cas d'utiliser des applications web."></Label>
+                </ScrollPane>
+            </VBox>
             <HBox styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT" prefHeight="300">
-                <TextArea VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" styleClass="textArea"
-                          focusTraversable="false" promptText="Message" wrapText="true">
+                <TextArea fx:id="newMsgMessage" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" styleClass="textArea"
+                          focusTraversable="false" wrapText="true">
                 </TextArea>
             </HBox>
             <HBox HBox.hgrow="ALWAYS" fx:id="fileContainer" styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT" managed="false" visible="false">

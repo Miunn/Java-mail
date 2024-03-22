@@ -5,6 +5,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -39,6 +41,19 @@ public class ControllerMailer implements Initializable {
     private HBox fileContainer;
     @FXML
     private Label fileName;
+    @FXML
+    private TextField newMsgDest;
+    @FXML
+    private TextField newMsgTitle;
+    @FXML
+    private TextArea newMsgMessage;
+    @FXML
+    private VBox objRespContainer;
+    @FXML
+    private Label objResp;
+
+
+
 
     private File PJ;
 
@@ -113,6 +128,10 @@ public class ControllerMailer implements Initializable {
             openMsgVbox.setVisible(!openMsgVbox.isVisible());
             openMsgVbox.setManaged(openMsgVbox.isVisible());
         }
+        newMsgDest.setText("");
+        newMsgTitle.setText("");
+        newMsgMessage.setText("");
+        setTextarea(false,"");
     }
 
     private void openMessage(Mail mail) {
@@ -194,6 +213,36 @@ public class ControllerMailer implements Initializable {
         PJ = null;
         fileContainer.setVisible(false);
         fileContainer.setManaged(false);
+    }
+
+    @FXML
+    private void respondMail(){
+        newMsgDest.setText(senderMessage.getText());
+        newMsgTitle.setText("Re : " + titreMessage.getText());
+        newMsgVbox.setVisible(true);
+        newMsgVbox.setManaged(true);
+        openMsgVbox.setVisible(false);
+        openMsgVbox.setManaged(false);
+        setTextarea(true,msgMessage.getText());
+    }
+
+    @FXML
+    private void transfertMail(){
+        newMsgTitle.setText("Pwd : " + titreMessage.getText());
+        newMsgVbox.setVisible(true);
+        newMsgVbox.setManaged(true);
+        openMsgVbox.setVisible(false);
+        openMsgVbox.setManaged(false);
+        setTextarea(true,msgMessage.getText());
+    }
+
+    @FXML
+    private void setTextarea(boolean resp, String obj){
+        objRespContainer.setVisible(resp);
+        objRespContainer.setManaged(resp);
+        if(resp){
+            objResp.setText("\""+obj+"\"");
+        }
     }
 
 

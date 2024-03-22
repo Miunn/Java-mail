@@ -95,6 +95,7 @@
 }
 
 .textArea{
+    -fx-background-color: rgb(245,245,245);
     -fx-control-inner-background : transparent;
     -fx-fit-to-height: true;
     -fx-text-fill: #444444;
@@ -167,4 +168,36 @@
 
 #delFile:hover{
     -fx-cursor: hand;
+}
+
+.objRespContainer{
+    -fx-max-height: 100px;
+    -fx-border-width: 0px 1px 0px 1px;
+    -fx-border-color: rgb(210, 210, 210);
+    -fx-background-color: rgb(245, 245, 245);
+    -fx-padding: 0px 1px;
+}
+
+#objResp{
+    -fx-padding: 9px 15px;
+    -fx-font-size: 12px;
+    -fx-text-fill: #7c7c7c;
+    -fx-font-style: italic;
+    -fx-background-color: rgb(245, 245, 245);
+}
+
+#scroll{
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-fit-to-width: true;
+;}
+
+#scroll > .scroll-bar:vertical,
+#scroll > .scroll-bar:horizontal {
+    -fx-opacity: 0;
+    -fx-scale-x: 0;
+    -fx-scale-y: 0;
 }
