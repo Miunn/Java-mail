@@ -28,6 +28,16 @@ public class PKGApi {
         try {
             HttpServer server = HttpServer.create(s, 1000);
 
+            server.createContext("/", new HttpHandler() {
+                public void handle(HttpExchange he) throws IOException {
+                    he.getResponseHeaders().set("Content-Type", "application/json");
+                    byte[] payload = ("{\"message\": \"hello\"}").getBytes();
+                    he.sendResponseHeaders(200, payload.length);
+                    OutputStream os = he.getResponseBody();
+                    os.write(payload);
+                    os.close();
+                }
+            });
             server.createContext("/register", handleRegisterRequest());
             server.createContext("/get", handleGetClientRequest());
             server.createContext("/challenge", handleChallengeRequest());
@@ -117,9 +127,9 @@ public class PKGApi {
                 try {
                     JsonObject requestBody = Json.createReader(he.getRequestBody()).readObject();
 
+                    System.out.println("Register OK.");
                     Client newClient = registerNewClient(requestBody.getString("identity"));
 
-                    he.getResponseHeaders().set("Content-Type", "application/json");
                     he.sendResponseHeaders(200, newClient.getClientPublicJSON().toString().getBytes().length);
 
                     OutputStream os = he.getResponseBody();
