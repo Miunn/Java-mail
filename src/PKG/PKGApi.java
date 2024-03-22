@@ -153,7 +153,7 @@ public class PKGApi {
                 Map<String, String> args = parseUriArgs(he.getRequestURI().getQuery());
 
                 if (!args.containsKey("client")) {
-                    he.sendResponseHeaders(400, "{\"error\": \"Missing client arguement\"}".getBytes().length);
+                    he.sendResponseHeaders(400, "{\"error\": \"Missing client argument\"}".getBytes().length);
                     OutputStream os = he.getResponseBody();
                     os.write("{\"error\": \"Missing client arguement\"}".getBytes());
                     os.close();
