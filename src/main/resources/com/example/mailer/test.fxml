@@ -33,11 +33,11 @@
 
     </VBox>
 
-    <VBox fx:id="openMsgVbox" HBox.hgrow="ALWAYS" visible="false" managed="false">
+    <VBox fx:id="openMsgVbox" HBox.hgrow="ALWAYS" visible="false" managed="false" userData="-1">
         <HBox styleClass="zoneBtn">
             <Button text="Répondre" styleClass="btn-style"/>
             <Button text="Transférer" styleClass="btn-style"/>
-            <Button text="Supprimer" styleClass="btn-style"/>
+            <Button text="Supprimer" onAction="#deleteMessage" styleClass="btn-style"/>
         </HBox>
         <VBox styleClass="containerViewMsg">
             <VBox styleClass="titreMessage">

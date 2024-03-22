@@ -1,5 +1,6 @@
 package com.example.mailer;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -49,7 +50,7 @@ public class ControllerMailer implements Initializable {
                 "Pour choisir le contenu de la page du navigateur il faut entrer une URL.\n" +
                 "\n" +
                 "De nombreux matériels tels que routeur, modem ou photocopieur disposent d'une interface web permettant de les administrer."));
-        for(int i=0; i<30;i++) {
+        for(int i=0; i<10;i++) {
             mails.add(new Mail("titre" + i,"sender","cocuouc"));
         }
         for (Mail mail : mails) {
@@ -94,6 +95,7 @@ public class ControllerMailer implements Initializable {
         mailBox.setOnMouseClicked(event -> {
             openMessage(mail);
         });
+
         mailBox.getChildren().addAll(senderLabel,titleLabel, messageLabel);
         return mailBox;
     }
@@ -108,9 +110,10 @@ public class ControllerMailer implements Initializable {
         }
     }
 
-    @FXML
-    protected void openMessage(Mail mail) {
+    private void openMessage(Mail mail) {
         if(newMsgVbox.isVisible()){ //Affichage interface message recu + maj infos
+            newMsgVbox.setUserData(mails.indexOf(mail));
+            System.out.println("UserData du mail ouvert : " + newMsgVbox.getUserData());
             newMsgVbox.setVisible(!newMsgVbox.isVisible());
             newMsgVbox.setManaged(newMsgVbox.isVisible());
             openMsgVbox.setVisible(!openMsgVbox.isVisible());
@@ -119,9 +122,67 @@ public class ControllerMailer implements Initializable {
             senderMessage.setText(mail.getSender());
             msgMessage.setText(mail.getMessage());
         }else{ //maj infos
+            newMsgVbox.setUserData(mails.indexOf(mail));
+            System.out.println("UserData du mail ouvert : " + newMsgVbox.getUserData());
             titreMessage.setText(mail.getTitle());
             senderMessage.setText(mail.getSender());
             msgMessage.setText(mail.getMessage());
         }
     }
+
+
+    private void openMessage(int index) {
+        Mail mail = mails.get(index);
+        if(newMsgVbox.isVisible()){ //Affichage interface message recu + maj infos
+            newMsgVbox.setUserData(mails.indexOf(mail));
+            newMsgVbox.setVisible(!newMsgVbox.isVisible());
+            newMsgVbox.setManaged(newMsgVbox.isVisible());
+            openMsgVbox.setVisible(!openMsgVbox.isVisible());
+            openMsgVbox.setManaged(openMsgVbox.isVisible());
+            titreMessage.setText(mail.getTitle());
+            senderMessage.setText(mail.getSender());
+            msgMessage.setText(mail.getMessage());
+        }else{ //maj infos
+            newMsgVbox.setUserData(mails.indexOf(mail));
+            titreMessage.setText(mail.getTitle());
+            senderMessage.setText(mail.getSender());
+            msgMessage.setText(mail.getMessage());
+        }
+    }
+    @FXML
+    protected void deleteMessage(ActionEvent event) {
+        // Obtenir l'index du mail à partir de la propriété userData
+        int index = (int)newMsgVbox.getUserData();
+
+        // Vérifier si l'index est valide
+        if (index >= 0 && index < mails.size()) {
+            // Supprimer le mail de la liste
+            mails.remove(index);
+            // Rafraîchissez l'interface utilisateur pour refléter les modifications
+            refreshMailList();
+            
+            if((index) < mails.size()){
+                openMessage(index);
+            } else if (index==mails.size() && index!=0){
+                openMessage(index-1);
+            } else {
+                newMessage();
+            }
+        } else {
+            // Gérer l'erreur si l'index n'est pas valide
+            System.err.println("Index invalide : " + index );
+
+        }
+    }
+
+    private void refreshMailList() {
+        mailList.getChildren().clear();
+        for (Mail mail : mails) {
+            VBox mailBox = createMailBox(mail);
+            mailBox.getStyleClass().add("mailBox");
+            mailList.getChildren().add(mailBox);
+        }
+    }
+
+
 }
