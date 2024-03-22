@@ -40,7 +40,8 @@ public class PKGApi {
                     }
     
                     Map<String, String> args = parseUriArgs(he.getRequestURI().getQuery());
-    
+
+                    he.getResponseHeaders().set("Content-Type", "application/json");
                     if (!args.containsKey("client")) {
                         he.sendResponseHeaders(400, "{\"error\": \"Missing client arguement\"}".getBytes().length);
                         OutputStream os = he.getResponseBody();
@@ -73,6 +74,7 @@ public class PKGApi {
     
                     Map<String, String> args = parseUriArgs(he.getRequestURI().getQuery());
     
+                    he.getResponseHeaders().set("Content-Type", "application/json");
                     if (!args.containsKey("client")) {
                         he.sendResponseHeaders(400, "{\"error\": \"Missing client arguement\"}".getBytes().length);
                         OutputStream os = he.getResponseBody();
@@ -111,6 +113,7 @@ public class PKGApi {
                     return;
                 }
 
+                he.getResponseHeaders().set("Content-Type", "application/json");
                 try {
                     JsonObject requestBody = Json.createReader(he.getRequestBody()).readObject();
 
@@ -152,6 +155,7 @@ public class PKGApi {
 
                 Map<String, String> args = parseUriArgs(he.getRequestURI().getQuery());
 
+                he.getResponseHeaders().set("Content-Type", "application/json");
                 if (!args.containsKey("client")) {
                     he.sendResponseHeaders(400, "{\"error\": \"Missing client argument\"}".getBytes().length);
                     OutputStream os = he.getResponseBody();
@@ -184,6 +188,7 @@ public class PKGApi {
 
                 Map<String, String> args = parseUriArgs(he.getRequestURI().getQuery());
 
+                he.getResponseHeaders().set("Content-Type", "application/json");
                 if (!args.containsKey("client")) {
                     he.sendResponseHeaders(400, "{\"error\": \"Missing client arguement\"}".getBytes().length);
                     OutputStream os = he.getResponseBody();
@@ -219,6 +224,7 @@ public class PKGApi {
 
                 Map<String, String> args = parseUriArgs(he.getRequestURI().getQuery());
 
+                he.getResponseHeaders().set("Content-Type", "application/json");
                 if (!args.containsKey("client")) {
                     he.sendResponseHeaders(400, "{\"error\": \"Missing client arguement\"}".getBytes().length);
                     OutputStream os = he.getResponseBody();
