@@ -21,8 +21,13 @@
 
 
     <VBox HBox.hgrow="ALWAYS" styleClass="column-left" >
-        <HBox styleClass="zoneBtn">
-            <Button text="+ Nouveau message" onAction="#newMessage" styleClass="btn-style"/>
+        <HBox styleClass="zoneBtn" alignment="CENTER_LEFT">
+            <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../../../Images/newmail.png"/>
+                </image>
+            </ImageView>
+            <Button text="Nouveau message" onAction="#newMessage" styleClass="btn-style"/>
         </HBox>
         <ScrollPane focusTraversable="false"
                     fitToWidth="true"
@@ -34,9 +39,24 @@
     </VBox>
 
     <VBox fx:id="openMsgVbox" HBox.hgrow="ALWAYS" visible="false" managed="false" userData="-1">
-        <HBox styleClass="zoneBtn">
+        <HBox styleClass="zoneBtn" alignment="CENTER_LEFT">
+            <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../../../Images/respond.png"/>
+                </image>
+            </ImageView>
             <Button text="Répondre" styleClass="btn-style"/>
+            <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../../../Images/transfert.png"/>
+                </image>
+            </ImageView>
             <Button text="Transférer" styleClass="btn-style"/>
+            <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../../../Images/del.png"/>
+                </image>
+            </ImageView>
             <Button text="Supprimer" onAction="#deleteMessage" styleClass="btn-style"/>
         </HBox>
         <VBox styleClass="containerViewMsg">
@@ -53,13 +73,20 @@
     </VBox>
 
     <VBox fx:id="newMsgVbox" HBox.hgrow="ALWAYS" styleClass="column-right" >
-        <HBox styleClass="zoneBtn">
-            <Button text="+ Envoyer" styleClass="btn-style"/>
+        <HBox styleClass="zoneBtn" alignment="CENTER_LEFT">
+            <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../../../Images/sendmail.png"/>
+                </image>
+            </ImageView>
+            <Button text="Envoyer" styleClass="btn-style"/>
+            <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../../../Images/pj.png"/>
+                </image>
+            </ImageView>
             <Button fx:id="btnPJ" text="Pièce jointe" styleClass="btn-style"/>
         </HBox>
-        <ImageView fx:id="img" fitHeight="100" fitWidth="100" pickOnBounds="true" preserveRatio="true">
-
-        </ImageView>
         <VBox styleClass="containerNewMsg" VBox.vgrow="ALWAYS">
             <HBox styleClass="blocNewMsg" alignment="CENTER_LEFT">
                 <Label text="A" styleClass="blocBlue"></Label>
@@ -73,8 +100,23 @@
                           focusTraversable="false" promptText="Message" wrapText="true">
                 </TextArea>
             </HBox>
-            <HBox fx:id="fileContainer" styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT" managed="false" visible="false">
-                <Label fx:id="fileName"></Label>
+            <HBox HBox.hgrow="ALWAYS" fx:id="fileContainer" styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT" managed="false" visible="false">
+                <VBox alignment="CENTER" styleClass="fileBloc">
+                    <ImageView fitWidth="35" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../../../Images/file.png"/>
+                        </image>
+                    </ImageView>
+                </VBox>
+                <HBox HBox.hgrow="ALWAYS" styleClass="fileNameBloc" alignment="CENTER_LEFT">
+                    <Label fx:id="fileName"></Label>
+                    <Region HBox.hgrow="ALWAYS"></Region>
+                    <ImageView fx:id="delFile" onMouseClicked="#delPJ" fitWidth="23" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../../../Images/close.png"/>
+                        </image>
+                    </ImageView>
+                </HBox>
             </HBox>
             <HBox fx:id="bottomNewMsg">
                 <Button text="Envoyer" styleClass="btn-style-blue"/>

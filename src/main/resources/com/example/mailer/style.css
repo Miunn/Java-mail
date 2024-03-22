@@ -11,7 +11,7 @@
 .btn-style{
     -fx-background-color: transparent;
     -fx-font-size: 14px;
-    -fx-padding: 8px 20px;
+    -fx-padding: 8px 20px 8px 6px;
     -fx-text-fill: rgb(68, 124, 218);
 }
 
@@ -37,7 +37,7 @@
 }
 
 .zoneBtn{
-    -fx-padding: 4px 10px;
+    -fx-padding: 4px 10px 4px 20px;
     -fx-background-color: rgb(230,230,230);
     -fx-border-width: 0px 0px 1px 0px;
     -fx-border-style: solid;
@@ -123,14 +123,7 @@
     -fx-font-size: 12px;
 }
 
-#img{
-    -fx-background-color: red;
-    -fx-pref-width: 200px;
-    -fx-pref-height: 200px;
-}
-#img:hover {
-    -fx-cursor: hand;
-}
+
 .mailBox-subject{
     -fx-text-fill: rgb(64, 128, 246);
     -fx-font-size: 14px;
@@ -161,5 +154,17 @@
     -fx-padding: 0px 10px 10px 0px;
 }
 
-.scroll-pane-mail{
+.fileBloc{
+    -fx-background-color: #ff6767;
+    -fx-padding: 12px;
+}
+
+.fileNameBloc{
+    -fx-font-size: 13px;
+    -fx-background-color: #eeeeee;
+    -fx-padding: 12px;
+}
+
+#delFile:hover{
+    -fx-cursor: hand;
 }

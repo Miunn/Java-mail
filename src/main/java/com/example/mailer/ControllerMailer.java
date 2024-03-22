@@ -39,8 +39,7 @@ public class ControllerMailer implements Initializable {
     private HBox fileContainer;
     @FXML
     private Label fileName;
-    @FXML
-    private ImageView img;
+
     private File PJ;
 
     private List<Mail> mails = new ArrayList<>();
@@ -85,8 +84,6 @@ public class ControllerMailer implements Initializable {
             }
         });
 
-        Image uneImage=new Image("test.jpg");
-        img.setImage(uneImage);
 
     }
 
@@ -190,6 +187,13 @@ public class ControllerMailer implements Initializable {
             mailBox.getStyleClass().add("mailBox");
             mailList.getChildren().add(mailBox);
         }
+    }
+
+    @FXML
+    private void delPJ(){
+        PJ = null;
+        fileContainer.setVisible(false);
+        fileContainer.setManaged(false);
     }
 
 
