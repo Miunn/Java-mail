@@ -5,6 +5,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -37,6 +39,8 @@ public class ControllerMailer implements Initializable {
     private HBox fileContainer;
     @FXML
     private Label fileName;
+    @FXML
+    private ImageView img;
     private File PJ;
 
     private List<Mail> mails = new ArrayList<>();
@@ -51,7 +55,7 @@ public class ControllerMailer implements Initializable {
                 "\n" +
                 "De nombreux matériels tels que routeur, modem ou photocopieur disposent d'une interface web permettant de les administrer."));
         for(int i=0; i<10;i++) {
-            mails.add(new Mail("titre" + i,"sender","cocuouc"));
+            mails.add(new Mail("Objet du mail d'identification " + i,"Contact associé","Message d'information pour simuler les mails recus"));
         }
         for (Mail mail : mails) {
             VBox mailBox = createMailBox(mail);
@@ -76,9 +80,13 @@ public class ControllerMailer implements Initializable {
             if(PJ != null){
                 filename = PJ.getName();
                 fileContainer.setVisible(true);
+                fileContainer.setManaged(true);
                 fileName.setText(filename);
             }
         });
+
+        Image uneImage=new Image("test.jpg");
+        img.setImage(uneImage);
 
     }
 

@@ -57,6 +57,9 @@
             <Button text="+ Envoyer" styleClass="btn-style"/>
             <Button fx:id="btnPJ" text="Pièce jointe" styleClass="btn-style"/>
         </HBox>
+        <ImageView fx:id="img" fitHeight="100" fitWidth="100" pickOnBounds="true" preserveRatio="true">
+
+        </ImageView>
         <VBox styleClass="containerNewMsg" VBox.vgrow="ALWAYS">
             <HBox styleClass="blocNewMsg" alignment="CENTER_LEFT">
                 <Label text="A" styleClass="blocBlue"></Label>
@@ -70,7 +73,7 @@
                           focusTraversable="false" promptText="Message" wrapText="true">
                 </TextArea>
             </HBox>
-            <HBox fx:id="fileContainer" styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT" visible="false">
+            <HBox fx:id="fileContainer" styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT" managed="false" visible="false">
                 <Label fx:id="fileName"></Label>
             </HBox>
             <HBox fx:id="bottomNewMsg">

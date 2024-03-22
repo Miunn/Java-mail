@@ -123,6 +123,14 @@
     -fx-font-size: 12px;
 }
 
+#img{
+    -fx-background-color: red;
+    -fx-pref-width: 200px;
+    -fx-pref-height: 200px;
+}
+#img:hover {
+    -fx-cursor: hand;
+}
 .mailBox-subject{
     -fx-text-fill: rgb(64, 128, 246);
     -fx-font-size: 14px;
