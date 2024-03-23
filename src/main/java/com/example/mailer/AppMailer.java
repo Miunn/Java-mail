@@ -41,12 +41,13 @@ public class AppMailer extends Application {
             Context.CONNECTION_STATE.put("email", "");
             Context.CONNECTION_STATE.put("password", "");
 
-            // eliott.georges8@gmail.com est dans la bdd du PKG
-            Context.connect("test", "test");
-            System.out.println(PkgHandler.confirmIdentity());
-            //Context.ELGAMAL_SK = PkgHandler.getSK();
+            if(Context.connect("eliott.georges8@gmail.com", "jmim ulhb ulxo dfji")) {
+                //System.out.println(PkgHandler.register("eliott.georges8@gmail.com"));
+                System.out.println(PkgHandler.confirmIdentity());
+                //Context.ELGAMAL_SK = PkgHandler.getSK();
 
-            launch();
+                launch();
+            }
 
         } catch (Exception ex) {
             Logger.getLogger(AppMailer.class.getName()).log(Level.SEVERE, null, ex);

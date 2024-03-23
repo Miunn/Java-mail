@@ -1,7 +1,7 @@
 package com.example.mailer;
 
+import com.example.mailer.mails.Mail;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -11,7 +11,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -19,13 +18,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import javax.mail.Message;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -76,16 +75,9 @@ public class ControllerMailer implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Remplir la liste des courriers électroniques
-        mails.add(new Mail("Mise a jour des informations","Jonh Newman", "Une interface web est une interface homme-machine constituée de pages web et permettant dans certains cas d'utiliser des applications web.\n" +
-                "\n" +
-                "Un client ou plus populairement un navigateur web tel que Firefox, Safari, Google Chrome, Internet Explorer ou bien Opera étant installable et généralement présent sur tout ordinateur moderne, une interface web est visualisable à partir de n'importe quel dispositif possédant un navigateur web (ordinateur, tablette ou smartphone, etc.). Elle est aussi potentiellement accessible du monde entier grâce à l'Internet.\n" +
-                "\n" +
-                "Pour choisir le contenu de la page du navigateur il faut entrer une URL.\n" +
-                "\n" +
-                "De nombreux matériels tels que routeur, modem ou photocopieur disposent d'une interface web permettant de les administrer.",
-                new File("src/main/resources/Files/cours_abe.pptx")));
+        mails.add(new Mail("Objet du mail 1", "Envoyeur", "Ceci est le message du mail", "Date du mail", List.of("Piece jointe 1", "Piece jointe 2"), false, "destinataire", null));
         for(int i=0; i<10;i++) {
-            mails.add(new Mail("Objet du mail d'identification " + i,"Contact associé","Message d'information pour simuler les mails recus"));
+            mails.add(new Mail("Objet du maillllllll", "Envoyeur", "Ceci est le message du mail", "Date du mail", false, "destinataire", null));
         }
         for (Mail mail : mails) {
             VBox mailBox = createMailBox(mail);
@@ -120,15 +112,15 @@ public class ControllerMailer implements Initializable {
 
     private VBox createMailBox(Mail mail) {
         VBox mailBox = new VBox(3);
-        Label titleLabel = new Label(mail.getTitle());
+        Label titleLabel = new Label(mail.getObject());
         Label senderLabel = new Label(mail.getSender());
-        Label messageLabel = new Label(mail.getMessage());
+        Label messageLabel = new Label(mail.getMessageContent());
 
         titleLabel.getStyleClass().add("mailBox-subject");
         senderLabel.getStyleClass().add("mailBox-sender");
         messageLabel.getStyleClass().add("mailBox-message");
 
-        if(mail.getPj()!=null){
+        if(mail.getAttachements()!=null){
             HBox hbox = new HBox(3);
             HBox.setHgrow(hbox, Priority.ALWAYS);
             Region region = new Region();
@@ -170,7 +162,7 @@ public class ControllerMailer implements Initializable {
     private void setDl(Mail mail){
         dlFileContainer.setVisible(true);
         dlFileContainer.setManaged(true);
-        dlFileName.setText(mail.getPj().getName());
+        dlFileName.setText(mail.getAttachements().get(0)); // TODO: à changer pour affficher toutes les pièces jointes
         dlFile.setOnMouseClicked(event -> {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle("Choisir un dossier");
@@ -178,9 +170,9 @@ public class ControllerMailer implements Initializable {
             File selectedDirectory = directoryChooser.showDialog(primaryStage);
             if (selectedDirectory != null) {
                 String destinationPath = selectedDirectory.getAbsolutePath();
-                String filePath = mail.getPj().getAbsolutePath();
-                System.out.println(filePath + " , "+destinationPath);
-                downloadFile(filePath, destinationPath);
+
+                // Déchiffrement de la pièce jointe + sauvegarde
+                mail.downloadEmailAttachments(destinationPath);
             }
         });
     }
@@ -192,17 +184,17 @@ public class ControllerMailer implements Initializable {
             newMsgVbox.setManaged(newMsgVbox.isVisible());
             openMsgVbox.setVisible(!openMsgVbox.isVisible());
             openMsgVbox.setManaged(openMsgVbox.isVisible());
-            titreMessage.setText(mail.getTitle());
+            titreMessage.setText(mail.getObject());
             senderMessage.setText(mail.getSender());
-            msgMessage.setText(mail.getMessage());
+            msgMessage.setText(mail.getMessageContent());
         }else{ //maj infos
             newMsgVbox.setUserData(mails.indexOf(mail));
-            titreMessage.setText(mail.getTitle());
+            titreMessage.setText(mail.getObject());
             senderMessage.setText(mail.getSender());
-            msgMessage.setText(mail.getMessage());
+            msgMessage.setText(mail.getMessageContent());
             delPJ();
         }
-        if(mail.getPj()!=null){
+        if(mail.getAttachements()!=null){
             setDl(mail);
         }else{
             dlFileContainer.setVisible(false);

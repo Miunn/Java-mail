@@ -20,7 +20,7 @@ public class Context {
         return CONNECTION_STATE.get("isConnected").equals("true");
     }
 
-    public static void connect(String email, String password) {
+    public static boolean connect(String email, String password) {
         try {
             Properties properties = new Properties();
 
@@ -44,19 +44,22 @@ public class Context {
 
             Session session = Session.getDefaultInstance(properties);
 
-            Store store = session.getStore("imap");
+            STORE = session.getStore("imap");
 
-            store.connect(email, password);
+            STORE.connect(email, password);
 
 
             CONNECTION_STATE.put("isConnected", "true");
             CONNECTION_STATE.put("email", email);
             CONNECTION_STATE.put("password", password);
 
+            return true;
         } catch (MessagingException e) {
             System.out.println("Erreur lors de la connexion au compte");
             System.exit(1);
         }
+
+        return false;
     }
 
     public static void setChallengeToken(String token) {

@@ -50,11 +50,16 @@ public class ElGamal {
         } else {
             // Récupération du fichier chiffré
             List<Element> UV = AesFileCrypt.getUV(attachement_path+fileName);
+            if(UV == null) {
+                System.out.println("Erreur lors de la récupération des clés U et V");
+                return;
+            }
 
             Element u_p = UV.get(0).duplicate().mulZn(Context.ELGAMAL_SK);
             Element aesKey = UV.get(1).duplicate().sub(u_p); //clef symmetrique AES retrouvée
 
-            AesFileCrypt.decryptAttachment(attachement_path, fileName, aesKey.toBytes());
+            String originalFileName = fileName.substring(1, fileName.length()+1);  // On enlève le "_" du début du nom de fichier
+            AesFileCrypt.decryptAttachment(attachement_path, originalFileName, aesKey.toBytes());
         }
     }
 }

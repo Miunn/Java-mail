@@ -1,13 +1,12 @@
 package com.example.mailer.crypto;
 
 import it.unisa.dia.gas.jpbc.Element;
-
 import java.io.File;
+import java.util.Base64;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -64,8 +63,19 @@ public class AesFileCrypt {
         try {
             File file = new File(path);
             Scanner sc = new Scanner(file);
-            Element U = null; // TODO: recupérer U depuis le fichier: première ligne après #---U---#
-            Element V = null; // TODO: recupérer V depuis le fichier: première ligne après #---V---#
+            Element U = null;
+            Element V = null;
+
+            while (sc.hasNextLine()) {
+                String line = sc.nextLine();
+                if (line.equals("#---U---#")) {
+                    line = sc.nextLine();
+                    U = ElGamal.generator.getField().newElementFromBytes(Base64.getDecoder().decode(line));
+                } else if (line.equals("#---V---#")) {
+                    line = sc.nextLine();
+                    V = ElGamal.generator.getField().newElementFromBytes(Base64.getDecoder().decode(line));
+                }
+            }
             sc.close();
 
             if (U != null && V != null) {
@@ -94,9 +104,9 @@ public class AesFileCrypt {
             File file = new File(path);
             java.io.FileWriter writer = new java.io.FileWriter(file);
             writer.write("#---U---#\n");
-            writer.write(new String(U));
+            writer.write(Base64.getEncoder().encodeToString(U));
             writer.write("#---V---#\n");
-            writer.write(new String(V));
+            writer.write(Base64.getEncoder().encodeToString(V));
             writer.write(content);
             writer.close();
         } catch (Exception e) {
@@ -134,7 +144,7 @@ public class AesFileCrypt {
         try {
             File file = new File(filePath+fileName);
             if(file.exists()) {
-                String newFilePath = "/Myfiles"+fileName+".txt";
+                String newFilePath = "/Myfiles/"+fileName+".txt";
                 String encryptedString = readEncryptedAttachment(filePath+fileName);
 
                 if(encryptedString != null) {
