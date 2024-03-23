@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class AppMailer extends Application {
 
@@ -16,7 +17,7 @@ public class AppMailer extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(AppMailer.class.getResource("App.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1000, 600);
         myStage = stage;
-        String cssFile = getClass().getResource("style.css").toExternalForm();
+        String cssFile = Objects.requireNonNull(getClass().getResource("style.css")).toExternalForm();
         scene.getStylesheets().add(cssFile);
 
         stage.setTitle("Mail Crypto");
