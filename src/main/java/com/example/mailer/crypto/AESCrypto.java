@@ -1,7 +1,6 @@
 package com.example.mailer.crypto;
 
-import utils.Constants;
-
+import com.example.mailer.utils.Constants;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;

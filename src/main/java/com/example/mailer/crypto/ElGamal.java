@@ -1,10 +1,10 @@
 package com.example.mailer.crypto;
 
 import com.example.mailer.Context;
+import com.example.mailer.utils.Constants;
 import it.unisa.dia.gas.jpbc.Element;
 import it.unisa.dia.gas.jpbc.Pairing;
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory;
-import utils.Constants;
 import javax.activation.FileDataSource;
 import java.util.List;
 import java.util.logging.Level;

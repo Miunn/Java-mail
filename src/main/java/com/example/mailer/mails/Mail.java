@@ -2,8 +2,7 @@ package com.example.mailer.mails;
 
 import com.example.mailer.Context;
 import com.example.mailer.crypto.ElGamal;
-import utils.Constants;
-
+import com.example.mailer.utils.Constants;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
