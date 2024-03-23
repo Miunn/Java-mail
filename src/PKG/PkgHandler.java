@@ -36,13 +36,18 @@ public class PkgHandler {
         return requestPKG(Constants.REGISTER_ENDPOINT, params, "POST");
     }
 
-    public static void confirmIdentity() {
+    public static String confirmIdentity() {
         if(Context.isConnected()) {
-            String params = "?client="+Context.CONNECTION_STATE.get("email");
-            requestPKG(Constants.CHALLENGE_ENDPOINT+params, null, "GET");
+            try {
+                String params = "?client="+Context.CONNECTION_STATE.get("email");
+                return Objects.requireNonNull(requestPKG(Constants.CHALLENGE_ENDPOINT+params, null, "GET")).get("message").toString();
+            } catch (NullPointerException e) {
+                System.out.println("Erreur: le mail d'activation n'a pas été envoyé");
+            }
         } else {
             notConnectedError();
         }
+        return null;
     }
 
     public static Element getPK(String id) {
@@ -104,15 +109,19 @@ public class PkgHandler {
             int responseCode = conn.getResponseCode();
             JsonObject jsonResponse = null;
 
-            if (responseCode != 200) {
-                try (JsonReader jsonReader = Json.createReader(conn.getErrorStream())) {
-                    jsonResponse = jsonReader.readObject();
-                    System.out.println("Erreur lors de la requete: " + jsonResponse.get("error"));
-                }
-            } else {
+            if(responseCode == 200) {
                 // Lecture de la réponse JSON
                 try (JsonReader jsonErrorReader = Json.createReader(conn.getInputStream())) {
                     System.out.println("Réponse JSON : " + jsonErrorReader.readObject());
+                }
+            } else if(responseCode == 204) { // TODO: il faudrai que le serveur envoie lui-meme le message de confirmation d'envoi de mail
+                jsonResponse = Json.createObjectBuilder()
+                        .add("message", "Un mail de confirmation à été envoyé")
+                        .build();
+            } else {
+                try (JsonReader jsonReader = Json.createReader(conn.getErrorStream())) {
+                    jsonResponse = jsonReader.readObject();
+                    System.out.println("Erreur lors de la requete: " + jsonResponse.get("error"));
                 }
             }
             // Fermeture de la connexion

@@ -21,7 +21,7 @@ public class App {
             //System.out.println(PkgHandler.register("test")); => OK
 
             Context.connect("test", "test");
-            Context.setChallengeToken(PkgHandler.confirmIdentity());
+            System.out.println(PkgHandler.confirmIdentity());
             //Context.ELGAMAL_SK = PkgHandler.getSK();
 
         } catch (Exception ex) {
