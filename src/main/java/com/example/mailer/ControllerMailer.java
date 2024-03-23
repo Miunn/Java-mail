@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.List;
 
@@ -133,7 +134,7 @@ public class ControllerMailer implements Initializable {
             Region region = new Region();
             HBox.setHgrow(region, Priority.ALWAYS);
             hbox.setAlignment(Pos.CENTER);
-            Image image = new Image(getClass().getResourceAsStream("/Images/pj.png"));
+            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/pj.png")));
             ImageView imageView = new ImageView(image);
             imageView.setFitWidth(15);
             imageView.setPickOnBounds(true);

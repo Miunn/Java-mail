@@ -1,5 +1,7 @@
 package com.example.mailer;
 
+import com.example.mailer.crypto.ElGamal;
+import com.example.mailer.pkg.PkgHandler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -7,6 +9,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AppMailer extends Application {
 
@@ -30,6 +34,23 @@ public class AppMailer extends Application {
     }
 
     public static void main(String[] args) {
-        launch();
+        try {
+            ElGamal.initCurve();
+
+            Context.CONNECTION_STATE.put("isConnected", "false");
+            Context.CONNECTION_STATE.put("email", "");
+            Context.CONNECTION_STATE.put("password", "");
+
+            // eliott.georges8@gmail.com est dans la bdd du PKG
+            Context.connect("test", "test");
+            System.out.println(PkgHandler.confirmIdentity());
+            //Context.ELGAMAL_SK = PkgHandler.getSK();
+
+            launch();
+
+        } catch (Exception ex) {
+            Logger.getLogger(AppMailer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 }

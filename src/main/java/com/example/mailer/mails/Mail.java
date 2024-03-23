@@ -15,7 +15,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.Address;
 import javax.mail.Flags;
 import javax.mail.Multipart;
@@ -88,20 +87,14 @@ public class Mail {
      * Envoie un mail sans pièces jointes
      */
     public static void sendMessage(String user, String password, String destination, String subject, String text) {
-        Properties properties = new Properties();
 
-        properties.put("mail.smtp.host", Constants.MAIL_HOST);
-        properties.put("mail.smtp.port", Constants.SMTP_PORT);
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
-        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(user,password);
-            }
-        });
-        System.out.println("session.getProviders():" + session.getProviders()[0].getType());
+        if(!Context.isConnected()) {
+            System.out.println("PAS CONNECTE");
+            return;
+        }
+        System.out.println("session.getProviders():" +  Context.EMAIL_SESSION.getProviders()[0].getType());
         try {
-            MimeMessage message = new MimeMessage(session);
+            MimeMessage message = new MimeMessage(Context.EMAIL_SESSION);
             message.setFrom(user);
             message.setSubject(subject);
             message.setText(text);
@@ -126,10 +119,9 @@ public class Mail {
             System.out.println("PAS CONNECTE");
             return;
         }
-        Session session = Context.EMAIL_SESSION;
-        System.out.println("session.getProviders():" + session.getProviders()[0].getType());
+        System.out.println("session.getProviders():" +  Context.EMAIL_SESSION.getProviders()[0].getType());
         try {
-            MimeMessage message = new MimeMessage(session);
+            MimeMessage message = new MimeMessage(Context.EMAIL_SESSION);
             message.setFrom(user);
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(destination));
             message.setSubject(subject);
@@ -162,23 +154,9 @@ public class Mail {
         Mail[] list_mail = new Mail[0];
 
 
-        // server setting (it can be pop3 too
-        properties.put("mail.imap.host", Constants.MAIL_HOST);
-        properties.put("mail.imap.port", Constants.IMAP_PORT);
-        properties.setProperty("mail.imap.socketFactory.class",
-                "javax.net.ssl.SSLSocketFactory");
-        properties.setProperty("mail.imap.socketFactory.fallback", "false");
-        properties.setProperty("mail.imap.socketFactory.port", Constants.IMAP_PORT);
-
-        Session session = Session.getDefaultInstance(properties);
-
         try {
-            Store store = session.getStore("imap");
-
-            store.connect(userName, password);
-
             // opens the inbox folder
-            Folder folderInbox = store.getFolder("INBOX");
+            Folder folderInbox = Context.STORE.getFolder("INBOX");
             folderInbox.open(Folder.READ_ONLY);
             // fetches new messages from server
             Message[] arrayMessages = folderInbox.getMessages();
@@ -194,7 +172,7 @@ public class Mail {
                 String messageContent = "";
                 boolean message_seen = message.getFlags().contains(Flags.Flag.SEEN);
                 // store attachment file name, separated by comma
-                String attachFiles = "";
+                StringBuilder attachFiles = new StringBuilder();
 
                 if (contentType.contains("multipart")) {
                     // content may contain attachments
@@ -205,7 +183,7 @@ public class Mail {
                         if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
                             // this part is attachment
                             String fileName = part.getFileName();
-                            attachFiles += fileName + "/";
+                            attachFiles.append(fileName).append("/");
                         } else {
                             // this part may be the message content
                             messageContent = part.getContent().toString();
@@ -213,7 +191,7 @@ public class Mail {
                     }
 
                     if (attachFiles.length() > 1) {
-                        attachFiles = attachFiles.substring(0, attachFiles.length() - 2);
+                        attachFiles = new StringBuilder(attachFiles.substring(0, attachFiles.length() - 2));
                     }
                 } else if (contentType.contains("text/plain")
                         || contentType.contains("text/html")) {
@@ -223,11 +201,11 @@ public class Mail {
                     }
                 }
 
-                if(attachFiles == ""){
+                if(attachFiles.toString().equals("")){
                     mail = new Mail(subject, from, messageContent, sentDate, message_seen, userName, message);
                 }
                 else{
-                    String[] attachements = attachFiles.split("/");
+                    String[] attachements = attachFiles.toString().split("/");
                     mail = new Mail(subject, from, messageContent, sentDate, attachements, message_seen, userName, message);
                 }
 
@@ -236,14 +214,7 @@ public class Mail {
 
             // disconnect
             folderInbox.close(false);
-            store.close();
-        } catch (NoSuchProviderException ex) {
-            System.out.println("No provider for imap.");
-            ex.printStackTrace();
-        } catch (MessagingException ex) {
-            System.out.println("Could not connect to the message store");
-            ex.printStackTrace();
-        } catch (IOException ex) {
+        } catch (IOException | MessagingException ex) {
             ex.printStackTrace();
         }
         return list_mail;
