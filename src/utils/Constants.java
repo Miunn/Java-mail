@@ -20,6 +20,6 @@ public class Constants {
     public static final String AES = "AES";
     public static final String AES_Padding = "AES/ECB/PKCS5Padding";
     public static final String Digest_Alg = "SHA1";
-    public static final String CURVE = "../cypher.curves/param.properties";
+    public static final String CURVE = "src/cypher/curves/param.properties";
 
 }

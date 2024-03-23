@@ -17,9 +17,12 @@ public class App {
             Context.CONNECTION_STATE.put("email", "");
             Context.CONNECTION_STATE.put("password", "");
 
-            Context.connect("email", "password");
+            // TESTS:
+            //System.out.println(PkgHandler.register("test")); => OK
+
+            Context.connect("test", "test");
             Context.setChallengeToken(PkgHandler.confirmIdentity());
-            Context.ELGAMAL_SK = PkgHandler.getSK();
+            //Context.ELGAMAL_SK = PkgHandler.getSK();
 
         } catch (Exception ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);

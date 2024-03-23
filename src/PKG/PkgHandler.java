@@ -7,7 +7,10 @@ import org.bouncycastle.util.encoders.Base64;
 import utils.Constants;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -20,53 +23,57 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.net.http.HttpClient;
 
-import javax.json.Json;
-import javax.json.JsonException;
-import javax.json.JsonObject;
+import javax.json.*;
 
 public class PkgHandler {
 
 
-    public static String register(String email) {
-        HashMap<String,String> params = new HashMap<>();
-        params.put("identity", email);
+    public static JsonObject register(String email) {
+        JsonObject params = Json.createObjectBuilder()
+                .add("identity", email)
+                .build();
 
-        return requestPKG(Constants.REGISTER_ENDPOINT, params);
+        return requestPKG(Constants.REGISTER_ENDPOINT, params, "POST");
     }
 
-    public static String confirmIdentity() {
+    public static void confirmIdentity() {
         if(Context.isConnected()) {
-            HashMap<String,String> params = new HashMap<>();
-            params.put("identity", Context.CONNECTION_STATE.get("email"));
-
-            return requestPKG(Constants.CHALLENGE_ENDPOINT, params);
+            String params = "?client="+Context.CONNECTION_STATE.get("email");
+            requestPKG(Constants.CHALLENGE_ENDPOINT+params, null, "GET");
         } else {
             notConnectedError();
-            return null;
         }
     }
 
-    public static String getPK(String id) {
+    public static Element getPK(String id) {
         if(Context.isConnected()) {
-            HashMap<String,String> params = new HashMap<>();
-            params.put("identity", id);
+            String params = "?client="+id;
 
-            return requestPKG(Constants.PK_ENDPOINT, params);
+            // récupération de PK:
+            try {
+                String sk_b64 = Objects.requireNonNull(requestPKG(Constants.SK_ENDPOINT+params, null, "GET")).get("pk").toString();
+                byte[] sk_bytes = Base64.decode(sk_b64);
+
+                return ElGamal.generator.getField().newElementFromBytes(sk_bytes);
+            } catch (NullPointerException e) {
+                System.out.println("Aucune clé PK récupérée");
+            }
         } else {
             notConnectedError();
-            return null;
         }
+        return null;
     }
 
     public static Element getSK() {
         if(Context.isConnected()) {
-            HashMap<String,String> params = new HashMap<>();
-            params.put("token", Context.CHALLENGE_TOKEN);
+            JsonObject params = Json.createObjectBuilder()
+                    .add("token", Context.CHALLENGE_TOKEN)
+                    .build();
 
             // récupération de SK:
             try {
-                String sk_b64 = requestPKG(Constants.SK_ENDPOINT, params);// TODO: recup sk dans la reponse
-                byte[] sk_bytes = Base64.decode(Objects.requireNonNull(sk_b64));
+                String sk_b64 = Objects.requireNonNull(requestPKG(Constants.SK_ENDPOINT, params,"POST")).get("sk").toString();
+                byte[] sk_bytes = Base64.decode(sk_b64);
 
                 return ElGamal.generator.getField().newElementFromBytes(sk_bytes);
             } catch (NullPointerException e) {
@@ -79,34 +86,47 @@ public class PkgHandler {
     }
 
 
-    public static String requestPKG(String endpoint, HashMap<String,String> arguments) {
+    public static JsonObject requestPKG(String endpoint, JsonObject post_arguments, String method) {
         try {
-            StringJoiner sj = new StringJoiner("&");
-            for(Map.Entry<String,String> entry : arguments.entrySet())
-                sj.add(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) + "="
-                        + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
+            HttpURLConnection conn = (HttpURLConnection) new URL(Constants.PKG_HOST + endpoint).openConnection();
 
-            byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
+            conn.setRequestMethod(method);
+            conn.setDoOutput(true);
 
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(Constants.PKG_HOST+endpoint))
-                    .POST(HttpRequest.BodyPublishers.ofByteArray(out))
-                    .build();
+            if(method.equals("POST")) {
+                conn.setRequestProperty("Content-Type", "application/json");
+                try (OutputStream os = conn.getOutputStream(); JsonWriter jw = Json.createWriter(os)) {
+                    jw.writeObject(post_arguments);
+                }
+            }
 
-            HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            // Récupération de la réponse
+            int responseCode = conn.getResponseCode();
+            JsonObject jsonResponse = null;
 
-            return new String(response.body());
+            if (responseCode != 200) {
+                try (JsonReader jsonReader = Json.createReader(conn.getErrorStream())) {
+                    jsonResponse = jsonReader.readObject();
+                    System.out.println("Erreur lors de la requete: " + jsonResponse.get("error"));
+                }
+            } else {
+                // Lecture de la réponse JSON
+                try (JsonReader jsonErrorReader = Json.createReader(conn.getInputStream())) {
+                    System.out.println("Réponse JSON : " + jsonErrorReader.readObject());
+                }
+            }
+            // Fermeture de la connexion
+            conn.disconnect();
+
+            return jsonResponse;
         } catch (IOException ex) {
             Logger.getLogger(PkgHandler.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         }
         return null;
     }
 
+
     public static void notConnectedError() {
-        // TODO: afficher la page de connexion
         System.out.println("Veuillez vous connecter pour effectuer cette action");
     }
 }
