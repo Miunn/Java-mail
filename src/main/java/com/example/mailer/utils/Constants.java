@@ -1,6 +1,9 @@
 package com.example.mailer.utils;
 
 public class Constants {
+
+    public static int DISPLAY_NB = 20;
+
     public static final String PKG_HOST = "https://pkg.remicaulier.fr/";
     public static final String SK_ENDPOINT = "/sk";
     public static final String PK_ENDPOINT = "/get";

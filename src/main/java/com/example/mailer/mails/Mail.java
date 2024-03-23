@@ -147,18 +147,20 @@ public class Mail {
     /*
      * Permet de récupérer tous les mails de la boîte de réception de user
      */
-    public static List<Mail> get_list_mail(String userName) {
+    public static List<Mail> getMailList(String userName) {
         try {
             // opens the inbox folder
             Folder folderInbox = Context.STORE.getFolder("INBOX");
             folderInbox.open(Folder.READ_ONLY);
             // fetches new messages from server
-            Message[] arrayMessages = folderInbox.getMessages();
-            List<Mail> list_mail = new ArrayList<Mail>(arrayMessages.length);
+            Message[] am = folderInbox.getMessages();
+            int len = am.length;
+            List<Message> arrayMessages = List.of(am).subList(len-Constants.DISPLAY_NB, len);
+            List<Mail> list_mail = new ArrayList<>();
 
-            for (int i = 0; i < arrayMessages.length; i++) {
+            for (int i = Constants.DISPLAY_NB-1; i >= 0 ; i--) {
                 Mail mail;
-                Message message = arrayMessages[i];
+                Message message = arrayMessages.get(i);
                 Address[] fromAddress = message.getFrom();
                 String from = fromAddress[0].toString();
                 String subject = message.getSubject();
@@ -204,7 +206,7 @@ public class Mail {
                     mail = new Mail(subject, from, messageContent, sentDate, attachements, message_seen, userName, message);
                 }
 
-                list_mail.set(i, mail);
+                list_mail.add(mail);
             }
 
             // disconnect

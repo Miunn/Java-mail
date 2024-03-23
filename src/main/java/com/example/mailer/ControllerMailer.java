@@ -75,10 +75,14 @@ public class ControllerMailer implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Remplir la liste des courriers électroniques
+        /*
         mails.add(new Mail("Objet du mail 1", "Envoyeur", "Ceci est le message du mail", "Date du mail", List.of("Piece jointe 1", "Piece jointe 2"), false, "destinataire", null));
         for(int i=0; i<10;i++) {
             mails.add(new Mail("Objet du maillllllll", "Envoyeur", "Ceci est le message du mail", "Date du mail", false, "destinataire", null));
         }
+        */
+        mails = Mail.getMailList(Context.CONNECTION_STATE.get("email"));
+
         for (Mail mail : mails) {
             VBox mailBox = createMailBox(mail);
             mailBox.getStyleClass().add("mailBox");
