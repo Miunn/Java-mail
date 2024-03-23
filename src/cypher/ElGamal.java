@@ -54,7 +54,7 @@ public class ElGamal {
     }
 
     public static void decryptAttachment(String attachement_path, String fileName) {
-        if(!Context.CONNECTED || Context.ELGAMAL_SK == null) {
+        if(!Context.isConnected() || Context.ELGAMAL_SK == null) {
             System.out.println("Veuillez vous connecter pour récupérer votre clé privée");
         } else {
             // Récupération du fichier chiffré

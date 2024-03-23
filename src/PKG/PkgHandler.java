@@ -1,6 +1,9 @@
 package PKG;
 
 import app.Context;
+import cypher.ElGamal;
+import it.unisa.dia.gas.jpbc.Element;
+import org.bouncycastle.util.encoders.Base64;
 import utils.Constants;
 
 import java.io.IOException;
@@ -11,17 +14,30 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.net.http.HttpClient;
 
+import javax.json.Json;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+
 public class PkgHandler {
 
+
+    public static String register(String email) {
+        HashMap<String,String> params = new HashMap<>();
+        params.put("identity", email);
+
+        return requestPKG(Constants.REGISTER_ENDPOINT, params);
+    }
+
     public static String confirmIdentity() {
-        if(Context.CONNECTED) {
+        if(Context.isConnected()) {
             HashMap<String,String> params = new HashMap<>();
-            params.put("client", Context.ID);
+            params.put("identity", Context.CONNECTION_STATE.get("email"));
 
             return requestPKG(Constants.CHALLENGE_ENDPOINT, params);
         } else {
@@ -31,9 +47,9 @@ public class PkgHandler {
     }
 
     public static String getPK(String id) {
-        if(Context.CONNECTED) {
+        if(Context.isConnected()) {
             HashMap<String,String> params = new HashMap<>();
-            params.put("client", id);
+            params.put("identity", id);
 
             return requestPKG(Constants.PK_ENDPOINT, params);
         } else {
@@ -42,17 +58,24 @@ public class PkgHandler {
         }
     }
 
-    public static String getSK() {
-        if(Context.CONNECTED) {
+    public static Element getSK() {
+        if(Context.isConnected()) {
             HashMap<String,String> params = new HashMap<>();
-            params.put("client", Context.ID);
             params.put("token", Context.CHALLENGE_TOKEN);
 
-            return requestPKG(Constants.SK_ENDPOINT, params);// TODO: parser le json pour récuperer sk
+            // récupération de SK:
+            try {
+                String sk_b64 = requestPKG(Constants.SK_ENDPOINT, params);// TODO: recup sk dans la reponse
+                byte[] sk_bytes = Base64.decode(Objects.requireNonNull(sk_b64));
+
+                return ElGamal.generator.getField().newElementFromBytes(sk_bytes);
+            } catch (NullPointerException e) {
+                System.out.println("Aucune clé SK récupérée");
+            }
         } else {
             notConnectedError();
-            return null;
         }
+        return null;
     }
 
 
@@ -67,14 +90,13 @@ public class PkgHandler {
 
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(Constants.PKG_HOST+":"+Constants.PKG_PORT+endpoint))
+                    .uri(URI.create(Constants.PKG_HOST+endpoint))
                     .POST(HttpRequest.BodyPublishers.ofByteArray(out))
                     .build();
 
             HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
 
             return new String(response.body());
-
         } catch (IOException ex) {
             Logger.getLogger(PkgHandler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InterruptedException e) {

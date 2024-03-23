@@ -1,5 +1,6 @@
 package mails;
 
+import app.Context;
 import cypher.AesFileCrypt;
 import cypher.ElGamal;
 import utils.Constants;
@@ -88,7 +89,7 @@ public class Mail {
     /*
      * Envoie un mail sans pièces jointes
      */
-    public static void sendmessage(String user, String password, String destination, String subject, String text) {
+    public static void sendMessage(String user, String password, String destination, String subject, String text) {
         Properties properties = new Properties();
 
         properties.put("mail.smtp.host", Constants.MAIL_HOST);
@@ -113,8 +114,6 @@ public class Mail {
             Transport.send(message);
             System.out.println("Message envoyé");
 
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -122,20 +121,14 @@ public class Mail {
     }
 
     // Envoie de message avec pièces jointes
-    public static void sendMessageWithAttachement(String user, String password, String destination,
+    public static void sendMessageWithAttachement(String user, String destination,
                                                   String attachement_path,String fileName, String subject, String text) {
-        Properties properties = new Properties();
 
-        properties.put("mail.smtp.host", Constants.MAIL_HOST);
-        properties.put("mail.smtp.port", Constants.SMTP_PORT);
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
-
-        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(user, password);
-            }
-        });
+        if(!Context.isConnected()) {
+            System.out.println("PAS CONNECTE");
+            return;
+        }
+        Session session = Context.EMAIL_SESSION;
         System.out.println("session.getProviders():" + session.getProviders()[0].getType());
         try {
             MimeMessage message = new MimeMessage(session);
@@ -156,8 +149,6 @@ public class Mail {
             message.setContent(myemailcontent);
             Transport.send(message);
 
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
         } catch (MessagingException e) {
             e.printStackTrace();
         } catch (IOException ex) {
