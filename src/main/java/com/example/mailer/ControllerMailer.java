@@ -120,7 +120,7 @@ public class ControllerMailer implements Initializable {
         senderLabel.getStyleClass().add("mailBox-sender");
         messageLabel.getStyleClass().add("mailBox-message");
 
-        if(mail.getAttachements()!=null){
+        if(mail.getAttachements().size()>0){
             HBox hbox = new HBox(3);
             HBox.setHgrow(hbox, Priority.ALWAYS);
             Region region = new Region();
@@ -160,21 +160,23 @@ public class ControllerMailer implements Initializable {
     }
 
     private void setDl(Mail mail){
-        dlFileContainer.setVisible(true);
-        dlFileContainer.setManaged(true);
-        dlFileName.setText(mail.getAttachements().get(0)); // TODO: à changer pour affficher toutes les pièces jointes
-        dlFile.setOnMouseClicked(event -> {
-            DirectoryChooser directoryChooser = new DirectoryChooser();
-            directoryChooser.setTitle("Choisir un dossier");
-            // Afficher la boîte de dialogue de sélection de dossier
-            File selectedDirectory = directoryChooser.showDialog(primaryStage);
-            if (selectedDirectory != null) {
-                String destinationPath = selectedDirectory.getAbsolutePath();
+        if(mail.getAttachements().size()>0) {
+            dlFileContainer.setVisible(true);
+            dlFileContainer.setManaged(true);
+            dlFileName.setText(mail.getAttachements().get(0)); // TODO: à changer pour affficher toutes les pièces jointes
+            dlFile.setOnMouseClicked(event -> {
+                DirectoryChooser directoryChooser = new DirectoryChooser();
+                directoryChooser.setTitle("Choisir un dossier");
+                // Afficher la boîte de dialogue de sélection de dossier
+                File selectedDirectory = directoryChooser.showDialog(primaryStage);
+                if (selectedDirectory != null) {
+                    String destinationPath = selectedDirectory.getAbsolutePath();
 
-                // Déchiffrement de la pièce jointe + sauvegarde
-                mail.downloadEmailAttachments(destinationPath);
-            }
-        });
+                    // Déchiffrement de la pièce jointe + sauvegarde
+                    mail.downloadEmailAttachments(destinationPath);
+                }
+            });
+        }
     }
 
     private void openMessage(Mail mail) {
@@ -194,7 +196,7 @@ public class ControllerMailer implements Initializable {
             msgMessage.setText(mail.getMessageContent());
             delPJ();
         }
-        if(mail.getAttachements()!=null){
+        if(mail.getAttachements().size()>0){
             setDl(mail);
         }else{
             dlFileContainer.setVisible(false);
