@@ -1,16 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.mailer.ControllerMailer">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
 
-    <Label fx:id="welcomeText" styleClass="textPerso"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
+    <HBox VBox.vgrow="ALWAYS">
+        <VBox HBox.hgrow="ALWAYS" styleClass="column-left" >
+            <HBox styleClass="zoneBtn" alignment="CENTER_LEFT">
+                <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../../../Images/newmail.png"/>
+                </ImageView>
+                <Button text="Nouveau message" onAction="#newMessage" styleClass="btn-style"/>
+            </HBox>
+            <ScrollPane fitToWidth="true" fitToHeight="true">
+                <VBox fx:id="mailList"/>
+            </ScrollPane>
+        </VBox>
+
+        <VBox fx:id="openMsgVbox" HBox.hgrow="ALWAYS" visible="false" managed="false" userData="-1">
+            <HBox styleClass="zoneBtn" alignment="CENTER_LEFT">
+                <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../../../Images/respond.png"/>
+                </ImageView>
+                <Button onAction="#respondMail" text="Répondre" styleClass="btn-style"/>
+                <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../../../Images/transfert.png"/>
+                </ImageView>
+                <Button onAction="#transfertMail" text="Transférer" styleClass="btn-style"/>
+                <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../../../Images/del.png"/>
+                </ImageView>
+                <Button text="Supprimer" onAction="#deleteMessage" styleClass="btn-style"/>
+            </HBox>
+            <VBox styleClass="containerViewMsg">
+                <VBox styleClass="titreMessage">
+                    <Label fx:id="titreMessage"/>
+                </VBox>
+                <VBox styleClass="containerViewInfos" VBox.vgrow="ALWAYS">
+                    <Label fx:id="senderMessage" styleClass="senderMessage"/>
+                    <Label fx:id="msgMessage" styleClass="msgMessage" wrapText="true"/>
+                </VBox>
+            </VBox>
+        </VBox>
+
+        <VBox fx:id="newMsgVbox" HBox.hgrow="ALWAYS" styleClass="column-right" >
+            <HBox styleClass="zoneBtn" alignment="CENTER_LEFT">
+                <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../../../Images/sendmail.png"/>
+                </ImageView>
+                <Button text="Envoyer" styleClass="btn-style"/>
+                <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../../../Images/pj.png"/>
+                </ImageView>
+                <Button fx:id="btnPJ" text="Pièce jointe" styleClass="btn-style"/>
+            </HBox>
+            <VBox styleClass="containerNewMsg" HBox.hgrow="ALWAYS">
+                <HBox HBox.hgrow="ALWAYS" styleClass="blocNewMsg" alignment="CENTER_LEFT">
+                    <Label text="A" styleClass="blocBlue"/>
+                    <TextField fx:id="newMsgDest" HBox.hgrow="ALWAYS" styleClass="textField" promptText="Destinataire"/>
+                </HBox>
+                <HBox HBox.hgrow="ALWAYS" styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT">
+                    <TextField fx:id="newMsgTitle" HBox.hgrow="ALWAYS" styleClass="textField" promptText="Objet"/>
+                </HBox>
+                <VBox fx:id="objRespContainer" styleClass="objRespContainer" HBox.hgrow="ALWAYS" visible="false" managed="false">
+                    <ScrollPane fx:id="scroll" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" fitToHeight="false" fitToWidth="true">
+                        <Label fx:id="objResp" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" wrapText="true"/>
+                    </ScrollPane>
+                </VBox>
+                <HBox styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT" prefHeight="300">
+                    <TextArea fx:id="newMsgMessage" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" styleClass="textArea"
+                              focusTraversable="false" wrapText="true">
+                    </TextArea>
+                </HBox>
+                <HBox HBox.hgrow="ALWAYS" fx:id="fileContainer" styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT" managed="false" visible="false">
+                    <VBox alignment="CENTER" styleClass="fileBloc">
+                        <ImageView fitWidth="35" pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../../../Images/file.png"/>
+                        </ImageView>
+                    </VBox>
+                    <HBox HBox.hgrow="ALWAYS" styleClass="fileNameBloc" alignment="CENTER_LEFT">
+                        <Label fx:id="fileName"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <ImageView fx:id="delFile" onMouseClicked="#delPJ" fitWidth="23" pickOnBounds="true"
+                                   preserveRatio="true">
+                            <Image url="@../../../Images/close.png"/>
+                        </ImageView>
+                    </HBox>
+                </HBox>
+                <HBox fx:id="bottomNewMsg">
+                    <Button text="Envoyer" styleClass="btn-style-blue"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </HBox>
 </VBox>

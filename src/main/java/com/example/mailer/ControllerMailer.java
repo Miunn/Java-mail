@@ -52,12 +52,9 @@ public class ControllerMailer implements Initializable {
     @FXML
     private Label objResp;
 
-
-
-
     private File PJ;
-
     private List<Mail> mails = new ArrayList<>();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Remplir la liste des courriers électroniques
@@ -132,12 +129,12 @@ public class ControllerMailer implements Initializable {
         newMsgTitle.setText("");
         newMsgMessage.setText("");
         setTextarea(false,"");
+        delPJ();
     }
 
     private void openMessage(Mail mail) {
         if(newMsgVbox.isVisible()){ //Affichage interface message recu + maj infos
             newMsgVbox.setUserData(mails.indexOf(mail));
-            System.out.println("UserData du mail ouvert : " + newMsgVbox.getUserData());
             newMsgVbox.setVisible(!newMsgVbox.isVisible());
             newMsgVbox.setManaged(newMsgVbox.isVisible());
             openMsgVbox.setVisible(!openMsgVbox.isVisible());
@@ -147,53 +144,32 @@ public class ControllerMailer implements Initializable {
             msgMessage.setText(mail.getMessage());
         }else{ //maj infos
             newMsgVbox.setUserData(mails.indexOf(mail));
-            System.out.println("UserData du mail ouvert : " + newMsgVbox.getUserData());
             titreMessage.setText(mail.getTitle());
             senderMessage.setText(mail.getSender());
             msgMessage.setText(mail.getMessage());
+            delPJ();
         }
     }
 
-
-    private void openMessage(int index) {
+    private void openAutoMessage(int index) {
         Mail mail = mails.get(index);
-        if(newMsgVbox.isVisible()){ //Affichage interface message recu + maj infos
-            newMsgVbox.setUserData(mails.indexOf(mail));
-            newMsgVbox.setVisible(!newMsgVbox.isVisible());
-            newMsgVbox.setManaged(newMsgVbox.isVisible());
-            openMsgVbox.setVisible(!openMsgVbox.isVisible());
-            openMsgVbox.setManaged(openMsgVbox.isVisible());
-            titreMessage.setText(mail.getTitle());
-            senderMessage.setText(mail.getSender());
-            msgMessage.setText(mail.getMessage());
-        }else{ //maj infos
-            newMsgVbox.setUserData(mails.indexOf(mail));
-            titreMessage.setText(mail.getTitle());
-            senderMessage.setText(mail.getSender());
-            msgMessage.setText(mail.getMessage());
-        }
+        openMessage(mail);
     }
+
     @FXML
     protected void deleteMessage(ActionEvent event) {
-        // Obtenir l'index du mail à partir de la propriété userData
         int index = (int)newMsgVbox.getUserData();
-
-        // Vérifier si l'index est valide
         if (index >= 0 && index < mails.size()) {
-            // Supprimer le mail de la liste
             mails.remove(index);
-            // Rafraîchissez l'interface utilisateur pour refléter les modifications
             refreshMailList();
-            
             if((index) < mails.size()){
-                openMessage(index);
+                openAutoMessage(index);
             } else if (index==mails.size() && index!=0){
-                openMessage(index-1);
+                openAutoMessage(index-1);
             } else {
                 newMessage();
             }
         } else {
-            // Gérer l'erreur si l'index n'est pas valide
             System.err.println("Index invalide : " + index );
 
         }
@@ -219,21 +195,26 @@ public class ControllerMailer implements Initializable {
     private void respondMail(){
         newMsgDest.setText(senderMessage.getText());
         newMsgTitle.setText("Re : " + titreMessage.getText());
+        newMsgMessage.setText("");
         newMsgVbox.setVisible(true);
         newMsgVbox.setManaged(true);
         openMsgVbox.setVisible(false);
         openMsgVbox.setManaged(false);
         setTextarea(true,msgMessage.getText());
+        delPJ();
     }
 
     @FXML
     private void transfertMail(){
         newMsgTitle.setText("Pwd : " + titreMessage.getText());
+        newMsgDest.setText("");
+        newMsgMessage.setText("");
         newMsgVbox.setVisible(true);
         newMsgVbox.setManaged(true);
         openMsgVbox.setVisible(false);
         openMsgVbox.setManaged(false);
         setTextarea(true,msgMessage.getText());
+        delPJ();
     }
 
     @FXML
