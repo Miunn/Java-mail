@@ -47,6 +47,21 @@
                 <VBox styleClass="containerViewInfos" VBox.vgrow="ALWAYS">
                     <Label fx:id="senderMessage" styleClass="senderMessage"/>
                     <Label fx:id="msgMessage" styleClass="msgMessage" wrapText="true"/>
+                    <HBox HBox.hgrow="ALWAYS" fx:id="dlFileContainer" styleClass="blocDlFile" alignment="CENTER_LEFT" managed="false" visible="false">
+                        <VBox alignment="CENTER" styleClass="fileBloc">
+                            <ImageView fitWidth="35" pickOnBounds="true" preserveRatio="true">
+                                <Image url="@../../../Images/file.png"/>
+                            </ImageView>
+                        </VBox>
+                        <HBox HBox.hgrow="ALWAYS" styleClass="fileNameBloc" alignment="CENTER_LEFT">
+                            <Label fx:id="dlFileName"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <ImageView fx:id="dlFile" fitWidth="23" pickOnBounds="true"
+                                       preserveRatio="true">
+                                <Image url="@../../../Images/dl.png"/>
+                            </ImageView>
+                        </HBox>
+                    </HBox>
                 </VBox>
             </VBox>
         </VBox>

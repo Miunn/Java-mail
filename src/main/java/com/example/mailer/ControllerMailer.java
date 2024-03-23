@@ -1,26 +1,35 @@
 package com.example.mailer;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
-import java.io.File;
+import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-
-
 import java.util.List;
+
 
 public class ControllerMailer implements Initializable {
     @FXML
@@ -51,9 +60,17 @@ public class ControllerMailer implements Initializable {
     private VBox objRespContainer;
     @FXML
     private Label objResp;
+    @FXML
+    private HBox dlFileContainer;
+    @FXML
+    private ImageView dlFile;
+    @FXML
+    private Label dlFileName;
 
     private File PJ;
     private List<Mail> mails = new ArrayList<>();
+
+    private Stage primaryStage = AppMailer.getMyStage();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -64,7 +81,8 @@ public class ControllerMailer implements Initializable {
                 "\n" +
                 "Pour choisir le contenu de la page du navigateur il faut entrer une URL.\n" +
                 "\n" +
-                "De nombreux matériels tels que routeur, modem ou photocopieur disposent d'une interface web permettant de les administrer."));
+                "De nombreux matériels tels que routeur, modem ou photocopieur disposent d'une interface web permettant de les administrer.",
+                new File("src/main/resources/Files/cours_abe.pptx")));
         for(int i=0; i<10;i++) {
             mails.add(new Mail("Objet du mail d'identification " + i,"Contact associé","Message d'information pour simuler les mails recus"));
         }
@@ -109,11 +127,27 @@ public class ControllerMailer implements Initializable {
         senderLabel.getStyleClass().add("mailBox-sender");
         messageLabel.getStyleClass().add("mailBox-message");
 
+        if(mail.getPj()!=null){
+            HBox hbox = new HBox(3);
+            HBox.setHgrow(hbox, Priority.ALWAYS);
+            Region region = new Region();
+            HBox.setHgrow(region, Priority.ALWAYS);
+            hbox.setAlignment(Pos.CENTER);
+            Image image = new Image(getClass().getResourceAsStream("/Images/pj.png"));
+            ImageView imageView = new ImageView(image);
+            imageView.setFitWidth(15);
+            imageView.setPickOnBounds(true);
+            imageView.setPreserveRatio(true);
+            hbox.getChildren().addAll(senderLabel,region,imageView);
+            mailBox.getChildren().addAll(hbox,titleLabel, messageLabel);
+        }else{
+            mailBox.getChildren().addAll(senderLabel,titleLabel, messageLabel);
+        }
+
         mailBox.setOnMouseClicked(event -> {
             openMessage(mail);
         });
 
-        mailBox.getChildren().addAll(senderLabel,titleLabel, messageLabel);
         return mailBox;
     }
 
@@ -132,6 +166,24 @@ public class ControllerMailer implements Initializable {
         delPJ();
     }
 
+    private void setDl(Mail mail){
+        dlFileContainer.setVisible(true);
+        dlFileContainer.setManaged(true);
+        dlFileName.setText(mail.getPj().getName());
+        dlFile.setOnMouseClicked(event -> {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Choisir un dossier");
+            // Afficher la boîte de dialogue de sélection de dossier
+            File selectedDirectory = directoryChooser.showDialog(primaryStage);
+            if (selectedDirectory != null) {
+                String destinationPath = selectedDirectory.getAbsolutePath();
+                String filePath = mail.getPj().getAbsolutePath();
+                System.out.println(filePath + " , "+destinationPath);
+                downloadFile(filePath, destinationPath);
+            }
+        });
+    }
+
     private void openMessage(Mail mail) {
         if(newMsgVbox.isVisible()){ //Affichage interface message recu + maj infos
             newMsgVbox.setUserData(mails.indexOf(mail));
@@ -148,6 +200,13 @@ public class ControllerMailer implements Initializable {
             senderMessage.setText(mail.getSender());
             msgMessage.setText(mail.getMessage());
             delPJ();
+        }
+        if(mail.getPj()!=null){
+            setDl(mail);
+        }else{
+            dlFileContainer.setVisible(false);
+            dlFileContainer.setManaged(false);
+            dlFileName.setText("");
         }
     }
 
@@ -227,4 +286,21 @@ public class ControllerMailer implements Initializable {
     }
 
 
+    private void downloadFile(String sourceFilePath, String targetDirectoryPath) {
+        try {
+            Path sourcePath = Paths.get(sourceFilePath);
+            Path targetDirectory = Paths.get(targetDirectoryPath);
+            if (Files.exists(sourcePath) && Files.isDirectory(targetDirectory)) {
+                String fileName = sourcePath.getFileName().toString();
+                Path targetPath = Paths.get(targetDirectoryPath, fileName);
+                Files.copy(sourcePath, targetPath);
+                System.out.println("Le fichier a été déplacé avec succès vers le dossier cible.");
+            } else {
+                System.out.println("Le fichier source n'existe pas ou le chemin cible n'est pas un dossier valide.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 }

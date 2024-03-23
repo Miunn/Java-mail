@@ -3,15 +3,26 @@ package com.example.mailer;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 
+import java.io.File;
+
 public class Mail {
     private String title;
     private String sender;
     private String message;
+    private File pj;
 
     public Mail(String title, String sender, String message) {
         this.title = title;
         this.sender = sender;
         this.message = message;
+        this.pj = null;
+    }
+
+    public Mail(String title, String sender, String message, File pj) {
+        this.title = title;
+        this.sender = sender;
+        this.message = message;
+        this.pj = pj;
     }
 
     public String getTitle() {
@@ -51,4 +62,11 @@ public class Mail {
         return Bindings.createStringBinding(this::getTitle);
     }
 
+    public File getPj() {
+        return pj;
+    }
+
+    public void setPj(File pj) {
+        this.pj = pj;
+    }
 }
