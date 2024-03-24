@@ -116,7 +116,7 @@ public class Mail {
     public static void sendMessageWithAttachement(String user, String destination,
                                                   String attachement_path,String fileName, String subject, String text) {
         if(!Context.isConnected()) {
-            System.out.println("PAS CONNECTE");
+            System.out.println("Vous n'êtes pas connecté");
             return;
         }
         System.out.println("session.getProviders():" + Context.EMAIL_SESSION.getProviders()[0].getType());
@@ -247,12 +247,10 @@ public class Mail {
                     }
                 }}
 
-            // Parcours de /tmp/ pour déchiffrer les fichiers todec_...
+            // Parcours de tmp/ pour déchiffrer les fichiers _...
             for (List<String> path : pathList) {
-                ElGamal.decryptAttachment(path.get(0), path.get(1));
+                ElGamal.decryptAttachment(path.get(0), path.get(1), destinationPath);
             }
-
-            // retourner la liste des path des fichiers déchiffrés
 
         } catch (NoSuchProviderException ex) {
             System.out.println("No provider for imap.");
