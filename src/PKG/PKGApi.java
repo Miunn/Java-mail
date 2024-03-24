@@ -371,19 +371,13 @@ public class PKGApi {
 				return new PasswordAuthentication(user,password);
 			}
 		});
-        System.out.println("session.getProviders():" + session.getProviders()[0].getType());
         try {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(user);
             message.setSubject(subject);
             message.setText(text);
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destination));
-
-            System.out.println("Message en cours d'envoie");
-
             Transport.send(message);
-            System.out.println("Message envoyé");
-
         } catch (NoSuchProviderException e) {
             e.printStackTrace();
         } catch (MessagingException e) {
