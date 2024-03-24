@@ -245,7 +245,7 @@ public class PKGApi {
                 ///////////////////
                 // SEND THE MAIL //
                 ///////////////////
-                sendmessage("serveurpkg@gmail.com", "pkgserver123", args.get("client"), "PKG-Challenge", client.getToken());
+                sendmessage("serveurpkg@gmail.com", "wdoo hvrj ruws kmuc", args.get("client"), "PKG-Challenge", client.getToken());
 
                 he.sendResponseHeaders(204, -1);
             }
