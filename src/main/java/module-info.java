@@ -11,6 +11,7 @@ module com.example.mailer {
     requires bcprov.jdk16;
     requires java.net.http;
     requires javax.json;
+    requires javafx.web;
 
     opens com.example.mailer to javafx.fxml;
     exports com.example.mailer;

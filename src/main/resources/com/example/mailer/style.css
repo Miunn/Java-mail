@@ -28,11 +28,11 @@
 
 .column-right {
     -fx-background-color: rgb(235,235,235);
-    -fx-pref-width: 500px;
+    -fx-pref-width: 700px;
 }
 
 .column-left {
-    -fx-pref-width: 100px;
+    -fx-pref-width: 80px;
     -fx-background-color: rgb(230,230,230);
 }
 
@@ -108,15 +108,28 @@
 
 .mailBox{
     -fx-background-color: rgb(245,245,245);
-    -fx-padding: 10px 30px;
+    -fx-padding: 15px 30px;
+    -fx-border-width:0px 0px 1.5px 0px;
+    -fx-border-color: #dcdcdc;
+}
+
+.mailBox-actif{
+    -fx-background-color: rgba(91, 147, 255, 0.3);
+    -fx-padding: 15px 30px;
     -fx-border-width:0px 0px 1.5px 0px;
     -fx-border-color: #dcdcdc;
 }
 
 .mailBox-sender{
     -fx-text-fill: #0c0c0c;
-    -fx-font-size: 13.5px;
+    -fx-font-size: 15px;
     -fx-font-weight: bold;
+    -fx-font-style: italic;
+}
+.mailBox-sender-seen{
+    -fx-text-fill: #0c0c0c;
+    -fx-font-size: 15px;
+    -fx-font-style: italic;
 }
 
 .mailBox-message{
@@ -127,13 +140,17 @@
 
 .mailBox-subject{
     -fx-text-fill: rgb(64, 128, 246);
-    -fx-font-size: 14px;
+    -fx-font-size: 15px;
     -fx-font-weight: bold;
+}
+.mailBox-subject-seen{
+    -fx-text-fill: rgb(64, 128, 246);
+    -fx-font-size: 15px;
 }
 
 #openMsgVbox{
     -fx-background-color: rgb(235,235,235);
-    -fx-pref-width: 500px;
+    -fx-pref-width: 700px;
 }
 
 .titreMessage{

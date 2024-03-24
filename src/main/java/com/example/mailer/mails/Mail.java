@@ -36,6 +36,8 @@ public class Mail {
     private String expediteur;
     private Message message;
 
+    private Boolean actif=false;
+
     // Constructeur Mail reçu avec pièces jointes
     public Mail(String object_, String sender, String msg_, String date, List<String> attachements, boolean seen, String destinataire_, Message message_){
         this.object = object_;
@@ -374,5 +376,13 @@ public class Mail {
      */
     public void setMessage(Message message_){
         this.message = message_;
+    }
+
+    public Boolean getActif() {
+        return actif;
+    }
+
+    public void setActif(Boolean actif) {
+        this.actif = actif;
     }
 }

@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.List;
+import javafx.scene.web.WebView;
+import org.w3c.dom.Document;
 
 
 public class ControllerMailer implements Initializable {
@@ -66,6 +68,8 @@ public class ControllerMailer implements Initializable {
     private ImageView dlFile;
     @FXML
     private Label dlFileName;
+    @FXML
+    private WebView msgContent;
 
     private File PJ;
     private List<Mail> mails = new ArrayList<>();
@@ -115,14 +119,19 @@ public class ControllerMailer implements Initializable {
     }
 
     private VBox createMailBox(Mail mail) {
-        VBox mailBox = new VBox(3);
+        VBox mailBox = new VBox(5);
         Label titleLabel = new Label(mail.getObject());
         Label senderLabel = new Label(mail.getSender());
-        Label messageLabel = new Label(mail.getMessageContent());
+        //Label messageLabel = new Label(extractTextFromHtml(mail.getMessageContent()));
 
-        titleLabel.getStyleClass().add("mailBox-subject");
-        senderLabel.getStyleClass().add("mailBox-sender");
-        messageLabel.getStyleClass().add("mailBox-message");
+        if(mail.getSeen()){
+            titleLabel.getStyleClass().add("mailBox-subject-seen");
+            senderLabel.getStyleClass().add("mailBox-sender-seen");
+        }else{
+            titleLabel.getStyleClass().add("mailBox-subject");
+            senderLabel.getStyleClass().add("mailBox-sender");
+        }
+        //messageLabel.getStyleClass().add("mailBox-message");
 
         if(mail.getAttachements().size()>0){
             HBox hbox = new HBox(3);
@@ -136,9 +145,9 @@ public class ControllerMailer implements Initializable {
             imageView.setPickOnBounds(true);
             imageView.setPreserveRatio(true);
             hbox.getChildren().addAll(senderLabel,region,imageView);
-            mailBox.getChildren().addAll(hbox,titleLabel, messageLabel);
+            mailBox.getChildren().addAll(hbox,titleLabel);
         }else{
-            mailBox.getChildren().addAll(senderLabel,titleLabel, messageLabel);
+            mailBox.getChildren().addAll(senderLabel,titleLabel);
         }
 
         mailBox.setOnMouseClicked(event -> {
@@ -155,10 +164,15 @@ public class ControllerMailer implements Initializable {
             newMsgVbox.setManaged(newMsgVbox.isVisible());
             openMsgVbox.setVisible(!openMsgVbox.isVisible());
             openMsgVbox.setManaged(openMsgVbox.isVisible());
+            for (Mail m :mails) {
+                m.setActif(false);
+            }
+            refreshMailList();
         }
         newMsgDest.setText("");
         newMsgTitle.setText("");
-        newMsgMessage.setText("");
+        setHtmlContent(false,"");
+        setNotHtmlContent(false, "");
         setTextarea(false,"");
         delPJ();
     }
@@ -184,21 +198,25 @@ public class ControllerMailer implements Initializable {
     }
 
     private void openMessage(Mail mail) {
+        newMsgVbox.setUserData(mails.indexOf(mail));
         if(newMsgVbox.isVisible()){ //Affichage interface message recu + maj infos
-            newMsgVbox.setUserData(mails.indexOf(mail));
-            newMsgVbox.setVisible(!newMsgVbox.isVisible());
-            newMsgVbox.setManaged(newMsgVbox.isVisible());
-            openMsgVbox.setVisible(!openMsgVbox.isVisible());
-            openMsgVbox.setManaged(openMsgVbox.isVisible());
-            titreMessage.setText(mail.getObject());
-            senderMessage.setText(mail.getSender());
-            msgMessage.setText(mail.getMessageContent());
+            newMsgVbox.setVisible(false);
+            newMsgVbox.setManaged(false);
+            openMsgVbox.setVisible(true);
+            openMsgVbox.setManaged(true);
         }else{ //maj infos
-            newMsgVbox.setUserData(mails.indexOf(mail));
-            titreMessage.setText(mail.getObject());
-            senderMessage.setText(mail.getSender());
-            msgMessage.setText(mail.getMessageContent());
             delPJ();
+        }
+        titreMessage.setText(mail.getObject());
+        senderMessage.setText(mail.getSender());
+        String mailContent = mail.getMessageContent();
+        if(isHtmlContent(mailContent)){
+            setHtmlContent(true,"");
+            setHtmlContent(true, mail.getMessageContent());
+            setNotHtmlContent(false, "");
+        }else{
+            setHtmlContent(false, "");
+            setNotHtmlContent(true, mail.getMessageContent());
         }
         if(mail.getAttachements().size()>0){
             setDl(mail);
@@ -207,6 +225,14 @@ public class ControllerMailer implements Initializable {
             dlFileContainer.setManaged(false);
             dlFileName.setText("");
         }
+        if(!mail.getSeen()){
+            mail.setSeen(true);
+        }
+        for (Mail m :mails) {
+            m.setActif(false);
+        }
+        mail.setActif(true);
+        refreshMailList();
     }
 
     private void openAutoMessage(int index) {
@@ -237,7 +263,11 @@ public class ControllerMailer implements Initializable {
         mailList.getChildren().clear();
         for (Mail mail : mails) {
             VBox mailBox = createMailBox(mail);
-            mailBox.getStyleClass().add("mailBox");
+            if(mail.getActif()){
+                mailBox.getStyleClass().add("mailBox-actif");
+            }else{
+                mailBox.getStyleClass().add("mailBox");
+            }
             mailList.getChildren().add(mailBox);
         }
     }
@@ -258,7 +288,7 @@ public class ControllerMailer implements Initializable {
         newMsgVbox.setManaged(true);
         openMsgVbox.setVisible(false);
         openMsgVbox.setManaged(false);
-        setTextarea(true,msgMessage.getText());
+        //setTextarea(true,msgMessage.getText());
         delPJ();
     }
 
@@ -271,7 +301,7 @@ public class ControllerMailer implements Initializable {
         newMsgVbox.setManaged(true);
         openMsgVbox.setVisible(false);
         openMsgVbox.setManaged(false);
-        setTextarea(true,msgMessage.getText());
+        //setTextarea(true,msgMessage.getText());
         delPJ();
     }
 
@@ -302,4 +332,30 @@ public class ControllerMailer implements Initializable {
         }
 
     }
+
+    public void setHtmlContent(boolean on, String content){
+        msgContent.setManaged(on);
+        msgContent.setVisible(on);
+        msgContent.getEngine().loadContent((on) ? content : "");
+    }
+
+    public void setNotHtmlContent(boolean on, String content){
+        msgMessage.setManaged(on);
+        msgMessage.setVisible(on);
+        msgMessage.setText((on) ? content : "");
+    }
+
+    public boolean isHtmlContent(String content) {
+        return content.matches("(?s).*<\\s*html.*>.*");
+    }
+
+    public static String extractTextFromHtml(String htmlContent) {
+        String text = htmlContent.replaceAll("\\<.*?\\>", "");
+        int maxLength = 50;
+        if (text.length() > maxLength) {
+            text = text.substring(0, maxLength) + "...";
+        }
+        return text;
+    }
+
 }

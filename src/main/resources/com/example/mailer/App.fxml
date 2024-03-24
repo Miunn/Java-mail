@@ -8,6 +8,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 
+<?import javafx.scene.web.WebView?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.mailer.ControllerMailer">
@@ -46,7 +47,8 @@
                 </VBox>
                 <VBox styleClass="containerViewInfos" VBox.vgrow="ALWAYS">
                     <Label fx:id="senderMessage" styleClass="senderMessage"/>
-                    <Label fx:id="msgMessage" styleClass="msgMessage" wrapText="true"/>
+                    <Label fx:id="msgMessage" styleClass="msgMessage"/>
+                    <WebView fx:id="msgContent"></WebView>
                     <HBox HBox.hgrow="ALWAYS" fx:id="dlFileContainer" styleClass="blocDlFile" alignment="CENTER_LEFT" managed="false" visible="false">
                         <VBox alignment="CENTER" styleClass="fileBloc">
                             <ImageView fitWidth="35" pickOnBounds="true" preserveRatio="true">
