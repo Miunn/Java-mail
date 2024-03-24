@@ -19,7 +19,6 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.mail.Message;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
@@ -30,7 +29,6 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.List;
 import javafx.scene.web.WebView;
-import org.w3c.dom.Document;
 
 
 public class ControllerMailer implements Initializable {
@@ -51,6 +49,8 @@ public class ControllerMailer implements Initializable {
     @FXML
     private HBox fileContainer;
     @FXML
+    private VBox attachmentsContainer;
+    @FXML
     private Label fileName;
     @FXML
     private TextField newMsgDest;
@@ -63,14 +63,7 @@ public class ControllerMailer implements Initializable {
     @FXML
     private Label objResp;
     @FXML
-    private HBox dlFileContainer;
-    @FXML
-    private ImageView dlFile;
-    @FXML
-    private Label dlFileName;
-    @FXML
     private WebView msgContent;
-
     private File PJ;
     private List<Mail> mails = new ArrayList<>();
 
@@ -133,7 +126,7 @@ public class ControllerMailer implements Initializable {
         }
         //messageLabel.getStyleClass().add("mailBox-message");
 
-        if(mail.getAttachements().size()>0){
+        if(!mail.getAttachements().isEmpty()){
             HBox hbox = new HBox(3);
             HBox.setHgrow(hbox, Priority.ALWAYS);
             Region region = new Region();
@@ -178,24 +171,54 @@ public class ControllerMailer implements Initializable {
     }
 
     private void setDl(Mail mail){
-        if(mail.getAttachements().size()>0) {
-            dlFileContainer.setVisible(true);
-            dlFileContainer.setManaged(true);
-            dlFileName.setText(mail.getAttachements().get(0)); // TODO: à changer pour affficher toutes les pièces jointes
-            dlFile.setOnMouseClicked(event -> {
-                DirectoryChooser directoryChooser = new DirectoryChooser();
-                directoryChooser.setTitle("Choisir un dossier");
-                // Afficher la boîte de dialogue de sélection de dossier
-                File selectedDirectory = directoryChooser.showDialog(primaryStage);
-                if (selectedDirectory != null) {
-                    String destinationPath = selectedDirectory.getAbsolutePath();
+        if(!mail.getAttachements().isEmpty()) {
+            for (String attachmentName : mail.getAttachements()) {
+                HBox attachmentBox = new HBox();
+                attachmentBox.getStyleClass().add("blocDlFile");
+                attachmentBox.setAlignment(Pos.CENTER_LEFT);
 
-                    // Déchiffrement de la pièce jointe + sauvegarde
-                    mail.downloadEmailAttachments(destinationPath);
-                }
-            });
+                // ImageView for file icon
+                ImageView fileIcon = new ImageView();
+                fileIcon.setFitWidth(35);
+                fileIcon.setPreserveRatio(true);
+                fileIcon.setImage(new Image(Objects.requireNonNull(getClass().getResource("/Images/file.png")).toString()));
+
+                // Label for attachment name
+                Label attachmentLabel = new Label(attachmentName);
+                attachmentLabel.setWrapText(true);
+
+                // ImageView for download icon
+                ImageView downloadIcon = new ImageView();
+                downloadIcon.setFitWidth(23);
+                downloadIcon.setPreserveRatio(true);
+                downloadIcon.setImage(new Image(Objects.requireNonNull(getClass().getResource("/Images/dl.png")).toString()));
+                downloadIcon.setOnMouseClicked(event -> {
+                    DirectoryChooser directoryChooser = new DirectoryChooser();
+                    directoryChooser.setTitle("Choisir un dossier");
+                    // Afficher la boîte de dialogue de sélection de dossier
+                    File selectedDirectory = directoryChooser.showDialog(primaryStage);
+                    if (selectedDirectory != null) {
+                        String destinationPath = selectedDirectory.getAbsolutePath();
+
+                        // Déchiffrement de la pièce jointe + sauvegarde
+                        mail.downloadEmailAttachments(destinationPath);
+                    }
+                });
+
+                // Region to fill space in HBox
+                Region spacer = new Region();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                attachmentBox.getChildren().addAll(fileIcon, attachmentLabel, spacer, downloadIcon);
+                attachmentsContainer.getChildren().add(attachmentBox);
+            }
+            attachmentsContainer.setVisible(true);
+            attachmentsContainer.setManaged(true);
         }
+
     }
+
+
 
     private void openMessage(Mail mail) {
         newMsgVbox.setUserData(mails.indexOf(mail));
@@ -218,12 +241,12 @@ public class ControllerMailer implements Initializable {
             setHtmlContent(false, "");
             setNotHtmlContent(true, mail.getMessageContent());
         }
-        if(mail.getAttachements().size()>0){
+        if(!mail.getAttachements().isEmpty()){
             setDl(mail);
         }else{
-            dlFileContainer.setVisible(false);
-            dlFileContainer.setManaged(false);
-            dlFileName.setText("");
+            attachmentsContainer.setVisible(false);
+            attachmentsContainer.setManaged(false);
+
         }
         if(!mail.getSeen()){
             mail.setSeen(true);
@@ -274,7 +297,7 @@ public class ControllerMailer implements Initializable {
 
     @FXML
     private void delPJ(){
-        PJ = null;
+        attachmentsContainer.getChildren().clear();
         fileContainer.setVisible(false);
         fileContainer.setManaged(false);
     }
