@@ -140,16 +140,15 @@ public class AesFileCrypt {
         return null;
     }
 
-    public static void decryptAttachment(String filePath, String fileName, byte[] aesKey) {
+    public static void decryptAttachment(String filePath, String fileName, String destinationPath, byte[] aesKey) {
         try {
             File file = new File(filePath+fileName);
             if(file.exists()) {
-                String newFilePath = "/Myfiles/"+fileName+".txt";
                 String encryptedString = readEncryptedAttachment(filePath+fileName);
 
                 if(encryptedString != null) {
                     String decryptedString = AESCrypto.decrypt(encryptedString.getBytes(StandardCharsets.UTF_8), aesKey);
-                    writeFile(newFilePath, decryptedString);
+                    writeFile(destinationPath, decryptedString);
                 } else {
                     System.out.println("Erreur de lecture du fichier");
                 }

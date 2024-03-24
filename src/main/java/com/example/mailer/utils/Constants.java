@@ -16,8 +16,8 @@ public class Constants {
     public static final String SMTP_PORT = "587";
     public static final String IMAP_PORT = "993";
 
-    public static final String ATTACHMENT_PATH = "/src/Myfiles/";
-    public static final String ENC_ATTACHMENTS_PATH = "/src/tmp/";
+    public static final String ATTACHMENT_PATH = "Myfiles/";
+    public static final String ENC_ATTACHMENTS_PATH = "tmp/";
 
 
     public static final String AES = "AES";
