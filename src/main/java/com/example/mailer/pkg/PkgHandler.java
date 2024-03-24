@@ -89,6 +89,7 @@ public class PkgHandler {
             try {
                 System.out.println(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"));
                 String sk_b64 = Objects.requireNonNull(requestPKG(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"), params,"POST")).get("sk").toString();
+                System.out.println(sk_b64);
                 byte[] sk_bytes = Base64.decode(sk_b64);
 
                 return ElGamal.generator.getField().newElementFromBytes(sk_bytes);
@@ -118,12 +119,12 @@ public class PkgHandler {
 
             // Récupération de la réponse
             int responseCode = conn.getResponseCode();
-            JsonObject jsonResponse = null;
+            JsonObject jsonResponse;
 
             if(responseCode == 200) {
                 // Lecture de la réponse JSON
-                try (JsonReader jsonErrorReader = Json.createReader(conn.getInputStream())) {
-                    System.out.println("Réponse JSON : " + jsonErrorReader.readObject());
+                try (JsonReader jsonReader = Json.createReader(conn.getInputStream())) {
+                    jsonResponse = jsonReader.readObject();
                 }
             } else if(responseCode == 204) {
                 jsonResponse = Json.createObjectBuilder()

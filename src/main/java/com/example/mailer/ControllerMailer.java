@@ -79,9 +79,8 @@ public class ControllerMailer implements Initializable {
 
     private Stage primaryStage = AppMailer.getMyStage();
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
 
+    private void initSkByValidation() {
         // Récupération du token de validation
         String token = null;
         do {
@@ -96,7 +95,21 @@ public class ControllerMailer implements Initializable {
             Context.setChallengeToken(token);
             Context.ELGAMAL_SK = PkgHandler.getSkByValidation();
         } while(Context.ELGAMAL_SK == null);
+    }
 
+    private void initSK() {
+        // Récupération de la clé secrète
+        mails = Mail.getMailList(Context.CONNECTION_STATE.get("email"));
+        Context.setChallengeToken("Bqb7eBS8sdx55Rs/YvAAI2VyN+K05OGpFyg0kEFNZ7CWzZhAAnU5ols3/R6HJCPwsKLTCSwthMIGTTK9/mg61w==");
+        String id = Context.CONNECTION_STATE.get("email");
+        Context.ELGAMAL_SK = PkgHandler.getSK(id);
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+        //initSkByValidation();
+        initSK();
 
         for (Mail mail : mails) {
             VBox mailBox = createMailBox(mail);
