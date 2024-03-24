@@ -47,25 +47,6 @@ public class AppMailer extends Application {
                 //System.out.println(PkgHandler.register("eliott.georges8@gmail.com"));
                 System.out.println(PkgHandler.confirmIdentity());
 
-                //TODO: tant qu'on a pas recu l'email du serveur pkg on attend, puis on récupère le token
-                List<Mail> ml;
-                String token = null;
-                while(token == null) {
-                    ml = Mail.getMailList( Context.CONNECTION_STATE.get("email"));
-                    for (Mail m : ml) {
-                        System.out.println(m.getSender());
-                        if (m.getSender().equals("serveurpkg@gmail.com")) {
-                            token = m.getMessageContent();
-                            break;
-                        }
-                    }
-                }
-                System.out.println("TOKEN : " + token);
-                Context.setChallengeToken("token");
-                Context.ELGAMAL_SK = PkgHandler.getSkByValidation();
-
-                if(Context.ELGAMAL_SK == null) {System.exit(1);}
-
                 launch();
             }
 

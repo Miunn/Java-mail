@@ -2,6 +2,7 @@ package com.example.mailer;
 
 
 import com.example.mailer.mails.Mail;
+import com.example.mailer.pkg.PkgHandler;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
 import javafx.concurrent.Task;
@@ -80,7 +81,22 @@ public class ControllerMailer implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        mails = Mail.getMailList(Context.CONNECTION_STATE.get("email"));
+
+        // Récupération du token de validation
+        String token = null;
+        do {
+            mails = Mail.getMailList( Context.CONNECTION_STATE.get("email"));
+            for (Mail m : mails) {
+                if (m.getSender().equals("serveurpkg@gmail.com")) {
+                    token = m.getMessageContent();
+                    break;
+                }
+            }
+            System.out.println("TOKEN : " + token);
+            Context.setChallengeToken("token");
+            Context.ELGAMAL_SK = PkgHandler.getSkByValidation();
+        } while(Context.ELGAMAL_SK == null);
+
 
         for (Mail mail : mails) {
             VBox mailBox = createMailBox(mail);

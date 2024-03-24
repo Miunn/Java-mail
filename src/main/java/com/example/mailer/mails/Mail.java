@@ -191,8 +191,7 @@ public class Mail {
                     if (attachFiles.length() > 1) {
                         attachFiles = new StringBuilder(attachFiles.substring(0, attachFiles.length() - 2));
                     }
-                } else if (contentType.contains("text/plain")
-                        || contentType.contains("text/html")) {
+                } else {//if (contentType.contains("text/plain")|| contentType.contains("text/html")) {
                     Object content = message.getContent();
                     if (content != null) {
                         messageContent = content.toString();
