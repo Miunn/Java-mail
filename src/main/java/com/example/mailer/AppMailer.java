@@ -48,11 +48,13 @@ public class AppMailer extends Application {
                 System.out.println(PkgHandler.confirmIdentity());
 
                 //TODO: tant qu'on a pas recu l'email du serveur pkg on attend, puis on récupère le token
-                List<Mail> ml = Mail.getMailList( Context.CONNECTION_STATE.get("email"));
+                List<Mail> ml;
                 String token = null;
                 while(token == null) {
+                    ml = Mail.getMailList( Context.CONNECTION_STATE.get("email"));
                     for (Mail m : ml) {
-                        if (m.getSender().equals("serverpkg@gmail.com")) {
+                        System.out.println(m.getSender());
+                        if (m.getSender().equals("serveurpkg@gmail.com")) {
                             token = m.getMessageContent();
                             break;
                         }
