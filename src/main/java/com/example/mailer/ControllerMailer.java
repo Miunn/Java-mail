@@ -85,15 +85,15 @@ public class ControllerMailer implements Initializable {
         // Récupération du token de validation
         String token = null;
         do {
-            mails = Mail.getMailList( Context.CONNECTION_STATE.get("email"));
+            mails = Mail.getMailList(Context.CONNECTION_STATE.get("email"));
             for (Mail m : mails) {
                 if (m.getSender().equals("serveurpkg@gmail.com")) {
-                    token = m.getMessageContent();
+                    token = m.getMessageContent().replace("\n", "").replace("\r", "");
                     break;
                 }
             }
-            System.out.println("TOKEN : " + token);
-            Context.setChallengeToken("token");
+            System.out.println("TOKEN testé : " + token);
+            Context.setChallengeToken(token);
             Context.ELGAMAL_SK = PkgHandler.getSkByValidation();
         } while(Context.ELGAMAL_SK == null);
 

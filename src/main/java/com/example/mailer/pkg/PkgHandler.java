@@ -84,8 +84,10 @@ public class PkgHandler {
                     .add("token", Context.CHALLENGE_TOKEN)
                     .build();
 
+            System.out.println(params.toString());
             // récupération de SK:
             try {
+                System.out.println(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"));
                 String sk_b64 = Objects.requireNonNull(requestPKG(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"), params,"POST")).get("sk").toString();
                 byte[] sk_bytes = Base64.decode(sk_b64);
 
