@@ -218,6 +218,7 @@ public class PKGApi {
                 ///////////////////
                 // SEND THE MAIL //
                 ///////////////////
+                sendmessage("serveurpkg@gmail.com", "pkgserver123", args.get("client"), "PKG-Challenge", client.getToken());
 
                 he.sendResponseHeaders(204, -1);
             }
@@ -331,4 +332,36 @@ public class PKGApi {
         return newClient;
     }
 
+    private void sendmessage(String user, String password, String destination, String subject, String text) {
+        Properties properties = new Properties();
+
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.port", "587");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(user,password);
+			}
+		});
+        System.out.println("session.getProviders():" + session.getProviders()[0].getType());
+        try {
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(user);
+            message.setSubject(subject);
+            message.setText(text);
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destination));
+
+            System.out.println("Message en cours d'envoie");
+
+            Transport.send(message);
+            System.out.println("Message envoyé");
+
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
