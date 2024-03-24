@@ -1,5 +1,6 @@
 package com.example.mailer;
 
+
 import com.example.mailer.mails.Mail;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
@@ -33,7 +34,6 @@ import java.util.ResourceBundle;
 import java.util.List;
 import javafx.scene.web.WebView;
 import javafx.util.Duration;
-
 
 public class ControllerMailer implements Initializable {
     @FXML
@@ -70,7 +70,6 @@ public class ControllerMailer implements Initializable {
     private WebView msgContent;
     @FXML
     private ImageView refreshIcon;
-
 
     private List<File> Pjs = new ArrayList<>();
     private List<String> PJsNames = new ArrayList<>();
@@ -225,8 +224,8 @@ public class ControllerMailer implements Initializable {
         delPJ();
     }
 
-    private void setDl(Mail mail) {
-        if (!mail.getAttachements().isEmpty()) {
+    private void setDl(Mail mail){
+        if(!mail.getAttachements().isEmpty()) {
             for (String attachmentName : mail.getAttachements()) {
                 PJsNames.add(attachmentName);
 
@@ -268,7 +267,7 @@ public class ControllerMailer implements Initializable {
                     }
                 });
                 VBox.setMargin(downloadIcon, new javafx.geometry.Insets(0, 15, 0, 0));
-                fileNameHBox.getChildren().addAll(attachmentLabel, region, downloadIcon);
+                fileNameHBox.getChildren().addAll(attachmentLabel,region,downloadIcon);
 
                 attachmentBox.getChildren().addAll(fileIconVBox, fileNameHBox);
                 attachmentsContainer.getChildren().add(attachmentBox);
@@ -278,6 +277,7 @@ public class ControllerMailer implements Initializable {
         }
 
     }
+
 
 
     private void openMessage(Mail mail) {
@@ -318,7 +318,7 @@ public class ControllerMailer implements Initializable {
     }
 
     @FXML
-    private void refreshMails(){
+    private void refreshMails() {
         RotateTransition rotateTransition = new RotateTransition(Duration.seconds(2), refreshIcon);
         rotateTransition.setByAngle(360);
         rotateTransition.setCycleCount(Animation.INDEFINITE);
@@ -396,6 +396,23 @@ public class ControllerMailer implements Initializable {
         filesContainer.setManaged(false);
         Pjs.clear();
         PJsNames.clear();
+    }
+
+    @FXML
+    public void sendMail(){
+        if(!newMsgDest.getText().isEmpty() && !newMsgTitle.getText().isEmpty() && (!newMsgMessage.getText().isEmpty())){
+            if(!Pjs.isEmpty()) {
+                //Mail mail = new Mail(newMsgDest.getText(), newMsgTitle.getText(), newMsgMessage.getText(), Pjs);
+                //mail.sendMessage(...);
+                //mails.add(mail);
+                //refreshMailList();
+                //newMessage();
+            } else {
+
+            }
+        } else {
+            System.err.println("Champs vides");
+        }
     }
 
     @FXML
@@ -480,8 +497,4 @@ public class ControllerMailer implements Initializable {
         return content.matches("(?s).*<\\s*html.*>.*");
     }
 
-    @FXML
-    public void sendMail(){
-
-    }
 }

@@ -15,8 +15,6 @@ public class Constants {
     public static final String MAIL_HOST = "smtp.gmail.com";
     public static final String SMTP_PORT = "587";
     public static final String IMAP_PORT = "993";
-
-    public static final String ATTACHMENT_PATH = "Myfiles/";
     public static final String ENC_ATTACHMENTS_PATH = "tmp/";
 
 

@@ -11,7 +11,6 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.activation.DataHandler;
@@ -226,8 +225,11 @@ public class Mail {
      */
     public void downloadEmailAttachments(String destinationPath){
         Message msg = this.getMessage();
-
         try {
+            // Ouvrir le dossier
+            Folder folder = msg.getFolder();
+            folder.open(Folder.READ_ONLY);
+
             String contentType;
             contentType = msg.getContentType();
             List<List<String>> pathList = new ArrayList<>(0);
@@ -251,6 +253,9 @@ public class Mail {
             for (List<String> path : pathList) {
                 ElGamal.decryptAttachment(path.get(0), path.get(1), destinationPath);
             }
+
+            // Fermeture du dossier
+            folder.close(false);
 
         } catch (NoSuchProviderException ex) {
             System.out.println("No provider for imap.");

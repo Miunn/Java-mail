@@ -46,7 +46,7 @@ public class PkgHandler {
 
             // récupération de PK:
             try {
-                String sk_b64 = Objects.requireNonNull(requestPKG(Constants.SK_ENDPOINT+params, null, "GET")).get("pk").toString();
+                String sk_b64 = Objects.requireNonNull(requestPKG(Constants.PK_ENDPOINT+params, null, "GET")).get("pk").toString();
                 byte[] sk_bytes = Base64.decode(sk_b64);
 
                 return ElGamal.generator.getField().newElementFromBytes(sk_bytes);
@@ -59,7 +59,26 @@ public class PkgHandler {
         return null;
     }
 
-    public static Element getSK() {
+    public static Element getSK(String id) {
+        if(Context.isConnected()) {
+            String params = "?client="+id;
+
+            // récupération de PK:
+            try {
+                String sk_b64 = Objects.requireNonNull(requestPKG(Constants.SK_ENDPOINT+params, null, "GET")).get("sk").toString();
+                byte[] sk_bytes = Base64.decode(sk_b64);
+
+                return ElGamal.generator.getField().newElementFromBytes(sk_bytes);
+            } catch (NullPointerException e) {
+                System.out.println("Aucune clé SK récupérée");
+            }
+        } else {
+            notConnectedError();
+        }
+        return null;
+    }
+
+    public static Element getSkByValidation() {
         if(Context.isConnected()) {
             JsonObject params = Json.createObjectBuilder()
                     .add("token", Context.CHALLENGE_TOKEN)
@@ -67,7 +86,7 @@ public class PkgHandler {
 
             // récupération de SK:
             try {
-                String sk_b64 = Objects.requireNonNull(requestPKG(Constants.SK_ENDPOINT, params,"POST")).get("sk").toString();
+                String sk_b64 = Objects.requireNonNull(requestPKG(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"), params,"POST")).get("sk").toString();
                 byte[] sk_bytes = Base64.decode(sk_b64);
 
                 return ElGamal.generator.getField().newElementFromBytes(sk_bytes);
@@ -104,7 +123,7 @@ public class PkgHandler {
                 try (JsonReader jsonErrorReader = Json.createReader(conn.getInputStream())) {
                     System.out.println("Réponse JSON : " + jsonErrorReader.readObject());
                 }
-            } else if(responseCode == 204) { // TODO: il faudrai que le serveur envoie lui-meme le message de confirmation d'envoi de mail
+            } else if(responseCode == 204) {
                 jsonResponse = Json.createObjectBuilder()
                         .add("message", "Un mail de confirmation à été envoyé")
                         .build();
