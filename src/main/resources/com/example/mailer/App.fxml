@@ -84,21 +84,7 @@
                               focusTraversable="false" wrapText="true">
                     </TextArea>
                 </HBox>
-                <HBox HBox.hgrow="ALWAYS" fx:id="fileContainer" styleClass="blocNewMsg, borderNoTop" alignment="CENTER_LEFT" managed="false" visible="false">
-                    <VBox alignment="CENTER" styleClass="fileBloc">
-                        <ImageView fitWidth="35" pickOnBounds="true" preserveRatio="true">
-                            <Image url="@../../../Images/file.png"/>
-                        </ImageView>
-                    </VBox>
-                    <HBox HBox.hgrow="ALWAYS" styleClass="fileNameBloc" alignment="CENTER_LEFT">
-                        <Label fx:id="fileName"/>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <ImageView fx:id="delFile" onMouseClicked="#delPJ" fitWidth="23" pickOnBounds="true"
-                                   preserveRatio="true">
-                            <Image url="@../../../Images/close.png"/>
-                        </ImageView>
-                    </HBox>
-                </HBox>
+                <VBox fx:id="filesContainer" managed="false" visible="false"/>
                 <HBox fx:id="bottomNewMsg">
                     <Button text="Envoyer" styleClass="btn-style-blue"/>
                 </HBox>

@@ -47,7 +47,7 @@ public class ControllerMailer implements Initializable {
     @FXML
     private Button btnPJ;
     @FXML
-    private HBox fileContainer;
+    private VBox filesContainer;
     @FXML
     private VBox attachmentsContainer;
     @FXML
@@ -64,7 +64,10 @@ public class ControllerMailer implements Initializable {
     private Label objResp;
     @FXML
     private WebView msgContent;
-    private File PJ;
+
+    private List<File> Pjs = new ArrayList<>();
+    private List<String> PJsNames = new ArrayList<>();
+    //private File PJ;
     private List<Mail> mails = new ArrayList<>();
 
     private Stage primaryStage = AppMailer.getMyStage();
@@ -90,9 +93,14 @@ public class ControllerMailer implements Initializable {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Choisir un fichier");
             File selectedFile = fileChooser.showOpenDialog(new Stage());
-            String filename;
             if (selectedFile != null) {
-                PJ = selectedFile;
+                addPJ(selectedFile);
+
+                filesContainer.setVisible(true);
+                filesContainer.setManaged(true);
+            }
+
+                /*PJ = selectedFile;
                 filename = selectedFile.getName();
                 String extension = "";
                 int lastIndexOfDot = filename.lastIndexOf(".");
@@ -105,10 +113,99 @@ public class ControllerMailer implements Initializable {
                 fileContainer.setVisible(true);
                 fileContainer.setManaged(true);
                 fileName.setText(filename);
-            }
+            }*/
         });
 
 
+    }
+
+    private void addPJ(File pj){
+        Pjs.add(pj);
+        PJsNames.add(pj.getName());
+
+        HBox fileContainer = new HBox();
+
+        // Creating VBox for file icon
+        VBox fileIconVBox = new VBox();
+        fileIconVBox.getStyleClass().add("fileBloc");
+
+        // Creating ImageView for file icon
+        ImageView fileIconImageView = new ImageView();
+        fileIconImageView.setFitWidth(35);
+        fileIconImageView.setPreserveRatio(true);
+        fileIconImageView.setImage(new Image(Objects.requireNonNull(getClass().getResource("/Images/file.png")).toString()));
+
+        // Adding file icon ImageView to VBox
+        fileIconVBox.getChildren().add(fileIconImageView);
+
+        // Creating HBox for file name and delete icon
+        HBox fileNameHBox = new HBox();
+        fileNameHBox.getStyleClass().add("fileNameBloc");
+
+        // Creating Label for file name
+        Label fileNameLabel = new Label(pj.getName());
+
+        // Creating Region for spacing
+        Region region = new Region();
+        HBox.setHgrow(region, Priority.ALWAYS); // Make the Region grow horizontally
+
+        // Creating ImageView for delete icon
+        ImageView delFileImageView = new ImageView();
+        delFileImageView.setFitWidth(23);
+        delFileImageView.setPreserveRatio(true);
+        delFileImageView.setImage(new Image(Objects.requireNonNull(getClass().getResource("/Images/del.png")).toString()));
+        delFileImageView.setOnMouseClicked(e -> delPJ(Pjs.indexOf(pj))); // Assuming delPJ() is your method
+
+        // Adding components to fileNameHBox
+        fileNameHBox.getChildren().addAll(fileNameLabel, region, delFileImageView);
+
+        // Adding fileIconVBox and fileNameHBox to fileContainer HBox
+        fileContainer.getChildren().addAll(fileIconVBox, fileNameHBox);
+
+        filesContainer.getChildren().add(fileContainer);
+
+    }
+    private void addPJFromMail(String namePJ){
+        HBox fileContainer = new HBox();
+
+        // Creating VBox for file icon
+        VBox fileIconVBox = new VBox();
+        fileIconVBox.getStyleClass().add("fileBloc");
+
+        // Creating ImageView for file icon
+        ImageView fileIconImageView = new ImageView();
+        fileIconImageView.setFitWidth(35);
+        fileIconImageView.setPreserveRatio(true);
+        fileIconImageView.setImage(new Image(Objects.requireNonNull(getClass().getResource("/Images/file.png")).toString()));
+
+        // Adding file icon ImageView to VBox
+        fileIconVBox.getChildren().add(fileIconImageView);
+
+        // Creating HBox for file name and delete icon
+        HBox fileNameHBox = new HBox();
+        fileNameHBox.getStyleClass().add("fileNameBloc");
+
+        // Creating Label for file name
+        Label fileNameLabel = new Label(namePJ);
+
+        // Creating Region for spacing
+        Region region = new Region();
+        HBox.setHgrow(region, Priority.ALWAYS); // Make the Region grow horizontally
+
+        // Creating ImageView for delete icon
+        ImageView delFileImageView = new ImageView();
+        delFileImageView.setFitWidth(23);
+        delFileImageView.setPreserveRatio(true);
+        delFileImageView.setImage(new Image(Objects.requireNonNull(getClass().getResource("/Images/del.png")).toString()));
+        delFileImageView.setOnMouseClicked(e -> delPJ(PJsNames.indexOf(namePJ))); // Assuming delPJ() is your method
+
+        // Adding components to fileNameHBox
+        fileNameHBox.getChildren().addAll(fileNameLabel, region, delFileImageView);
+
+        // Adding fileIconVBox and fileNameHBox to fileContainer HBox
+        fileContainer.getChildren().addAll(fileIconVBox, fileNameHBox);
+
+        filesContainer.getChildren().add(fileContainer);
     }
 
     private VBox createMailBox(Mail mail) {
@@ -173,6 +270,8 @@ public class ControllerMailer implements Initializable {
     private void setDl(Mail mail){
         if(!mail.getAttachements().isEmpty()) {
             for (String attachmentName : mail.getAttachements()) {
+                PJsNames.add(attachmentName);
+
                 HBox attachmentBox = new HBox();
                 attachmentBox.getStyleClass().add("blocDlFile");
                 attachmentBox.setAlignment(Pos.CENTER_LEFT);
@@ -227,9 +326,8 @@ public class ControllerMailer implements Initializable {
             newMsgVbox.setManaged(false);
             openMsgVbox.setVisible(true);
             openMsgVbox.setManaged(true);
-        }else{ //maj infos
-            delPJ();
         }
+        delPJ();
         titreMessage.setText(mail.getObject());
         senderMessage.setText(mail.getSender());
         String mailContent = mail.getMessageContent();
@@ -296,10 +394,23 @@ public class ControllerMailer implements Initializable {
     }
 
     @FXML
+    private void delPJ(int index){
+        Pjs.remove(index);
+        PJsNames.remove(index);
+        filesContainer.getChildren().remove(index);
+
+        if (Pjs.isEmpty()) {
+            attachmentsContainer.getChildren().clear();
+            filesContainer.setVisible(false);
+            filesContainer.setManaged(false);
+        }
+    }
+
     private void delPJ(){
         attachmentsContainer.getChildren().clear();
-        fileContainer.setVisible(false);
-        fileContainer.setManaged(false);
+        filesContainer.getChildren().clear();
+        Pjs.clear();
+        PJsNames.clear();
     }
 
     @FXML
@@ -312,7 +423,13 @@ public class ControllerMailer implements Initializable {
         openMsgVbox.setVisible(false);
         openMsgVbox.setManaged(false);
         //setTextarea(true,msgMessage.getText());
-        delPJ();
+        if(!PJsNames.isEmpty()){
+            for (String pj : PJsNames){
+                addPJFromMail(pj);
+            }
+            filesContainer.setVisible(true);
+            filesContainer.setManaged(true);
+        }
     }
 
     @FXML
@@ -325,7 +442,13 @@ public class ControllerMailer implements Initializable {
         openMsgVbox.setVisible(false);
         openMsgVbox.setManaged(false);
         //setTextarea(true,msgMessage.getText());
-        delPJ();
+        if(!PJsNames.isEmpty()){
+            for (String pj : PJsNames){
+                addPJFromMail(pj);
+            }
+            filesContainer.setVisible(true);
+            filesContainer.setManaged(true);
+        }
     }
 
     @FXML
