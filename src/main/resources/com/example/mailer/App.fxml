@@ -20,6 +20,10 @@
                     <Image url="@../../../Images/newmail.png"/>
                 </ImageView>
                 <Button text="Nouveau message" onAction="#newMessage" styleClass="btn-style"/>
+                <ImageView fx:id="refreshIcon" fitWidth="15" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../../../Images/refresh.png"/>
+                </ImageView>
+                <Button text="Rafraichir" onAction="#refreshMails" styleClass="btn-style"/>
             </HBox>
             <ScrollPane fitToWidth="true" fitToHeight="true">
                 <VBox fx:id="mailList"/>
@@ -59,7 +63,7 @@
                 <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../../../Images/sendmail.png"/>
                 </ImageView>
-                <Button text="Envoyer" styleClass="btn-style"/>
+                <Button text="Envoyer" onAction="#sendMail" styleClass="btn-style"/>
                 <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../../../Images/pj.png"/>
                 </ImageView>
@@ -85,7 +89,7 @@
                 </HBox>
                 <VBox fx:id="filesContainer" styleClass="blocNewMsg, borderNoTop" managed="false" visible="false" spacing="7"/>
                 <HBox fx:id="bottomNewMsg">
-                    <Button text="Envoyer" styleClass="btn-style-blue"/>
+                    <Button text="Envoyer" onAction="#sendMail" styleClass="btn-style-blue"/>
                 </HBox>
             </VBox>
         </VBox>

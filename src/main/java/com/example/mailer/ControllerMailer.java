@@ -1,6 +1,9 @@
 package com.example.mailer;
 
 import com.example.mailer.mails.Mail;
+import javafx.animation.Animation;
+import javafx.animation.RotateTransition;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -29,6 +32,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.List;
 import javafx.scene.web.WebView;
+import javafx.util.Duration;
 
 
 public class ControllerMailer implements Initializable {
@@ -64,6 +68,9 @@ public class ControllerMailer implements Initializable {
     private Label objResp;
     @FXML
     private WebView msgContent;
+    @FXML
+    private ImageView refreshIcon;
+
 
     private List<File> Pjs = new ArrayList<>();
     private List<String> PJsNames = new ArrayList<>();
@@ -218,8 +225,8 @@ public class ControllerMailer implements Initializable {
         delPJ();
     }
 
-    private void setDl(Mail mail){
-        if(!mail.getAttachements().isEmpty()) {
+    private void setDl(Mail mail) {
+        if (!mail.getAttachements().isEmpty()) {
             for (String attachmentName : mail.getAttachements()) {
                 PJsNames.add(attachmentName);
 
@@ -261,7 +268,7 @@ public class ControllerMailer implements Initializable {
                     }
                 });
                 VBox.setMargin(downloadIcon, new javafx.geometry.Insets(0, 15, 0, 0));
-                fileNameHBox.getChildren().addAll(attachmentLabel,region,downloadIcon);
+                fileNameHBox.getChildren().addAll(attachmentLabel, region, downloadIcon);
 
                 attachmentBox.getChildren().addAll(fileIconVBox, fileNameHBox);
                 attachmentsContainer.getChildren().add(attachmentBox);
@@ -271,7 +278,6 @@ public class ControllerMailer implements Initializable {
         }
 
     }
-
 
 
     private void openMessage(Mail mail) {
@@ -309,6 +315,28 @@ public class ControllerMailer implements Initializable {
         }
         mail.setActif(true);
         refreshMailList();
+    }
+
+    @FXML
+    private void refreshMails(){
+        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(2), refreshIcon);
+        rotateTransition.setByAngle(360);
+        rotateTransition.setCycleCount(Animation.INDEFINITE);
+        rotateTransition.play();
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                mails = Mail.getMailList(Context.CONNECTION_STATE.get("email"));
+                return null;
+            }
+        };
+        // Gérer les événements une fois la tâche terminée
+        task.setOnSucceeded(e -> {
+            rotateTransition.stop();
+            refreshMailList();
+        });
+        // Démarrer la tâche dans un nouveau thread
+        new Thread(task).start();
     }
 
     private void openAutoMessage(int index) {
@@ -452,13 +480,8 @@ public class ControllerMailer implements Initializable {
         return content.matches("(?s).*<\\s*html.*>.*");
     }
 
-    public static String extractTextFromHtml(String htmlContent) {
-        String text = htmlContent.replaceAll("\\<.*?\\>", "");
-        int maxLength = 50;
-        if (text.length() > maxLength) {
-            text = text.substring(0, maxLength) + "...";
-        }
-        return text;
-    }
+    @FXML
+    public void sendMail(){
 
+    }
 }
