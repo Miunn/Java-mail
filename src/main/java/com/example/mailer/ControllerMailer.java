@@ -249,6 +249,7 @@ public class ControllerMailer implements Initializable {
         refreshMailList();
         newMsgDest.setText("");
         newMsgTitle.setText("");
+        newMsgMessage.setText("");
         setHtmlContent(false,"");
         setNotHtmlContent(false, "");
         setTextarea(false,"");
@@ -434,7 +435,7 @@ public class ControllerMailer implements Initializable {
         if(!newMsgDest.getText().isEmpty() && !newMsgTitle.getText().isEmpty() && (!newMsgMessage.getText().isEmpty())){
             if(!Pjs.isEmpty()) {
                 File pj = Pjs.get(0);
-                Mail.sendMessageWithAttachement(Context.CONNECTION_STATE.get("email"), newMsgDest.getText(), pj.getAbsolutePath(), pj.getName(), newMsgTitle.getText(), newMsgMessage.getText());
+                Mail.sendMessageWithAttachement(Context.CONNECTION_STATE.get("email"), newMsgDest.getText(), pj.getAbsolutePath().replace(pj.getName(), ""), pj.getName(), newMsgTitle.getText(), newMsgMessage.getText());
 
             } else {
                 Mail.sendMessage(Context.CONNECTION_STATE.get("email"), newMsgDest.getText(), newMsgTitle.getText(), newMsgMessage.getText());

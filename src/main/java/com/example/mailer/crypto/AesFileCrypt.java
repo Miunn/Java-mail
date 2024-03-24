@@ -1,9 +1,10 @@
 package com.example.mailer.crypto;
 
+import com.example.mailer.utils.Constants;
 import it.unisa.dia.gas.jpbc.Element;
-import java.io.File;
+
+import java.io.*;
 import java.util.Base64;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -19,40 +20,36 @@ import javax.crypto.NoSuchPaddingException;
 
 public class AesFileCrypt {
 
-    public static String readFile(String path) {
-        try {
-            File file = new File(path);
-            Scanner sc = new Scanner(file);
-            StringBuilder buffer = new StringBuilder();
-            while (sc.hasNextLine()) {
-                buffer.append(sc.nextLine());
-                buffer.append("\n");
+    public static byte[] readFile(String filePath) {
+        File file = new File(filePath);
+        try (InputStream inputStream = new FileInputStream(file)) {
+            // Créer un tableau de bytes pour stocker le contenu du fichier
+            byte[] buffer = new byte[(int) file.length()];
+            // Lire le contenu du fichier dans le buffer
+            int bytesRead = inputStream.read(buffer);
+            if (bytesRead == -1) {
+                throw new IOException("Erreur lors de la lecture du fichier : " + filePath);
             }
-            sc.close();
-            return buffer.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
+            return buffer;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return null;
-
     }
 
-    public static String readEncryptedAttachment(String path) {
-        try {
-            File file = new File(path);
-            Scanner sc = new Scanner(file);
-            StringBuilder buffer = new StringBuilder();
-            int i = 0;
-            while (sc.hasNextLine()) {
-                String line = sc.nextLine();
-                i++;
-                if (i > 4) {  // Les 4 premières lignes sont les clés U et V
-                    buffer.append(line);
-                    buffer.append("\n");
-                }
+    public static byte[] readEncryptedAttachment(String path) {
+        File file = new File(path);
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            // Ignorer les quatre premières lignes
+            for (int i = 0; i < 4; i++) {
+                reader.readLine();
             }
-            sc.close();
-            return buffer.toString();
+            // Lire le reste du fichier
+            StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append(System.lineSeparator());
+            }
+            return content.toString().getBytes();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -95,7 +92,16 @@ public class AesFileCrypt {
             writer.write(content);
             writer.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Erreur lors de l'écriture du fichier : " + path);
+        }
+    }
+
+    public static void writeFile(String filePath, byte[] data) {
+        try (OutputStream outputStream = new FileOutputStream(filePath)) {
+            // Écrire le contenu du buffer dans le fichier
+            outputStream.write(data);
+        } catch (IOException e) {
+            System.err.println("Erreur lors de l'écriture du fichier : " + filePath);
         }
     }
 
@@ -105,8 +111,10 @@ public class AesFileCrypt {
             java.io.FileWriter writer = new java.io.FileWriter(file);
             writer.write("#---U---#\n");
             writer.write(Base64.getEncoder().encodeToString(U));
+            writer.write("\n");
             writer.write("#---V---#\n");
             writer.write(Base64.getEncoder().encodeToString(V));
+            writer.write("\n");
             writer.write(content);
             writer.close();
         } catch (Exception e) {
@@ -118,14 +126,10 @@ public class AesFileCrypt {
         try {
             File file = new File(filePath+fileName);
             if(file.exists()) {
-                String encFilePath = "/tmp/enc_"+fileName+".txt";
-                String fileBuffer = readFile(filePath+fileName);
-                if(fileBuffer == null) {
-                    System.out.println("Erreur de lecture du fichier");
-                    return null;
-                }
+                String encFilePath = Constants.ENC_ATTACHMENTS_PATH+fileName;
+                byte[] fileBuffer = readFile(filePath+fileName);
 
-                String encryptedBuffer = new String(AESCrypto.encrypt(fileBuffer.getBytes(), aesKey)) ;
+                String encryptedBuffer = new String(AESCrypto.encrypt(fileBuffer, aesKey)) ;
                 writeEncryptedAttachment(encFilePath, encryptedBuffer, U, V);
 
                 return new FileDataSource(encFilePath);
@@ -144,10 +148,10 @@ public class AesFileCrypt {
         try {
             File file = new File(filePath+fileName);
             if(file.exists()) {
-                String encryptedString = readEncryptedAttachment(filePath+fileName);
+                byte[] encryptedString = readEncryptedAttachment(filePath+fileName);
 
                 if(encryptedString != null) {
-                    String decryptedString = AESCrypto.decrypt(encryptedString.getBytes(StandardCharsets.UTF_8), aesKey);
+                    String decryptedString = AESCrypto.decrypt(encryptedString, aesKey);
                     writeFile(destinationPath, decryptedString);
                 } else {
                     System.out.println("Erreur de lecture du fichier");

@@ -7,19 +7,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
+import javax.mail.*;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.mail.Address;
-import javax.mail.Flags;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -106,7 +99,7 @@ public class Mail {
             System.out.println("Message envoyé");
 
         } catch (MessagingException e) {
-            e.printStackTrace();
+            System.err.println("Erreur lors de l'envoie du mail (l'adresse est surrement invalide)");
         }
 
     }
@@ -131,9 +124,10 @@ public class Mail {
             bodypart.setText(text);
 
             MimeBodyPart attachementfile = new MimeBodyPart();
-            DataSource source = ElGamal.encryptAttachment(attachement_path, fileName);
+            DataSource source = Objects.requireNonNull(ElGamal.encryptAttachment(attachement_path, fileName, destination));
+
             attachementfile.setDataHandler(new DataHandler(source));
-            attachementfile.attachFile(attachement_path);
+            attachementfile.attachFile(Constants.ENC_ATTACHMENTS_PATH+fileName);
             myemailcontent.addBodyPart(bodypart);
             myemailcontent.addBodyPart(attachementfile);
             message.setContent(myemailcontent);
@@ -143,6 +137,8 @@ public class Mail {
             e.printStackTrace();
         } catch (IOException ex) {
             Logger.getLogger(Mail.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NullPointerException e){
+            System.err.println("Erreur lors du chiffrement de la pièce jointe");
         }
     }
 

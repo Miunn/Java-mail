@@ -1,6 +1,7 @@
 package com.example.mailer.crypto;
 
 import com.example.mailer.Context;
+import com.example.mailer.pkg.PkgHandler;
 import com.example.mailer.utils.Constants;
 import it.unisa.dia.gas.jpbc.Element;
 import it.unisa.dia.gas.jpbc.Pairing;
@@ -20,20 +21,27 @@ public class ElGamal {
         generator = pairing.getG1().newRandomElement();
     }
 
-    public Element getPK() { // TODO: on la récupère en interrogeant le serveur ou direct dans le mail ? (ce que le prof avait proposé)
+    public Element getPK(String id) {
+        if(Context.isConnected()) {
+            return PkgHandler.getPK(id);
+        } else {
+            System.out.println("Erreur: vous n'êtes pas connecté");
+        }
         return null;
     }
 
-    public static FileDataSource encryptAttachment(String attachement_path, String fileName) {
-        Element pk = new ElGamal().getPK();
+    public static FileDataSource encryptAttachment(String attachement_path, String fileName, String id) {
+        Element pk = new ElGamal().getPK(id);
 
         if (pairing != null && pk != null) {
             try {
                 Element r = pairing.getZr().newRandomElement();
                 Element K = pairing.getG1().newElement();
                 Element V = pk.duplicate().mulZn(r);
-                Element U=generator.duplicate().mulZn(r);
+                Element U = generator.duplicate().mulZn(r);
                 V.add(K);
+
+                System.out.println("CLE SYMETRIQUE: "+K.toString()); // TODO: probleme: pas la meme cle symetrique que dans le decryptAttachment
 
                 return AesFileCrypt.encryptAttachment(attachement_path, fileName, K.toBytes(), U.toBytes(), V.toBytes());
 
@@ -41,6 +49,7 @@ public class ElGamal {
                 Logger.getLogger(ElGamal.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        System.err.println("Pas de courbe ou de clé publique PK");
         return null;
     }
 
@@ -50,19 +59,22 @@ public class ElGamal {
         } else {
             // Récupération du fichier chiffré
             List<Element> UV = AesFileCrypt.getUV(attachement_path+fileName);
-            String originalFileName = fileName.substring(1, fileName.length() + 1);  // On enlève le "_" du début du nom de fichier
+            String originalFileName = fileName.substring(1);  // On enlève le "_" du début du nom de fichier
+
             if(UV == null) {
                 System.out.println("Le fichier ne contient pas de U et V, il est surement non chiffré ou corrompu.\n=> Enregistrement du fichier tel quel dans: "+ destinationPath+originalFileName);
                 AesFileCrypt.writeFile(destinationPath+fileName, AesFileCrypt.readFile(attachement_path+fileName));
 
             } else if(Context.ELGAMAL_SK == null) {
+                System.out.println("Erreur: la clé privée SK n'a pas été récupérée");
+
+            } else {
                 Element u_p = UV.get(0).duplicate().mulZn(Context.ELGAMAL_SK);
                 Element aesKey = UV.get(1).duplicate().sub(u_p); //clef symmetrique AES retrouvée
 
-                AesFileCrypt.decryptAttachment(attachement_path, originalFileName, destinationPath, aesKey.toBytes());
+                System.out.println("CLE SYMETRIQUE RECUP: "+aesKey.toString());
 
-            } else {
-                System.out.println("Erreur: la clé privée SK n'a pas été récupérée");
+                AesFileCrypt.decryptAttachment(attachement_path, originalFileName, destinationPath, aesKey.toBytes());
             }
         }
     }
