@@ -50,7 +50,6 @@
                     <Label fx:id="msgMessage" styleClass="msgMessage"/>
                     <WebView fx:id="msgContent"></WebView>
                     <VBox fx:id="attachmentsContainer" styleClass="blocDlFile" managed="false" visible="false"/>
-
                 </VBox>
             </VBox>
         </VBox>
@@ -84,7 +83,7 @@
                               focusTraversable="false" wrapText="true">
                     </TextArea>
                 </HBox>
-                <VBox fx:id="filesContainer" managed="false" visible="false"/>
+                <VBox fx:id="filesContainer" styleClass="blocNewMsg, borderNoTop" managed="false" visible="false" spacing="7"/>
                 <HBox fx:id="bottomNewMsg">
                     <Button text="Envoyer" styleClass="btn-style-blue"/>
                 </HBox>
