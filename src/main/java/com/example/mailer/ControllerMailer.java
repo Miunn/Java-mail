@@ -82,6 +82,8 @@ public class ControllerMailer implements Initializable {
 
     private void initSkByValidation() {
         // Récupération du token de validation
+        System.out.println(PkgHandler.confirmIdentity());
+
         String token = null;
         do {
             mails = Mail.getMailList(Context.CONNECTION_STATE.get("email"));
@@ -428,17 +430,16 @@ public class ControllerMailer implements Initializable {
     }
 
     @FXML
-    public void sendMail(){
+    public void sendMail(){ // TODO: pour l'instant on envoie une seule piece jointe (la première)
         if(!newMsgDest.getText().isEmpty() && !newMsgTitle.getText().isEmpty() && (!newMsgMessage.getText().isEmpty())){
             if(!Pjs.isEmpty()) {
-                //Mail mail = new Mail(newMsgDest.getText(), newMsgTitle.getText(), newMsgMessage.getText(), Pjs);
-                //mail.sendMessage(...);
-                //mails.add(mail);
-                //refreshMailList();
-                //newMessage();
-            } else {
+                File pj = Pjs.get(0);
+                Mail.sendMessageWithAttachement(Context.CONNECTION_STATE.get("email"), newMsgDest.getText(), pj.getAbsolutePath(), pj.getName(), newMsgTitle.getText(), newMsgMessage.getText());
 
+            } else {
+                Mail.sendMessage(Context.CONNECTION_STATE.get("email"), newMsgDest.getText(), newMsgTitle.getText(), newMsgMessage.getText());
             }
+            newMessage();
         } else {
             System.err.println("Champs vides");
         }

@@ -112,6 +112,7 @@ public class Mail {
     }
 
     // Envoie de message avec pièces jointes
+    // TODO: pour l'instant on envoie une seule piece jointe, il faudrai modifier pour tout envoyer
     public static void sendMessageWithAttachement(String user, String destination,
                                                   String attachement_path,String fileName, String subject, String text) {
         if(!Context.isConnected()) {
