@@ -169,7 +169,8 @@ public class AesFileCrypt {
 
                     System.out.println("Decrypted content: "+decryptedString);
 
-                    writeFile(destinationPath+fileName, decryptedString);
+                    String originalFileName = fileName.substring(1);  // On enlève le "_" du début du nom de fichier
+                    writeFile(destinationPath+originalFileName, decryptedString);
                 } else {
                     System.err.println("Erreur de lecture du fichier chiffré (decryptAttachment)");
                 }
