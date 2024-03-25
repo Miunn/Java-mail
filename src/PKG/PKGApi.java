@@ -80,7 +80,7 @@ public class PKGApi {
                         return;
                     }
 
-                    byte[] payload = ("{\"sk\": \""+client.getPrivateKey().toString()+"\"}").getBytes();
+                    byte[] payload = ("{\"sk\": \""+Base64.getEncoder().encodeToString(client.getPrivateKey().toBytes())+"\"}").getBytes();
                     he.sendResponseHeaders(200, payload.length);
                     OutputStream os = he.getResponseBody();
                     os.write(payload);

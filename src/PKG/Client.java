@@ -67,7 +67,7 @@ public class Client {
         Pairing p = PairingFactory.getPairing("params.properties");
 
         // Use NEWELEMENTFROMHASH with identity
-        Element generator = p.getG1().newRandomElement();
+        Element generator = p.getG1().newElementFromHash(this.identity.getBytes(), 0, this.identity.getBytes().length);
         this.privateKey = p.getZr().newRandomElement();
 
         this.publicKey = generator.duplicate().mulZn(this.privateKey);
