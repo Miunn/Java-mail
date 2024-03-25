@@ -307,7 +307,7 @@ public class PKGApi {
                 } catch (NullPointerException e) {
                     he.sendResponseHeaders(400, 47);
                     OutputStream os = he.getResponseBody();
-                    os.write("{\"error\": \"Body identity attribute is missing\"}".getBytes());
+                    os.write("{\"error\": \"Body token attribute is missing or challenge already validated\"}".getBytes());
                     os.close();
                 }
             }
