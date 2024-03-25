@@ -1,8 +1,10 @@
 package com.example.mailer;
 
 
+import com.example.mailer.crypto.ElGamal;
 import com.example.mailer.mails.Mail;
 import com.example.mailer.pkg.PkgHandler;
+import it.unisa.dia.gas.jpbc.Element;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
 import javafx.concurrent.Task;
@@ -110,8 +112,11 @@ public class ControllerMailer implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        ElGamal.initCurve();
+
         //initSkByValidation();
         initSK();
+
 
         for (Mail mail : mails) {
             VBox mailBox = createMailBox(mail);

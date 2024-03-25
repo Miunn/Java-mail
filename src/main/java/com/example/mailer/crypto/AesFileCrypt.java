@@ -68,12 +68,9 @@ public class AesFileCrypt {
                 if (line.equals("#---U---#")) {
                     line = sc.nextLine();
                     U = ElGamal.generator.getField().newElementFromBytes(Base64.getDecoder().decode(line));
-                    System.out.println("U RECUP: "+U);
                 } else if (line.equals("#---V---#")) {
                     line = sc.nextLine();
                     V = ElGamal.generator.getField().newElementFromBytes(Base64.getDecoder().decode(line));
-
-                    System.out.println("V RECUP: "+V);
                 }
             }
             sc.close();
@@ -85,8 +82,8 @@ public class AesFileCrypt {
             e.printStackTrace();
         }
         return null;
-
     }
+
 
     public static void writeFile(String path, String content) {
         try {

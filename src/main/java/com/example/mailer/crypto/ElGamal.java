@@ -7,7 +7,6 @@ import it.unisa.dia.gas.jpbc.Element;
 import it.unisa.dia.gas.jpbc.Pairing;
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory;
 import javax.activation.FileDataSource;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,7 +18,8 @@ public class ElGamal {
 
     public static void initCurve() {
         pairing = PairingFactory.getPairing(Constants.CURVE);
-        generator = pairing.getG1().newRandomElement();
+        byte[] identity = Context.CONNECTION_STATE.get("email").getBytes();
+        generator = pairing.getG1().newElementFromHash(identity, 0, identity.length);
     }
 
     public Element getPK(String id) {
@@ -42,9 +42,10 @@ public class ElGamal {
                 Element U = generator.duplicate().mulZn(r);
                 V.add(K);
 
+                System.out.println("PK: "+pk);
                 System.out.println("U: "+U);
                 System.out.println("V: "+V);
-                System.out.println("CLE SYMETRIQUE: "+ K);
+                System.out.println("K: "+ K);
 
                 return AesFileCrypt.encryptAttachment(attachement_path, fileName, K.toBytes(), U.toBytes(), V.toBytes());
 
@@ -75,11 +76,15 @@ public class ElGamal {
             } else {
                 Element U = UV.get(0);
                 Element V = UV.get(1);
+                System.out.println("U': "+U);
+                System.out.println("V': "+V);
+                //TODO: regler le probleme ici
                 Element u_p = U.duplicate().mulZn(Context.ELGAMAL_SK);
-                // TODO: POURQUOI CA MARCHE PAS ?????????????????
                 Element aesKey = V.duplicate().sub(u_p); //clef symmetrique AES retrouvée
 
-                System.out.println("CLE SYMETRIQUE RECUP: "+ aesKey);
+                System.out.println("SK: "+Context.ELGAMAL_SK);
+                System.out.println("u_p: " + u_p);
+                System.out.println("K': "+ aesKey);
 
                 AesFileCrypt.decryptAttachment(attachement_path, originalFileName, destinationPath, aesKey.toBytes());
             }

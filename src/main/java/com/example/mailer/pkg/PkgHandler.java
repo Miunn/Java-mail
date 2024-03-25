@@ -7,6 +7,7 @@ import it.unisa.dia.gas.jpbc.Element;
 import org.bouncycastle.util.encoders.Base64;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
@@ -69,7 +70,7 @@ public class PkgHandler {
                 System.out.println(sk_b64);
                 byte[] sk_bytes = Base64.decode(sk_b64);
 
-                return ElGamal.generator.getField().newElementFromBytes(sk_bytes);
+                return ElGamal.pairing.getZr().newElementFromBytes(sk_bytes);
             } catch (NullPointerException e) {
                 System.out.println("Aucune clé SK récupérée");
             }
@@ -90,10 +91,11 @@ public class PkgHandler {
             try {
                 System.out.println(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"));
                 String sk_b64 = Objects.requireNonNull(requestPKG(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"), params,"POST")).get("sk").toString();
-                System.out.println(sk_b64);
+
                 byte[] sk_bytes = Base64.decode(sk_b64);
 
-                return ElGamal.generator.getField().newElementFromBytes(sk_bytes);
+                return ElGamal.pairing.getZr().newElementFromBytes(sk_bytes);
+
             } catch (NullPointerException e) {
                 System.out.println("Aucune clé SK récupérée");
             }

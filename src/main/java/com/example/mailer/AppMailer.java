@@ -37,8 +37,6 @@ public class AppMailer extends Application {
 
     public static void main(String[] args) {
         try {
-            ElGamal.initCurve();
-
             Context.CONNECTION_STATE.put("isConnected", "false");
             Context.CONNECTION_STATE.put("email", "");
             Context.CONNECTION_STATE.put("password", "");
