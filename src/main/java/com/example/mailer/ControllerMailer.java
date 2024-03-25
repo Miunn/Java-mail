@@ -300,7 +300,7 @@ public class ControllerMailer implements Initializable {
                         String destinationPath = selectedDirectory.getAbsolutePath();
 
                         // Déchiffrement de la pièce jointe + sauvegarde
-                        mail.downloadEmailAttachments(destinationPath);
+                        mail.downloadEmailAttachments(destinationPath+File.separator);
                     }
                 });
                 VBox.setMargin(downloadIcon, new javafx.geometry.Insets(0, 15, 0, 0));
