@@ -7,6 +7,7 @@ import it.unisa.dia.gas.jpbc.Element;
 import it.unisa.dia.gas.jpbc.Pairing;
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory;
 import javax.activation.FileDataSource;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,12 +37,14 @@ public class ElGamal {
         if (pairing != null && pk != null) {
             try {
                 Element r = pairing.getZr().newRandomElement();
-                Element K = pairing.getG1().newElement();
+                Element K = pairing.getG1().newRandomElement();
+                System.out.println("R: "+r);
+                System.out.println("K: "+K);
                 Element V = pk.duplicate().mulZn(r);
                 Element U = generator.duplicate().mulZn(r);
                 V.add(K);
 
-                System.out.println("CLE SYMETRIQUE: "+K.toString()); // TODO: probleme: pas la meme cle symetrique que dans le decryptAttachment
+                System.out.println("CLE SYMETRIQUE: "+ K);
 
                 return AesFileCrypt.encryptAttachment(attachement_path, fileName, K.toBytes(), U.toBytes(), V.toBytes());
 
@@ -72,7 +75,7 @@ public class ElGamal {
                 Element u_p = UV.get(0).duplicate().mulZn(Context.ELGAMAL_SK);
                 Element aesKey = UV.get(1).duplicate().sub(u_p); //clef symmetrique AES retrouvée
 
-                System.out.println("CLE SYMETRIQUE RECUP: "+aesKey.toString());
+                System.out.println("CLE SYMETRIQUE RECUP: "+ aesKey);
 
                 AesFileCrypt.decryptAttachment(attachement_path, originalFileName, destinationPath, aesKey.toBytes());
             }

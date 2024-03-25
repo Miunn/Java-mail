@@ -46,10 +46,10 @@ public class PkgHandler {
 
             // récupération de PK:
             try {
-                String sk_b64 = Objects.requireNonNull(requestPKG(Constants.PK_ENDPOINT+params, null, "GET")).get("pk").toString();
-                byte[] sk_bytes = Base64.decode(sk_b64);
+                String pk_b64 = Objects.requireNonNull(requestPKG(Constants.PK_ENDPOINT+params, null, "GET")).get("pk").toString();
+                byte[] pk_bytes = Base64.decode(pk_b64);
 
-                return ElGamal.generator.getField().newElementFromBytes(sk_bytes);
+                return ElGamal.generator.getField().newElementFromBytes(pk_bytes);
             } catch (NullPointerException e) {
                 System.out.println("Aucune clé PK récupérée");
             }
@@ -63,7 +63,7 @@ public class PkgHandler {
         if(Context.isConnected()) {
             String params = "?client="+id;
 
-            // récupération de PK:
+            // récupération de SK:
             try {
                 String sk_b64 = Objects.requireNonNull(requestPKG(Constants.SK_ENDPOINT+params, null, "GET")).get("sk").toString();
                 byte[] sk_bytes = Base64.decode(sk_b64);

@@ -67,9 +67,15 @@ public class AesFileCrypt {
                 String line = sc.nextLine();
                 if (line.equals("#---U---#")) {
                     line = sc.nextLine();
+
+                    System.out.println("U RECUP: "+line);
+
                     U = ElGamal.generator.getField().newElementFromBytes(Base64.getDecoder().decode(line));
                 } else if (line.equals("#---V---#")) {
                     line = sc.nextLine();
+
+                    System.out.println("V RECUP: "+line);
+
                     V = ElGamal.generator.getField().newElementFromBytes(Base64.getDecoder().decode(line));
                 }
             }
@@ -110,9 +116,15 @@ public class AesFileCrypt {
             File file = new File(path);
             java.io.FileWriter writer = new java.io.FileWriter(file);
             writer.write("#---U---#\n");
+
+            System.out.println("U: "+Base64.getEncoder().encodeToString(U));
+
             writer.write(Base64.getEncoder().encodeToString(U));
             writer.write("\n");
             writer.write("#---V---#\n");
+
+            System.out.println("V: "+Base64.getEncoder().encodeToString(V));
+
             writer.write(Base64.getEncoder().encodeToString(V));
             writer.write("\n");
             writer.write(content);
