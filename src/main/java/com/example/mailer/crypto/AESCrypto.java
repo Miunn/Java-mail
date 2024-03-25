@@ -16,17 +16,17 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class AESCrypto {
 
-    public static String encrypt(byte[] data, byte[] key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException{
+    public static byte[] encrypt(byte[] data, byte[] key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException{
         //méthode de chiffrement AES d'un message m en utilisant la clef key
 
         Cipher cipher= Cipher.getInstance(Constants.AES_Padding);
         MessageDigest digest=MessageDigest.getInstance(Constants.Digest_Alg);
         digest.update(key);
-        byte[] AESkey=Arrays.copyOf(digest.digest(),16);
-        SecretKeySpec keyspec=new SecretKeySpec(AESkey, Constants.AES);
+        byte[] AESkey = Arrays.copyOf(digest.digest(),16);
+        SecretKeySpec keyspec = new SecretKeySpec(AESkey, Constants.AES);
         cipher.init(Cipher.ENCRYPT_MODE, keyspec);
 
-        return Base64.getEncoder().encodeToString(cipher.doFinal(data));
+        return Base64.getEncoder().encode(cipher.doFinal(data));
     }
 
 

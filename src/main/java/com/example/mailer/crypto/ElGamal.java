@@ -64,11 +64,11 @@ public class ElGamal {
         } else {
             // Récupération du fichier chiffré
             List<Element> UV = AesFileCrypt.getUV(attachement_path+fileName);
-            String originalFileName = fileName.substring(1);  // On enlève le "_" du début du nom de fichier
 
             if(UV == null) {
+                String originalFileName = fileName.substring(1);  // On enlève le "_" du début du nom de fichier
                 System.out.println("Le fichier ne contient pas de U et V, il est surement non chiffré ou corrompu.\n=> Enregistrement du fichier tel quel dans: "+ destinationPath+originalFileName);
-                AesFileCrypt.writeFile(destinationPath+fileName, AesFileCrypt.readFile(attachement_path+fileName));
+                AesFileCrypt.writeFile(destinationPath+originalFileName, AesFileCrypt.readFile(attachement_path+fileName));
 
             } else if(Context.ELGAMAL_SK == null) {
                 System.out.println("Erreur: la clé privée SK n'a pas été récupérée");
@@ -78,15 +78,12 @@ public class ElGamal {
                 Element V = UV.get(1);
                 System.out.println("U': "+U);
                 System.out.println("V': "+V);
-                //TODO: regler le probleme ici
                 Element u_p = U.duplicate().mulZn(Context.ELGAMAL_SK);
                 Element aesKey = V.duplicate().sub(u_p); //clef symmetrique AES retrouvée
 
-                System.out.println("SK: "+Context.ELGAMAL_SK);
-                System.out.println("u_p: " + u_p);
                 System.out.println("K': "+ aesKey);
 
-                AesFileCrypt.decryptAttachment(attachement_path, originalFileName, destinationPath, aesKey.toBytes());
+                AesFileCrypt.decryptAttachment(attachement_path, fileName, destinationPath, aesKey.toBytes());
             }
         }
     }
