@@ -22,6 +22,8 @@ import javax.crypto.NoSuchPaddingException;
 
 public class AesFileCrypt {
 
+
+    // TODO: réussir à lire des fichiers autres que des textes
     public static byte[] readFile(String path) {
         try {
             File file = new File(path);
@@ -138,6 +140,8 @@ public class AesFileCrypt {
             if(file.exists()) {
                 String encFilePath = Constants.ENC_ATTACHMENTS_PATH+fileName;
                 byte[] fileBuffer = readFile(filePath+fileName);
+
+                System.out.println("File content: "+new String(fileBuffer));
 
                 byte[] encryptedBuffer = AESCrypto.encrypt(fileBuffer, aesKey);
                 writeEncryptedAttachment(encFilePath, encryptedBuffer, U, V);
