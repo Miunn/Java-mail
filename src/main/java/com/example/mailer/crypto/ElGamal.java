@@ -38,12 +38,12 @@ public class ElGamal {
             try {
                 Element r = pairing.getZr().newRandomElement();
                 Element K = pairing.getG1().newRandomElement();
-                System.out.println("R: "+r);
-                System.out.println("K: "+K);
                 Element V = pk.duplicate().mulZn(r);
                 Element U = generator.duplicate().mulZn(r);
                 V.add(K);
 
+                System.out.println("U: "+U);
+                System.out.println("V: "+V);
                 System.out.println("CLE SYMETRIQUE: "+ K);
 
                 return AesFileCrypt.encryptAttachment(attachement_path, fileName, K.toBytes(), U.toBytes(), V.toBytes());
@@ -59,6 +59,7 @@ public class ElGamal {
     public static void decryptAttachment(String attachement_path, String fileName, String destinationPath) {
         if(!Context.isConnected()) {
             System.out.println("Connectez vous pour pouvoir télécharger et déchiffrer les fichiers.");
+
         } else {
             // Récupération du fichier chiffré
             List<Element> UV = AesFileCrypt.getUV(attachement_path+fileName);
@@ -72,8 +73,11 @@ public class ElGamal {
                 System.out.println("Erreur: la clé privée SK n'a pas été récupérée");
 
             } else {
-                Element u_p = UV.get(0).duplicate().mulZn(Context.ELGAMAL_SK);
-                Element aesKey = UV.get(1).duplicate().sub(u_p); //clef symmetrique AES retrouvée
+                Element U = UV.get(0);
+                Element V = UV.get(1);
+                Element u_p = U.duplicate().mulZn(Context.ELGAMAL_SK);
+                // TODO: POURQUOI CA MARCHE PAS ?????????????????
+                Element aesKey = V.duplicate().sub(u_p); //clef symmetrique AES retrouvée
 
                 System.out.println("CLE SYMETRIQUE RECUP: "+ aesKey);
 

@@ -66,6 +66,7 @@ public class PkgHandler {
             // récupération de SK:
             try {
                 String sk_b64 = Objects.requireNonNull(requestPKG(Constants.SK_ENDPOINT+params, null, "GET")).get("sk").toString();
+                System.out.println(sk_b64);
                 byte[] sk_bytes = Base64.decode(sk_b64);
 
                 return ElGamal.generator.getField().newElementFromBytes(sk_bytes);

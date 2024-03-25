@@ -102,9 +102,9 @@ public class ControllerMailer implements Initializable {
     private void initSK() {
         // Récupération de la clé secrète
         mails = Mail.getMailList(Context.CONNECTION_STATE.get("email"));
-        Context.setChallengeToken("Bqb7eBS8sdx55Rs/YvAAI2VyN+K05OGpFyg0kEFNZ7CWzZhAAnU5ols3/R6HJCPwsKLTCSwthMIGTTK9/mg61w==");
         String id = Context.CONNECTION_STATE.get("email");
         Context.ELGAMAL_SK = PkgHandler.getSK(id);
+        System.out.println("Clé secrète: " + Context.ELGAMAL_SK);
     }
 
     @Override
