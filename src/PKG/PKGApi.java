@@ -279,7 +279,7 @@ public class PKGApi {
                         return;
                     }
 
-                    byte[] payload = ("{\"sk\": \""+Base64.getEncoder().encode(client.getPrivateKey().toBytes())+"\"}").getBytes();
+                    byte[] payload = ("{\"sk\": \""+Base64.getEncoder().encodeToString(client.getPrivateKey().toBytes())+"\"}").getBytes();
                     he.getResponseHeaders().set("Content-Type", "application/json");
                     he.sendResponseHeaders(200, payload.length);
                     OutputStream os = he.getResponseBody();
