@@ -3,6 +3,7 @@ package PKG;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,32 +15,17 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Properties;
 
-import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.mail.Address;
-import javax.mail.Flags;
-import javax.mail.Multipart;
-import javax.mail.Part;
 import javax.mail.PasswordAuthentication;
-import javax.mail.Store;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 
 public class PKGApi {
 
@@ -293,7 +279,7 @@ public class PKGApi {
                         return;
                     }
 
-                    byte[] payload = ("{\"sk\": \""+client.getPrivateKey().toString()+"\"}").getBytes();
+                    byte[] payload = ("{\"sk\": \""+Base64.getEncoder().encode(client.getPrivateKey().toBytes())+"\"}").getBytes();
                     he.getResponseHeaders().set("Content-Type", "application/json");
                     he.sendResponseHeaders(200, payload.length);
                     OutputStream os = he.getResponseBody();
