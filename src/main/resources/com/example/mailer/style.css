@@ -227,3 +227,28 @@
 #dlFile:hover{
     -fx-cursor: hand;
 }
+
+.loginContainer{
+    -fx-background-color: rgb(252, 252, 252);
+    -fx-padding: 30px;
+    -fx-pref-width: 400px;
+    -fx-max-width: 400px;
+}
+
+.loginTitle{
+    -fx-font-size: 24px;
+    -fx-padding: 0px 0px 20px 0px;
+}
+
+.errorLogin{
+    -fx-fill: #fc5f5f;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.login, .mdp{
+    -fx-background-color: rgb(247, 247, 247);
+    -fx-pref-height: 40px;
+    -fx-font-size: 14px;
+    -fx-border-width: 0px;
+}

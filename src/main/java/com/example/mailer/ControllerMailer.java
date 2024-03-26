@@ -11,10 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -27,9 +24,6 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -38,6 +32,10 @@ import javafx.scene.web.WebView;
 import javafx.util.Duration;
 
 public class ControllerMailer implements Initializable {
+    @FXML
+    public TextField emailTextField;
+    @FXML
+    public PasswordField passwordTextField;
     @FXML
     private VBox newMsgVbox;
     @FXML
@@ -57,8 +55,6 @@ public class ControllerMailer implements Initializable {
     @FXML
     private VBox attachmentsContainer;
     @FXML
-    private Label fileName;
-    @FXML
     private TextField newMsgDest;
     @FXML
     private TextField newMsgTitle;
@@ -72,6 +68,11 @@ public class ControllerMailer implements Initializable {
     private WebView msgContent;
     @FXML
     private ImageView refreshIcon;
+    @FXML
+    private VBox connectionPage;
+    @FXML
+    private VBox colonneMailVbox;
+
 
     private List<File> Pjs = new ArrayList<>();
     private List<String> PJsNames = new ArrayList<>();
@@ -108,7 +109,10 @@ public class ControllerMailer implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        System.out.println("Initialisation de l'application");
+    }
 
+    public void loadData() {
         Cipher.initCurve();
 
         initParamsByValidation();
@@ -166,6 +170,8 @@ public class ControllerMailer implements Initializable {
         fileContainer.getChildren().addAll(fileIconVBox, fileNameHBox);
         filesContainer.getChildren().add(fileContainer);
     }
+
+
     private void addPJFromMail(String namePJ){
         HBox fileContainer = new HBox();
         HBox.setHgrow(fileContainer, Priority.ALWAYS);
@@ -494,24 +500,24 @@ public class ControllerMailer implements Initializable {
         }
     }
 
+    @FXML
+    public void btnConnectionClicked(){
+        // jmim ulhb ulxo dfji
 
-    private void downloadFile(String sourceFilePath, String targetDirectoryPath) {
-        try {
-            Path sourcePath = Paths.get(sourceFilePath);
-            Path targetDirectory = Paths.get(targetDirectoryPath);
-            if (Files.exists(sourcePath) && Files.isDirectory(targetDirectory)) {
-                String fileName = sourcePath.getFileName().toString();
-                Path targetPath = Paths.get(targetDirectoryPath, fileName);
-                Files.copy(sourcePath, targetPath);
-                System.out.println("Le fichier a été déplacé avec succès vers le dossier cible.");
-            } else {
-                System.out.println("Le fichier source n'existe pas ou le chemin cible n'est pas un dossier valide.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(Context.connect(emailTextField.getText(), passwordTextField.getText())) {
+            System.out.println(PkgHandler.register(Context.CONNECTION_STATE.get("email")));
+
+            connectionPage.setManaged(false);
+            connectionPage.setVisible(false);
+            colonneMailVbox.setVisible(true);
+            colonneMailVbox.setManaged(true);
+            newMsgVbox.setVisible(true);
+            newMsgVbox.setManaged(true);
+
+            loadData();
         }
-
     }
+
 
     public void setHtmlContent(boolean on, String content){
         msgContent.setManaged(on);

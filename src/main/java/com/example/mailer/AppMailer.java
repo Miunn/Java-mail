@@ -38,11 +38,7 @@ public class AppMailer extends Application {
             Context.CONNECTION_STATE.put("email", "");
             Context.CONNECTION_STATE.put("password", "");
 
-            if(Context.connect("eliott.georges8@gmail.com", "jmim ulhb ulxo dfji")) {
-                System.out.println(PkgHandler.register("eliott.georges8@gmail.com"));
-
-                launch();
-            }
+            launch();
 
         } catch (Exception ex) {
             Logger.getLogger(AppMailer.class.getName()).log(Level.SEVERE, null, ex);

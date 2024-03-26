@@ -55,7 +55,7 @@ public class Context {
 
             return true;
         } catch (MessagingException e) {
-            System.out.println("Erreur lors de la connexion au compte");
+            System.err.println("Erreur lors de la connexion au compte");
             System.exit(1);
         }
 
