@@ -32,9 +32,10 @@ import javax.mail.internet.MimeMessage;
 public class PKGApi {
 
     private HashMap<String, Client> clients = new HashMap<>();
+    private PKGIdentity pkg;
 
     public PKGApi() {
-
+        PKGIdentity pkg = new PKGIdentity();
     }
 
     public void startServer() {
@@ -142,8 +143,8 @@ public class PKGApi {
                 try {
                     JsonObject requestBody = Json.createReader(he.getRequestBody()).readObject();
 
-                    System.out.println("Register OK.");
                     Client newClient = registerNewClient(requestBody.getString("identity"));
+                    System.out.println("Register: "+newClient.getIdentity());
 
                     he.sendResponseHeaders(200, newClient.getClientPublicJSON().toString().getBytes().length);
 
@@ -195,7 +196,8 @@ public class PKGApi {
                     return;
                 }
 
-                he.sendResponseHeaders(200, client.getClientPublicJSON().toString().getBytes().length);
+                byte[] payload = this.pkg.getClientPublicJSON().toString().getBytes();
+                he.sendResponseHeaders(200, payload.length);
                 OutputStream os = he.getResponseBody();
                 os.write(client.getClientPublicJSON().toString().getBytes());
                 os.close();
@@ -348,6 +350,9 @@ public class PKGApi {
         }
 
         Client newClient = new Client(identity);
+
+        this.pkg.generateKeyPairForClient(newClient);
+
         clients.put(identity, newClient);
         return newClient;
     }

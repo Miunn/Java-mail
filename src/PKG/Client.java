@@ -63,13 +63,6 @@ public class Client {
         return this.challengeCode;
     }
 
-    public JsonObject getClientPublicJSON() {
-        return Json.createObjectBuilder()
-                    .add("identity", this.identity)
-                    .add("pk", Base64.getEncoder().encodeToString(this.publicKey.toBytes()))
-                    .build();
-    }
-
     public Element[] encodeSkFromPk(String pk_b64) {
         Pairing p = PairingFactory.getPairing("params.properties");
 

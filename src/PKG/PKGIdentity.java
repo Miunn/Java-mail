@@ -2,6 +2,10 @@ package PKG;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+
+import javax.json.Json;
+import javax.json.JsonObject;
 
 import it.unisa.dia.gas.jpbc.Element;
 import it.unisa.dia.gas.jpbc.Pairing;
@@ -45,5 +49,14 @@ public class PKGIdentity {
 
     public Element getPublicKey() {
         return this.publicKey;
+    }
+
+    public JsonObject getClientPublicJSON(Client client) {
+        return Json.createObjectBuilder()
+                    .add("identity", client.getIdentity())
+                    .add("P", Base64.getEncoder().encodeToString(this.generator.toBytes()))
+                    .add("Kpub", Base64.getEncoder().encodeToString(this.publicKey.toBytes()))
+                    .add("Qid", Base64.getEncoder().encodeToString(client.getPublicKey().toBytes()))
+                    .build();
     }
 }
