@@ -19,7 +19,6 @@ public class Client {
 
     Client(String identity) {
         this.identity = identity;
-        this.generateKeyPair();
     }
 
     public String getIdentity() {
@@ -30,8 +29,16 @@ public class Client {
         return this.publicKey;
     }
 
+    public void setPublicKey(Element publicKey) {
+        this.publicKey = publicKey;
+    }
+
     public Element getPrivateKey() {
         return this.privateKey;
+    }
+
+    public void setPrivateKey(Element privateKey) {
+        this.privateKey = privateKey;
     }
 
     public void generateChallengeCode() {
@@ -61,15 +68,6 @@ public class Client {
                     .add("identity", this.identity)
                     .add("pk", Base64.getEncoder().encodeToString(this.publicKey.toBytes()))
                     .build();
-    }
-
-    private void generateKeyPair() {
-        Pairing p = PairingFactory.getPairing("params.properties");
-
-        Element generator = p.getG1().newElementFromHash(this.identity.getBytes(), 0, this.identity.getBytes().length);
-        this.privateKey = p.getZr().newRandomElement();
-
-        this.publicKey = generator.duplicate().mulZn(this.privateKey);
     }
 
     public Element[] encodeSkFromPk(String pk_b64) {
