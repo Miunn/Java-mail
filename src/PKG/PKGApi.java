@@ -83,7 +83,7 @@ public class PKGApi {
                         return;
                     }
 
-                    byte[] payload = ("{\"sk\": \""+Base64.getEncoder().encodeToString(client.getPrivateKey().toBytes())+"\"}").getBytes();
+                    byte[] payload = ("{\"Qid\": \""+Base64.getEncoder().encodeToString(client.getPrivateKey().toBytes())+"\"}").getBytes();
                     he.sendResponseHeaders(200, payload.length);
                     OutputStream os = he.getResponseBody();
                     os.write(payload);
@@ -283,12 +283,13 @@ public class PKGApi {
                         return;
                     }
 
-                    String pk_b64 = requestBody.getString("pk");
-                    System.out.println(pk_b64);
-                    Element[] UV = client.encodeSkFromPk(pk_b64);
-                    System.out.println("Got encoded");
+                    //String pk_b64 = requestBody.getString("pk");
+                    //System.out.println(pk_b64);
+                    //Element[] UV = client.encodeSkFromPk(pk_b64);
+                    //System.out.println("Got encoded");
 
-                    byte[] payload = ("{\"U\": \""+Base64.getEncoder().encodeToString(UV[0].toBytes())+"\", \"V\": \""+Base64.getEncoder().encodeToString(UV[1].toBytes())+"\"}").getBytes();
+                    //byte[] payload = ("{\"U\": \""+Base64.getEncoder().encodeToString(UV[0].toBytes())+"\", \"V\": \""+Base64.getEncoder().encodeToString(UV[1].toBytes())+"\"}").getBytes();
+                    byte[] payload = ("{\"P\": \""+Base64.getEncoder().encodeToString(pkg.getP().toBytes())+"\",\"Qid\": \""+Base64.getEncoder().encodeToString(client.getPrivateKey().toBytes())+"\"}").getBytes();
                     he.getResponseHeaders().set("Content-Type", "application/json");
                     he.sendResponseHeaders(200, payload.length);
                     OutputStream os = he.getResponseBody();

@@ -26,6 +26,10 @@ public class PKGIdentity {
         this.publicKey = generator.duplicate().mulZn(this.masterKey).getImmutable();
     }
 
+    public Element getP() {
+        return this.generator;
+    }
+
     public Element h1(byte[] id) throws NoSuchAlgorithmException {
         MessageDigest hash = MessageDigest.getInstance("SHA-256");
         byte[] idDigest = hash.digest(id);
