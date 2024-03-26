@@ -289,7 +289,7 @@ public class PKGApi {
                     Element[] UV = client.encodeSkFromPk(pk_b64);
                     System.out.println("Got encoded");
 
-                    byte[] payload = ("{\"u\": \""+Base64.getEncoder().encodeToString(UV[0].toBytes())+"\", \"V\": \""+Base64.getEncoder().encodeToString(UV[1].toBytes())+"\"}").getBytes();
+                    byte[] payload = ("{\"U\": \""+Base64.getEncoder().encodeToString(UV[0].toBytes())+"\", \"V\": \""+Base64.getEncoder().encodeToString(UV[1].toBytes())+"\"}").getBytes();
                     he.getResponseHeaders().set("Content-Type", "application/json");
                     he.sendResponseHeaders(200, payload.length);
                     OutputStream os = he.getResponseBody();
