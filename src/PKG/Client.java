@@ -71,4 +71,29 @@ public class Client {
 
         this.publicKey = generator.duplicate().mulZn(this.privateKey);
     }
+
+    public Element[] encodeSkFromPk(String pk_b64) {
+        Pairing p = PairingFactory.getPairing("params.properties");
+
+        System.out.println("Call encode sk");
+        Element generator = p.getG1().newElementFromHash(this.getIdentity().getBytes(), 0, this.getIdentity().getBytes().length);
+        System.out.println("Init generator");
+
+
+        Element pk = generator.getField().newElementFromBytes(Base64.getDecoder().decode(pk_b64));
+        System.out.println("Init pk element");
+        Element a = p.getZr().newRandomElement();
+        System.out.println("Init a");
+        Element U = generator.duplicate().mulZn(a);
+        System.out.println("Init U");
+        Element V = pk.duplicate().mulZn(a);
+        System.out.println("Init V");
+        V.add(this.getPrivateKey());
+        System.out.println("Add V");
+
+        System.out.println(U);
+        System.out.println(V);
+
+        return new Element[]{U, V};
+    }
 }
