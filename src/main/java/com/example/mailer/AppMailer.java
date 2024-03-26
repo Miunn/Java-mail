@@ -42,7 +42,7 @@ public class AppMailer extends Application {
             Context.CONNECTION_STATE.put("password", "");
 
             if(Context.connect("eliott.georges8@gmail.com", "jmim ulhb ulxo dfji")) {
-                //System.out.println(PkgHandler.register("eliott.georges8@gmail.com"));
+                System.out.println(PkgHandler.register("eliott.georges8@gmail.com"));
 
                 launch();
             }

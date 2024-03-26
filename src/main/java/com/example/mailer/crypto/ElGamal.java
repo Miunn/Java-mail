@@ -22,16 +22,15 @@ public class ElGamal {
         generator = pairing.getG1().newElementFromHash(identity, 0, identity.length);
     }
 
-    public static Element generateKeyPair() {
+    public static void generateKeyPair() {
         if(pairing != null) {
             Element sk = pairing.getZr().newRandomElement();
             Element pk = generator.duplicate().mulZn(sk);
             Context.CHALLENGE_SK = sk;
             Context.CHALLENGE_PK = pk;
-            return pk;
+        } else {
+            System.err.println("Pas de courbe définie");
         }
-        System.err.println("Pas de courbe définie");
-        return null;
     }
 
     public Element getPK(String id) {

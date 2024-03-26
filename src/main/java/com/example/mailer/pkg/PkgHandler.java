@@ -98,10 +98,13 @@ public class PkgHandler {
 
                 Element U = ElGamal.generator.getField().newElementFromBytes(Base64.getDecoder().decode(resp.get("U").toString()));
                 Element V = ElGamal.generator.getField().newElementFromBytes(Base64.getDecoder().decode(resp.get("V").toString()));
-                System.out.println("U for SK': "+U);
-                System.out.println("V for SK': "+V);
+                System.out.println("U for SK: "+U);
+                System.out.println("V for SK: "+V);
                 Element u_p = U.duplicate().mulZn(Context.CHALLENGE_SK);
+                System.out.println("U*SK: "+u_p);
                 Element sk = V.duplicate().sub(u_p);
+
+                System.out.println("SK: "+sk);
 
                 return ElGamal.pairing.getZr().newElementFromBytes(sk.toBytes());
 
