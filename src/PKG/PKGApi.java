@@ -287,7 +287,7 @@ public class PKGApi {
                     String pk_b64 = requestBody.getString("pk");
                     System.out.println(pk_b64);
                     Element[] UV = encodeSkFromPk(client, pk_b64);
-                    
+                    System.out.println("Got encoded");
 
                     byte[] payload = ("{\"u\": \""+Base64.getEncoder().encodeToString(UV[0].toBytes())+"\", \"V\": \""+Base64.getEncoder().encodeToString(UV[1].toBytes())+"\"}").getBytes();
                     he.getResponseHeaders().set("Content-Type", "application/json");
@@ -312,12 +312,19 @@ public class PKGApi {
                 Pairing p = PairingFactory.getPairing("params.properties");
 
                 Element generator = p.getG1().newElementFromHash(client.getIdentity().getBytes(), 0, client.getIdentity().getBytes().length);
+                System.out.println("Init generator");
+
 
                 Element pk = generator.getField().newElementFromBytes(Base64.getDecoder().decode(pk_b64));
+                System.out.println("Init pk element");
                 Element a = p.getZr().newRandomElement();
+                System.out.println("Init a");
                 Element U = generator.duplicate().mulZn(a);
+                System.out.println("Init U");
                 Element V = pk.duplicate().mulZn(a);
+                System.out.println("Init V");
                 V.add(client.getPrivateKey());
+                System.out.println("Add V");
 
                 System.out.println(U);
                 System.out.println(V);
