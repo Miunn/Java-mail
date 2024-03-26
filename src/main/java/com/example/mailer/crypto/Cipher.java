@@ -55,18 +55,17 @@ public class Cipher {
                 // Compute U = r*P
                 Element U = PkgGenerator.duplicate().mulZn(r).getImmutable();
 
-
                 // Compute V = M xor H2(e(Qid, publicKey)^r)
                 // pair(e(id, publicKey), P)
                 Element e = pairing.pairing(Qid, pk).getImmutable();
 
                 // Generate a random AES key in GT
-                Element aesKey = pairing.getGT().newRandomElement().getImmutable();
+                byte[] aesKey = pairing.getGT().newRandomElement().getImmutable().toBytes();
 
                 // e(Qid, publicKey)^r
-                byte[] V = XOR(aesKey.toBytes(), e.powZn(r).toBytes());
+                byte[] V = XOR(aesKey, e.powZn(r).toBytes());
 
-                return AesFileCrypt.encryptAttachment(attachement_path, fileName, aesKey.toBytes(), U.toBytes(), V);
+                return AesFileCrypt.encryptAttachment(attachement_path, fileName, aesKey, U.toBytes(), V);
 
             } catch (Exception ex) {
                 Logger.getLogger(Cipher.class.getName()).log(Level.SEVERE, null, ex);
