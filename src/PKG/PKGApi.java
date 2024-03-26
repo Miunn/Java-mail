@@ -35,7 +35,7 @@ public class PKGApi {
     private PKGIdentity pkg;
 
     public PKGApi() {
-        PKGIdentity pkg = new PKGIdentity();
+        this.pkg = new PKGIdentity();
     }
 
     public void startServer() {
@@ -146,10 +146,10 @@ public class PKGApi {
                     Client newClient = registerNewClient(requestBody.getString("identity"));
                     System.out.println("Register: "+newClient.getIdentity());
 
-                    he.sendResponseHeaders(200, newClient.getClientPublicJSON().toString().getBytes().length);
+                    he.sendResponseHeaders(200, pkg.getClientPublicJSON(newClient).toString().getBytes().length);
 
                     OutputStream os = he.getResponseBody();
-                    os.write(newClient.getClientPublicJSON().toString().getBytes());
+                    os.write(pkg.getClientPublicJSON(newClient).toString().getBytes());
                     os.close();
                 } catch (JsonException e) {
                     he.sendResponseHeaders(400, 41);
