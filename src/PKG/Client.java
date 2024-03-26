@@ -96,6 +96,7 @@ public class Client {
 
         System.out.println(U);
         System.out.println(V);
+        System.out.println("Sk:" + this.privateKey);
 
         return new Element[]{U, V};
     }
