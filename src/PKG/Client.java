@@ -88,7 +88,10 @@ public class Client {
         System.out.println("Init U");
         Element V = pk.duplicate().mulZn(a);
         System.out.println("Init V");
-        V.add(this.getPrivateKey());
+
+        Element M = p.getG1().newElementFromBytes(this.privateKey.toBytes());
+        System.out.println("Init M");
+        V.add(M);
         System.out.println("Add V");
 
         System.out.println(U);
