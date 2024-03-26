@@ -1,7 +1,7 @@
 package com.example.mailer.mails;
 
 import com.example.mailer.Context;
-import com.example.mailer.crypto.ElGamal;
+import com.example.mailer.crypto.Cipher;
 import com.example.mailer.utils.Constants;
 import java.io.File;
 import java.io.IOException;
@@ -124,7 +124,7 @@ public class Mail {
             bodypart.setText(text);
 
             MimeBodyPart attachementfile = new MimeBodyPart();
-            DataSource source = Objects.requireNonNull(ElGamal.encryptAttachment(attachement_path, fileName, destination));
+            DataSource source = Objects.requireNonNull(Cipher.encryptAttachment(attachement_path, fileName, destination));
 
             attachementfile.setDataHandler(new DataHandler(source));
             attachementfile.attachFile(Constants.ENC_ATTACHMENTS_PATH+fileName);
@@ -247,7 +247,7 @@ public class Mail {
 
             // Parcours de tmp/ pour déchiffrer les fichiers _...
             for (List<String> path : pathList) {
-                ElGamal.decryptAttachment(path.get(0), path.get(1), destinationPath);
+                Cipher.decryptAttachment(path.get(0), path.get(1), destinationPath);
             }
 
             // Fermeture du dossier

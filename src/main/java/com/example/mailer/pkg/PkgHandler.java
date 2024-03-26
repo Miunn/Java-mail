@@ -1,13 +1,12 @@
 package com.example.mailer.pkg;
 
 import com.example.mailer.Context;
-import com.example.mailer.crypto.ElGamal;
+import com.example.mailer.crypto.Cipher;
 import com.example.mailer.utils.Constants;
 import it.unisa.dia.gas.jpbc.Element;
 import org.bouncycastle.util.encoders.Base64;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
@@ -50,7 +49,7 @@ public class PkgHandler {
                 String pk_b64 = Objects.requireNonNull(requestPKG(Constants.PK_ENDPOINT+params, null, "GET")).get("pk").toString();
                 byte[] pk_bytes = Base64.decode(pk_b64);
 
-                return ElGamal.generator.getField().newElementFromBytes(pk_bytes);
+                return Cipher.generator.getField().newElementFromBytes(pk_bytes);
             } catch (NullPointerException e) {
                 System.out.println("Aucune clé PK récupérée");
             }
@@ -70,7 +69,7 @@ public class PkgHandler {
                 System.out.println(sk_b64);
                 byte[] sk_bytes = Base64.decode(sk_b64);
 
-                return ElGamal.pairing.getZr().newElementFromBytes(sk_bytes);
+                return Cipher.pairing.getZr().newElementFromBytes(sk_bytes);
             } catch (NullPointerException e) {
                 System.out.println("Aucune clé SK récupérée");
             }
@@ -94,7 +93,7 @@ public class PkgHandler {
 
                 byte[] sk_bytes = Base64.decode(sk_b64);
 
-                return ElGamal.pairing.getZr().newElementFromBytes(sk_bytes);
+                return Cipher.pairing.getZr().newElementFromBytes(sk_bytes);
 
             } catch (NullPointerException e) {
                 System.out.println("Aucune clé SK récupérée");

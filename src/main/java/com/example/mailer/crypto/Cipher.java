@@ -7,19 +7,22 @@ import it.unisa.dia.gas.jpbc.Element;
 import it.unisa.dia.gas.jpbc.Pairing;
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory;
 import javax.activation.FileDataSource;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class ElGamal {
+public class Cipher {
     public static Pairing pairing;
-    public static Element generator;
+    public static Element PkgGenerator;
 
     public static void initCurve() {
         pairing = PairingFactory.getPairing(Constants.CURVE);
-        byte[] identity = Context.CONNECTION_STATE.get("email").getBytes();
-        generator = pairing.getG1().newElementFromHash(identity, 0, identity.length);
+    }
+
+    public static void initPkgGenerator(Element P) {
+        PkgGenerator = P;
     }
 
     public Element getPK(String id) {
@@ -31,26 +34,43 @@ public class ElGamal {
         return null;
     }
 
+    public static byte[] XOR(byte[] a, byte[] b){
+        byte[] result = new byte[a.length];
+        for(int i = 0; i < a.length; i++){
+            result[i] = (byte) (a[i] ^ b[i]);
+        }
+        return result;
+    }
+
     public static FileDataSource encryptAttachment(String attachement_path, String fileName, String id) {
-        Element pk = new ElGamal().getPK(id);
+        Element pk = new Cipher().getPK(id);
 
         if (pairing != null && pk != null) {
             try {
-                Element r = pairing.getZr().newRandomElement();
-                Element K = pairing.getG1().newRandomElement();
-                Element V = pk.duplicate().mulZn(r);
-                Element U = generator.duplicate().mulZn(r);
-                V.add(K);
+                // Q_id = H1(ID)
+                byte[] identityBytes = id.getBytes();
+                Element Q_id = pairing.getG1().newElementFromHash(identityBytes, 0, identityBytes.length).getImmutable();
 
-                System.out.println("PK: "+pk);
-                System.out.println("U: "+U);
-                System.out.println("V: "+V);
-                System.out.println("K: "+ K);
+                // Get a random element r in Zp
+                Element r = pairing.getZr().newRandomElement().getImmutable();
+                // Compute U = r*P
+                Element U = PkgGenerator.duplicate().mulZn(r).getImmutable();
 
-                return AesFileCrypt.encryptAttachment(attachement_path, fileName, K.toBytes(), U.toBytes(), V.toBytes());
+
+                // Compute V = M xor H2(e(Q_id, publicKey)^r)
+                // pair(e(Q_id, publicKey), P)
+                Element e = pairing.pairing(Q_id, pk).getImmutable();
+
+                // Generate a random AES key in GT
+                Element aesKey = pairing.getGT().newRandomElement().getImmutable();
+
+                // e(Q_id, publicKey)^r
+                byte[] V = XOR(aesKey.toBytes(), e.powZn(r).toBytes());
+
+                return AesFileCrypt.encryptAttachment(attachement_path, fileName, aesKey.toBytes(), U.toBytes(), V);
 
             } catch (Exception ex) {
-                Logger.getLogger(ElGamal.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Cipher.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         System.err.println("Pas de courbe ou de clé publique PK");
@@ -78,12 +98,16 @@ public class ElGamal {
                 Element V = UV.get(1);
                 System.out.println("U': "+U);
                 System.out.println("V': "+V);
-                Element u_p = U.duplicate().mulZn(Context.ELGAMAL_SK);
-                Element aesKey = V.duplicate().sub(u_p); //clef symmetrique AES retrouvée
 
-                System.out.println("K': "+ aesKey);
+                // Compute e(d_id, U) where d_id = s*Q_id, U = r*P
+                Element e = pairing.pairing(Context.ELGAMAL_SK, U).getImmutable();
 
-                AesFileCrypt.decryptAttachment(attachement_path, fileName, destinationPath, aesKey.toBytes());
+                // Get back AES key : V XOR H2(e(Q_id, publicKey)^r)
+                byte[] aesKey = XOR(V.toBytes(), e.toBytes());
+
+                System.out.println("K': "+ Arrays.toString(aesKey));
+
+                AesFileCrypt.decryptAttachment(attachement_path, fileName, destinationPath, aesKey);
             }
         }
     }

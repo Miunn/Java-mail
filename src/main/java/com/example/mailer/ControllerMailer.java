@@ -1,10 +1,9 @@
 package com.example.mailer;
 
 
-import com.example.mailer.crypto.ElGamal;
+import com.example.mailer.crypto.Cipher;
 import com.example.mailer.mails.Mail;
 import com.example.mailer.pkg.PkgHandler;
-import it.unisa.dia.gas.jpbc.Element;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
 import javafx.concurrent.Task;
@@ -82,7 +81,7 @@ public class ControllerMailer implements Initializable {
     private Stage primaryStage = AppMailer.getMyStage();
 
 
-    private void initSkByValidation() {
+    private void initParamsByValidation() {
         // Récupération du token de validation
         System.out.println(PkgHandler.confirmIdentity());
         try {
@@ -103,10 +102,13 @@ public class ControllerMailer implements Initializable {
             System.out.println("TOKEN testé : " + token);
             Context.setChallengeToken(token);
             Context.ELGAMAL_SK = PkgHandler.getSkByValidation();
+            //TODO: récuperer Pk du PKG et le générateur P du PKG
+            //...
+
         } while(Context.ELGAMAL_SK == null);
     }
 
-    private void initSK() {
+    private void initParams() { // POUR DEBUG
         // Récupération de la clé secrète
         mails = Mail.getMailList(Context.CONNECTION_STATE.get("email"));
         String id = Context.CONNECTION_STATE.get("email");
@@ -117,10 +119,10 @@ public class ControllerMailer implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        ElGamal.initCurve();
+        Cipher.initCurve();
 
-        initSkByValidation();
-        //initSK();
+        initParamsByValidation();
+        //initParams();
 
 
         for (Mail mail : mails) {

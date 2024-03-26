@@ -1,12 +1,10 @@
 package com.example.mailer.crypto;
 
-import com.example.mailer.Context;
 import com.example.mailer.utils.Constants;
 import it.unisa.dia.gas.jpbc.Element;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Base64;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -32,8 +30,6 @@ public class AesFileCrypt {
             throw new RuntimeException(e);
         }
 
-        System.out.println("Buffer (plain content): "+ Arrays.toString(buffer));
-
         return buffer;
     }
 
@@ -52,8 +48,6 @@ public class AesFileCrypt {
                 }
             }
             sc.close();
-
-            System.out.println("Buffer (encrypted content): "+buffer);
 
             return buffer.toString().getBytes();
 
@@ -74,10 +68,10 @@ public class AesFileCrypt {
                 String line = sc.nextLine();
                 if (line.equals("#---U---#")) {
                     line = sc.nextLine();
-                    U = ElGamal.generator.getField().newElementFromBytes(Base64.getDecoder().decode(line));
+                    U = Cipher.generator.getField().newElementFromBytes(Base64.getDecoder().decode(line));
                 } else if (line.equals("#---V---#")) {
                     line = sc.nextLine();
-                    V = ElGamal.generator.getField().newElementFromBytes(Base64.getDecoder().decode(line));
+                    V = Cipher.generator.getField().newElementFromBytes(Base64.getDecoder().decode(line));
                 }
             }
             sc.close();
