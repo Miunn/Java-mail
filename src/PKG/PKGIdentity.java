@@ -41,7 +41,7 @@ public class PKGIdentity {
         System.out.println("Generate key pair for client:"+client.getIdentity());
         Element Qid;
         try {
-            Qid = this.h1(client.getIdentity().getBytes());
+            Qid = this.h1(client.getIdentity().getBytes()).getImmutable();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return;
