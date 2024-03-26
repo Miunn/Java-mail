@@ -81,6 +81,7 @@ public class PKGApi {
                         return;
                     }
 
+                    System.out.println("GET /sk Response:\n"+"{\"Qid\": \""+Base64.getEncoder().encodeToString(client.getPrivateKey().toBytes())+"\"}");
                     byte[] payload = ("{\"Qid\": \""+Base64.getEncoder().encodeToString(client.getPrivateKey().toBytes())+"\"}").getBytes();
                     he.sendResponseHeaders(200, payload.length);
                     OutputStream os = he.getResponseBody();

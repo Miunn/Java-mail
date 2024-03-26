@@ -12,7 +12,7 @@ import it.unisa.dia.gas.jpbc.Pairing;
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory;
 
 public class PKGIdentity {
-    
+
     public static String ID = "serveurpkg@gmail.com";
 
     private Pairing p = PairingFactory.getPairing("params.properties");
@@ -21,7 +21,8 @@ public class PKGIdentity {
     private Element publicKey;
 
     public PKGIdentity() {
-        this.generator = p.getG1().newElementFromHash(PKGIdentity.ID.getBytes(), 0, PKGIdentity.ID.length()).getImmutable();
+        this.generator = p.getG1().newElementFromHash(PKGIdentity.ID.getBytes(), 0, PKGIdentity.ID.length())
+                .getImmutable();
         this.masterKey = p.getZr().newRandomElement().getImmutable();
         this.publicKey = generator.duplicate().mulZn(this.masterKey).getImmutable();
     }
@@ -56,11 +57,15 @@ public class PKGIdentity {
     }
 
     public JsonObject getClientPublicJSON(Client client) {
-        return Json.createObjectBuilder()
-                    .add("identity", client.getIdentity())
-                    .add("P", Base64.getEncoder().encodeToString(this.generator.toBytes()))
-                    .add("Kpub", Base64.getEncoder().encodeToString(this.publicKey.toBytes()))
-                    .add("Qid", Base64.getEncoder().encodeToString(client.getPublicKey().toBytes()))
-                    .build();
+        JsonObject json = Json.createObjectBuilder()
+                .add("identity", client.getIdentity())
+                .add("P", Base64.getEncoder().encodeToString(this.generator.toBytes()))
+                .add("Kpub", Base64.getEncoder().encodeToString(this.publicKey.toBytes()))
+                .add("Qid", Base64.getEncoder().encodeToString(client.getPublicKey().toBytes()))
+                .build();
+
+        System.out.println(json.toString());
+
+        return json;
     }
 }
