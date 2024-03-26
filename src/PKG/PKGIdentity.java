@@ -48,7 +48,7 @@ public class PKGIdentity {
         }
         System.out.println("Got Qid:"+Qid.toString());
 
-        Element Did = this.masterKey.duplicate().mulZn(Qid);
+        Element Did = Qid.duplicate().mulZn(this.masterKey);
         System.out.println("Got Did:"+Did.toString());
 
         client.setPublicKey(Qid);
