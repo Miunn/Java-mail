@@ -25,23 +25,17 @@ public class AesFileCrypt {
 
     // TODO: réussir à lire des fichiers autres que des textes
     public static byte[] readFile(String path) {
-        try {
-            File file = new File(path);
-            Scanner sc = new Scanner(file);
-            StringBuilder buffer = new StringBuilder();
-            while (sc.hasNextLine()) {
-                buffer.append(sc.nextLine());
-            }
-            sc.close();
-
-            //System.out.println("Buffer (plain content): "+buffer);
-
-            return buffer.toString().getBytes(StandardCharsets.UTF_8);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        File file = new File(path);
+        byte[] buffer = new byte[(int) file.length()];
+        try(FileInputStream fis = new FileInputStream(file)) {
+            fis.read(buffer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return null;
+
+        System.out.println("Buffer (plain content): "+ Arrays.toString(buffer));
+
+        return buffer;
     }
 
     public static byte[] readEncryptedAttachment(String path) {
@@ -62,7 +56,7 @@ public class AesFileCrypt {
 
             System.out.println("Buffer (encrypted content): "+buffer);
 
-            return buffer.toString().getBytes(StandardCharsets.UTF_8);
+            return buffer.toString().getBytes();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,23 +92,12 @@ public class AesFileCrypt {
         return null;
     }
 
-    public static void writeFile(String path, String content) {
-        try {
-            File file = new File(path);
-            java.io.FileWriter writer = new java.io.FileWriter(file);
-            writer.write(content);
-            writer.close();
-        } catch (Exception e) {
-            System.err.println("Erreur lors de l'écriture du fichier : " + e);
-        }
-    }
-
-    public static void writeFile(String filePath, byte[] data) {
-        try (OutputStream outputStream = new FileOutputStream(filePath)) {
-            // Écrire le contenu du buffer dans le fichier
-            outputStream.write(data);
+    public static void writeFile(String path, byte[] buffer) {
+        File file = new File(path);
+        try(FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(buffer);
         } catch (IOException e) {
-            System.err.println("Erreur lors de l'écriture du fichier : " + filePath);
+            System.err.println("Erreur lors de l'écriture du fichier : " + e);
         }
     }
 
@@ -165,7 +148,7 @@ public class AesFileCrypt {
                 byte[] encryptedString = readEncryptedAttachment(filePath+fileName);
 
                 if(encryptedString != null) {
-                    String decryptedString = AESCrypto.decrypt(encryptedString, aesKey);
+                    byte[] decryptedString = AESCrypto.decrypt(encryptedString, aesKey);
 
                     System.out.println("Decrypted content: "+decryptedString);
 

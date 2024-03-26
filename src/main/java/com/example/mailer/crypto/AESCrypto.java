@@ -30,7 +30,7 @@ public class AESCrypto {
     }
 
 
-    public static String decrypt(byte[] cipherText, byte[] key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException{
+    public static byte[] decrypt(byte[] cipherText, byte[] key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException{
 
         Cipher cipher = Cipher.getInstance(Constants.AES_Padding);
         MessageDigest digest = MessageDigest.getInstance(Constants.Digest_Alg);
@@ -39,7 +39,7 @@ public class AESCrypto {
         SecretKeySpec keyspec = new SecretKeySpec(AESkey, Constants.AES);
         cipher.init(Cipher.DECRYPT_MODE, keyspec);
 
-        return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)));
+        return cipher.doFinal(Base64.getDecoder().decode(cipherText));
 
     }
 
