@@ -38,6 +38,7 @@ public class PKGIdentity {
     }
 
     public void generateKeyPairForClient(Client client) {
+        System.out.println("Generate key pair for client:"+client.getIdentity());
         Element Qid;
         try {
             Qid = this.h1(client.getIdentity().getBytes());
@@ -45,8 +46,10 @@ public class PKGIdentity {
             e.printStackTrace();
             return;
         }
+        System.out.println("Got Qid:"+Qid.toString());
 
         Element Did = this.masterKey.duplicate().mulZn(Qid);
+        System.out.println("Got Did:"+Did.toString());
 
         client.setPublicKey(Qid);
         client.setPrivateKey(Did);
