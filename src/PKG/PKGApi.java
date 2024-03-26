@@ -196,10 +196,10 @@ public class PKGApi {
                     return;
                 }
 
-                byte[] payload = this.pkg.getClientPublicJSON().toString().getBytes();
+                byte[] payload = pkg.getClientPublicJSON(client).toString().getBytes();
                 he.sendResponseHeaders(200, payload.length);
                 OutputStream os = he.getResponseBody();
-                os.write(client.getClientPublicJSON().toString().getBytes());
+                os.write(pkg.getClientPublicJSON(client).toString().getBytes());
                 os.close();
             }
         };
