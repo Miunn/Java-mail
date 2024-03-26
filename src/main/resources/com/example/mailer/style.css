@@ -227,3 +227,7 @@
 #dlFile:hover{
     -fx-cursor: hand;
 }
+
+.hover:hover{
+    -fx-cursor: hand;
+}
