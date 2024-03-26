@@ -6,6 +6,7 @@ import java.net.InetSocketAddress;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.json.Json;
 import javax.json.JsonException;
@@ -14,6 +15,10 @@ import javax.json.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+
+import it.unisa.dia.gas.jpbc.Element;
+import it.unisa.dia.gas.jpbc.Pairing;
+import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory;
 
 import java.util.Properties;
 
@@ -279,7 +284,12 @@ public class PKGApi {
                         return;
                     }
 
-                    byte[] payload = ("{\"sk\": \""+Base64.getEncoder().encodeToString(client.getPrivateKey().toBytes())+"\"}").getBytes();
+                    String pk_b64 = requestBody.getString("pk");
+                    System.out.println(pk_b64);
+                    Element[] UV = encodeSkFromPk(client, pk_b64);
+                    
+
+                    byte[] payload = ("{\"u\": \""+Base64.getEncoder().encodeToString(UV[0].toBytes())+"\", \"V\": \""+Base64.getEncoder().encodeToString(UV[1].toBytes())+"\"}").getBytes();
                     he.getResponseHeaders().set("Content-Type", "application/json");
                     he.sendResponseHeaders(200, payload.length);
                     OutputStream os = he.getResponseBody();
@@ -293,9 +303,26 @@ public class PKGApi {
                 } catch (NullPointerException e) {
                     he.sendResponseHeaders(400, 47);
                     OutputStream os = he.getResponseBody();
-                    os.write("{\"error\": \"Body token attribute is missing or challenge already validated\"}".getBytes());
+                    os.write("{\"error\": \"Body token or pkc attribute is missing or challenge already validated\"}".getBytes());
                     os.close();
                 }
+            }
+            
+            public Element[] encodeSkFromPk(Client client, String pk_b64) {
+                Pairing p = PairingFactory.getPairing("params.properties");
+
+                Element generator = p.getG1().newElementFromHash(client.getIdentity().getBytes(), 0, client.getIdentity().getBytes().length);
+
+                Element pk = generator.getField().newElementFromBytes(Base64.getDecoder().decode(pk_b64));
+                Element a = p.getZr().newRandomElement();
+                Element U = generator.duplicate().mulZn(a);
+                Element V = pk.duplicate().mulZn(a);
+                V.add(client.getPrivateKey());
+
+                System.out.println(U);
+                System.out.println(V);
+
+                return new Element[]{U, V};
             }
         };
     }

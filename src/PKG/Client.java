@@ -22,7 +22,7 @@ public class Client {
         this.generateKeyPair();
     }
 
-    public String getidentity() {
+    public String getIdentity() {
         return identity;
     }
 
@@ -66,7 +66,6 @@ public class Client {
     private void generateKeyPair() {
         Pairing p = PairingFactory.getPairing("params.properties");
 
-        // Use NEWELEMENTFROMHASH with identity
         Element generator = p.getG1().newElementFromHash(this.identity.getBytes(), 0, this.identity.getBytes().length);
         this.privateKey = p.getZr().newRandomElement();
 
