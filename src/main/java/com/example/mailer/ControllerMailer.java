@@ -85,6 +85,11 @@ public class ControllerMailer implements Initializable {
     private void initSkByValidation() {
         // Récupération du token de validation
         System.out.println(PkgHandler.confirmIdentity());
+        try {
+            Thread.sleep(2000);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
 
         String token = null;
         do {
@@ -114,8 +119,8 @@ public class ControllerMailer implements Initializable {
 
         ElGamal.initCurve();
 
-        //initSkByValidation();
-        initSK();
+        initSkByValidation();
+        //initSK();
 
 
         for (Mail mail : mails) {

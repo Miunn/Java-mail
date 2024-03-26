@@ -23,7 +23,6 @@ import javax.crypto.NoSuchPaddingException;
 public class AesFileCrypt {
 
 
-    // TODO: réussir à lire des fichiers autres que des textes
     public static byte[] readFile(String path) {
         File file = new File(path);
         byte[] buffer = new byte[(int) file.length()];
@@ -124,8 +123,6 @@ public class AesFileCrypt {
                 String encFilePath = Constants.ENC_ATTACHMENTS_PATH+fileName;
                 byte[] fileBuffer = readFile(filePath+fileName);
 
-                System.out.println("File content: "+new String(fileBuffer));
-
                 byte[] encryptedBuffer = AESCrypto.encrypt(fileBuffer, aesKey);
                 writeEncryptedAttachment(encFilePath, encryptedBuffer, U, V);
 
@@ -149,8 +146,6 @@ public class AesFileCrypt {
 
                 if(encryptedString != null) {
                     byte[] decryptedString = AESCrypto.decrypt(encryptedString, aesKey);
-
-                    System.out.println("Decrypted content: "+decryptedString);
 
                     String originalFileName = fileName.substring(1);  // On enlève le "_" du début du nom de fichier
                     writeFile(destinationPath+originalFileName, decryptedString);
