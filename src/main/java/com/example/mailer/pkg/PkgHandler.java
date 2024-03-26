@@ -4,12 +4,11 @@ import com.example.mailer.Context;
 import com.example.mailer.crypto.ElGamal;
 import com.example.mailer.utils.Constants;
 import it.unisa.dia.gas.jpbc.Element;
-import org.bouncycastle.util.encoders.Base64;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Base64;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,7 +47,7 @@ public class PkgHandler {
             // récupération de PK:
             try {
                 String pk_b64 = Objects.requireNonNull(requestPKG(Constants.PK_ENDPOINT+params, null, "GET")).get("pk").toString();
-                byte[] pk_bytes = Base64.decode(pk_b64);
+                byte[] pk_bytes = Base64.getDecoder().decode(pk_b64);
 
                 return ElGamal.generator.getField().newElementFromBytes(pk_bytes);
             } catch (NullPointerException e) {
@@ -60,6 +59,9 @@ public class PkgHandler {
         return null;
     }
 
+
+
+    // ROUTE DE DEBUG (jamais utilisée)
     public static Element getSK(String id) {
         if(Context.isConnected()) {
             String params = "?client="+id;
@@ -68,7 +70,7 @@ public class PkgHandler {
             try {
                 String sk_b64 = Objects.requireNonNull(requestPKG(Constants.SK_ENDPOINT+params, null, "GET")).get("sk").toString();
                 System.out.println(sk_b64);
-                byte[] sk_bytes = Base64.decode(sk_b64);
+                byte[] sk_bytes = Base64.getDecoder().decode(sk_b64);
 
                 return ElGamal.pairing.getZr().newElementFromBytes(sk_bytes);
             } catch (NullPointerException e) {
@@ -82,19 +84,26 @@ public class PkgHandler {
 
     public static Element getSkByValidation() {
         if(Context.isConnected()) {
+            ElGamal.generateKeyPair();
+            System.out.println("PK: "+Context.CHALLENGE_PK);
             JsonObject params = Json.createObjectBuilder()
                     .add("token", Context.CHALLENGE_TOKEN)
+                    .add("pk", Base64.getEncoder().encodeToString(Context.CHALLENGE_PK.toBytes()))
                     .build();
 
-            System.out.println(params.toString());
             // récupération de SK:
             try {
                 System.out.println(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"));
-                String sk_b64 = Objects.requireNonNull(requestPKG(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"), params,"POST")).get("sk").toString();
+                JsonObject resp = Objects.requireNonNull(requestPKG(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"), params,"POST"));
 
-                byte[] sk_bytes = Base64.decode(sk_b64);
+                Element U = ElGamal.generator.getField().newElementFromBytes(Base64.getDecoder().decode(resp.get("U").toString()));
+                Element V = ElGamal.generator.getField().newElementFromBytes(Base64.getDecoder().decode(resp.get("V").toString()));
+                System.out.println("U for SK': "+U);
+                System.out.println("V for SK': "+V);
+                Element u_p = U.duplicate().mulZn(Context.CHALLENGE_SK);
+                Element sk = V.duplicate().sub(u_p);
 
-                return ElGamal.pairing.getZr().newElementFromBytes(sk_bytes);
+                return ElGamal.pairing.getZr().newElementFromBytes(sk.toBytes());
 
             } catch (NullPointerException e) {
                 System.out.println("Aucune clé SK récupérée");

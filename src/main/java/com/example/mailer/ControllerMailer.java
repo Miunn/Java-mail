@@ -104,6 +104,8 @@ public class ControllerMailer implements Initializable {
             Context.setChallengeToken(token);
             Context.ELGAMAL_SK = PkgHandler.getSkByValidation();
         } while(Context.ELGAMAL_SK == null);
+
+        System.out.println("Clé secrète récupérée: " + Context.ELGAMAL_SK);
     }
 
     private void initSK() {

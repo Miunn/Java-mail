@@ -14,6 +14,9 @@ public class Context {
     public static Element ELGAMAL_SK = null;
     public static String CHALLENGE_TOKEN = null;
 
+    public static Element CHALLENGE_SK = null;
+    public static Element CHALLENGE_PK = null;
+
 
     public static boolean isConnected() {
         System.out.println(CONNECTION_STATE.get("isConnected").equals("true"));
