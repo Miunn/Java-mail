@@ -4,6 +4,7 @@ package com.example.mailer;
 import com.example.mailer.crypto.Cipher;
 import com.example.mailer.mails.Mail;
 import com.example.mailer.pkg.PkgHandler;
+import it.unisa.dia.gas.jpbc.Element;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
 import javafx.concurrent.Task;
@@ -78,7 +79,7 @@ public class ControllerMailer implements Initializable {
     //private File PJ;
     private List<Mail> mails = new ArrayList<>();
 
-    private Stage primaryStage = AppMailer.getMyStage();
+    private final Stage primaryStage = AppMailer.getMyStage();
 
 
     private void initParamsByValidation() {
@@ -101,19 +102,17 @@ public class ControllerMailer implements Initializable {
             }
             System.out.println("TOKEN testé : " + token);
             Context.setChallengeToken(token);
-            Context.ELGAMAL_SK = PkgHandler.getSkByValidation();
-            //TODO: récuperer Pk du PKG et le générateur P du PKG
-            //...
+            Context.SK = PkgHandler.getSkByValidation();
 
-        } while(Context.ELGAMAL_SK == null);
+        } while(Context.SK == null);
     }
 
     private void initParams() { // POUR DEBUG
         // Récupération de la clé secrète
         mails = Mail.getMailList(Context.CONNECTION_STATE.get("email"));
         String id = Context.CONNECTION_STATE.get("email");
-        Context.ELGAMAL_SK = PkgHandler.getSK(id);
-        System.out.println("Clé secrète: " + Context.ELGAMAL_SK);
+        Context.SK = PkgHandler.getSK(id);
+        System.out.println("Clé secrète: " + Context.SK);
     }
 
     @Override

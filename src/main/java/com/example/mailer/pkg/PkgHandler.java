@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,16 +41,19 @@ public class PkgHandler {
         return null;
     }
 
-    public static Element getPK(String id) {
+    public static List<Element> getClient(String id) {
         if(Context.isConnected()) {
             String params = "?client="+id;
 
             // récupération de PK:
             try {
-                String pk_b64 = Objects.requireNonNull(requestPKG(Constants.PK_ENDPOINT+params, null, "GET")).get("pk").toString();
-                byte[] pk_bytes = Base64.decode(pk_b64);
+                JsonObject json = Objects.requireNonNull(requestPKG(Constants.PK_ENDPOINT+params, null, "GET"));
+                String Qid_b64 = json.get("Qid").toString();
+                String Kpub_b64 = json.get("Kpub").toString();
+                byte[] Qid_bytes = Base64.decode(Qid_b64);
+                byte[] Kpub_bytes = Base64.decode(Kpub_b64);
 
-                return Cipher.generator.getField().newElementFromBytes(pk_bytes);
+                return List.of(Cipher.PkgGenerator.getField().newElementFromBytes(Qid_bytes), Cipher.pairing.getG1().newElementFromBytes(Kpub_bytes));
             } catch (NullPointerException e) {
                 System.out.println("Aucune clé PK récupérée");
             }
@@ -59,6 +63,7 @@ public class PkgHandler {
         return null;
     }
 
+    // Pour le debug
     public static Element getSK(String id) {
         if(Context.isConnected()) {
             String params = "?client="+id;
@@ -89,9 +94,14 @@ public class PkgHandler {
             // récupération de SK:
             try {
                 System.out.println(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"));
-                String sk_b64 = Objects.requireNonNull(requestPKG(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"), params,"POST")).get("sk").toString();
+                JsonObject json = Objects.requireNonNull(requestPKG(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"), params,"POST"));
 
+                String sk_b64 = json.get("sk").toString();
+                String P_b64 = json.get("P").toString();
                 byte[] sk_bytes = Base64.decode(sk_b64);
+                byte[] P_bytes = Base64.decode(P_b64);
+
+                Cipher.initPkgGenerator(Cipher.pairing.getG1().newElementFromBytes(P_bytes));
 
                 return Cipher.pairing.getZr().newElementFromBytes(sk_bytes);
 

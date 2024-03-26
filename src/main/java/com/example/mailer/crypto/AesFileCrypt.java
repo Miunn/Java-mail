@@ -68,10 +68,10 @@ public class AesFileCrypt {
                 String line = sc.nextLine();
                 if (line.equals("#---U---#")) {
                     line = sc.nextLine();
-                    U = Cipher.generator.getField().newElementFromBytes(Base64.getDecoder().decode(line));
+                    U = Cipher.PkgGenerator.getField().newElementFromBytes(Base64.getDecoder().decode(line));
                 } else if (line.equals("#---V---#")) {
                     line = sc.nextLine();
-                    V = Cipher.generator.getField().newElementFromBytes(Base64.getDecoder().decode(line));
+                    V = Cipher.PkgGenerator.getField().newElementFromBytes(Base64.getDecoder().decode(line));
                 }
             }
             sc.close();

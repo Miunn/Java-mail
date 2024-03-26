@@ -25,9 +25,9 @@ public class Cipher {
         PkgGenerator = P;
     }
 
-    public Element getPK(String id) {
+    public List<Element> getClient(String id) {
         if(Context.isConnected()) {
-            return PkgHandler.getPK(id);
+            return PkgHandler.getClient(id);
         } else {
             System.out.println("Erreur: vous n'êtes pas connecté");
         }
@@ -43,28 +43,27 @@ public class Cipher {
     }
 
     public static FileDataSource encryptAttachment(String attachement_path, String fileName, String id) {
-        Element pk = new Cipher().getPK(id);
+        List<Element> client = new Cipher().getClient(id);
+        Element Qid = client.get(0);
+        Element pk = client.get(1);
 
-        if (pairing != null && pk != null) {
+        if (pairing != null && pk != null && PkgGenerator != null) {
             try {
-                // Q_id = H1(ID)
-                byte[] identityBytes = id.getBytes();
-                Element Q_id = pairing.getG1().newElementFromHash(identityBytes, 0, identityBytes.length).getImmutable();
-
                 // Get a random element r in Zp
                 Element r = pairing.getZr().newRandomElement().getImmutable();
+
                 // Compute U = r*P
                 Element U = PkgGenerator.duplicate().mulZn(r).getImmutable();
 
 
-                // Compute V = M xor H2(e(Q_id, publicKey)^r)
-                // pair(e(Q_id, publicKey), P)
-                Element e = pairing.pairing(Q_id, pk).getImmutable();
+                // Compute V = M xor H2(e(Qid, publicKey)^r)
+                // pair(e(id, publicKey), P)
+                Element e = pairing.pairing(Qid, pk).getImmutable();
 
                 // Generate a random AES key in GT
                 Element aesKey = pairing.getGT().newRandomElement().getImmutable();
 
-                // e(Q_id, publicKey)^r
+                // e(Qid, publicKey)^r
                 byte[] V = XOR(aesKey.toBytes(), e.powZn(r).toBytes());
 
                 return AesFileCrypt.encryptAttachment(attachement_path, fileName, aesKey.toBytes(), U.toBytes(), V);
@@ -73,7 +72,7 @@ public class Cipher {
                 Logger.getLogger(Cipher.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        System.err.println("Pas de courbe ou de clé publique PK");
+        System.err.println("Pas de courbe, ou de clé publique PK, ou de générateur PkgGenerator.");
         return null;
     }
 
@@ -90,7 +89,7 @@ public class Cipher {
                 System.out.println("Le fichier ne contient pas de U et V, il est surement non chiffré ou corrompu.\n=> Enregistrement du fichier tel quel dans: "+ destinationPath+originalFileName);
                 AesFileCrypt.writeFile(destinationPath+originalFileName, AesFileCrypt.readFile(attachement_path+fileName));
 
-            } else if(Context.ELGAMAL_SK == null) {
+            } else if(Context.SK == null) {
                 System.out.println("Erreur: la clé privée SK n'a pas été récupérée");
 
             } else {
@@ -100,7 +99,7 @@ public class Cipher {
                 System.out.println("V': "+V);
 
                 // Compute e(d_id, U) where d_id = s*Q_id, U = r*P
-                Element e = pairing.pairing(Context.ELGAMAL_SK, U).getImmutable();
+                Element e = pairing.pairing(Context.SK, U).getImmutable();
 
                 // Get back AES key : V XOR H2(e(Q_id, publicKey)^r)
                 byte[] aesKey = XOR(V.toBytes(), e.toBytes());
