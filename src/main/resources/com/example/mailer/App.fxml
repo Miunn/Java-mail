@@ -9,12 +9,25 @@
 <?import javafx.scene.image.ImageView?>
 
 <?import javafx.scene.web.WebView?>
+<?import javafx.scene.text.Text?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.mailer.ControllerMailer">
 
     <HBox VBox.vgrow="ALWAYS">
-        <VBox HBox.hgrow="ALWAYS" styleClass="column-left" >
+
+        <VBox fx:id="connectionPage" alignment="CENTER" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS">
+            <VBox styleClass="loginContainer" HBox.hgrow="NEVER" spacing="20">
+                <Text text="Page de connexion" styleClass="loginTitle"/>
+                <Text text="Le login ou le mot de passe est incorrect !" styleClass="errorLogin" visible="false"/>
+                <TextField HBox.hgrow="ALWAYS" styleClass="login" promptText="Adresse-mail"/>
+                <PasswordField HBox.hgrow="ALWAYS" styleClass="mdp" promptText="Mot de passe"/>
+                <Region style="-fx-pref-height: 5px"/>
+                <Button HBox.hgrow="ALWAYS" text="Se connecter" onAction="#btnConnectionClicked" styleClass="btn-style-blue"/>
+            </VBox>
+        </VBox>
+
+        <VBox fx:id="colonneMailVbox" HBox.hgrow="ALWAYS" styleClass="column-left" visible="false" managed="false">
             <HBox styleClass="zoneBtn" alignment="CENTER_LEFT">
                 <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../../../Images/newmail.png"/>
@@ -58,7 +71,7 @@
             </VBox>
         </VBox>
 
-        <VBox fx:id="newMsgVbox" HBox.hgrow="ALWAYS" styleClass="column-right" >
+        <VBox fx:id="newMsgVbox" HBox.hgrow="ALWAYS" styleClass="column-right"  visible="false" managed="false">
             <HBox styleClass="zoneBtn" alignment="CENTER_LEFT">
                 <ImageView fitWidth="15" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../../../Images/sendmail.png"/>

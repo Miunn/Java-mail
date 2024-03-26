@@ -73,6 +73,11 @@ public class ControllerMailer implements Initializable {
     private WebView msgContent;
     @FXML
     private ImageView refreshIcon;
+    @FXML
+    private VBox connectionPage;
+    @FXML
+    private VBox colonneMailVbox;
+
 
     private List<File> Pjs = new ArrayList<>();
     private List<String> PJsNames = new ArrayList<>();
@@ -114,14 +119,27 @@ public class ControllerMailer implements Initializable {
         System.out.println("Clé secrète: " + Context.ELGAMAL_SK);
     }
 
+    @FXML
+    public void btnConnectionClicked(){
+
+
+
+        /* Code a mettre en cas de succes
+            connectionPage.setManaged(false);
+            connectionPage.setVisible(false);
+            colonneMailVbox.setVisible(true);
+            colonneMailVbox.setManaged(true);
+            newMsgVbox.setVisible(true);
+            newMsgVbox.setManaged(true);
+         */
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         ElGamal.initCurve();
-
         initSkByValidation();
         //initSK();
-
 
         for (Mail mail : mails) {
             VBox mailBox = createMailBox(mail);
