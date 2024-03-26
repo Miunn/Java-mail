@@ -15,8 +15,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import it.unisa.dia.gas.jpbc.Element;
-
 import java.util.Properties;
 
 import javax.mail.Message;

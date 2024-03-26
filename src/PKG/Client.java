@@ -2,10 +2,6 @@ package PKG;
 
 import java.security.SecureRandom;
 import java.util.Base64;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-
 import it.unisa.dia.gas.jpbc.Element;
 import it.unisa.dia.gas.jpbc.Pairing;
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory;
