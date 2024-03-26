@@ -11,8 +11,7 @@ public class Context {
     public static HashMap<String, String> CONNECTION_STATE = new HashMap<>();
     public static Session EMAIL_SESSION = null;
     public static Store STORE = null;
-    public static Element SK = null;
-    public static Element PKG_PK = null;
+    public static Element Did = null;
     public static String CHALLENGE_TOKEN = null;
 
 

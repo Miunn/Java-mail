@@ -4,7 +4,6 @@ package com.example.mailer;
 import com.example.mailer.crypto.Cipher;
 import com.example.mailer.mails.Mail;
 import com.example.mailer.pkg.PkgHandler;
-import it.unisa.dia.gas.jpbc.Element;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
 import javafx.concurrent.Task;
@@ -86,13 +85,13 @@ public class ControllerMailer implements Initializable {
         // Récupération du token de validation
         System.out.println(PkgHandler.confirmIdentity());
         try {
-            Thread.sleep(2000);
+            Thread.sleep(4000); // Attendre 2 secondes pour que le mail arrive
         }catch (InterruptedException e){
             e.printStackTrace();
         }
 
         String token = null;
-        do {
+        do { // Tant que le token n'est pas récupéré, c'est à dire que le mail n'est pas arrivé
             mails = Mail.getMailList(Context.CONNECTION_STATE.get("email"));
             for (Mail m : mails) {
                 if (m.getSender().equals("serveurpkg@gmail.com")) {
@@ -102,17 +101,9 @@ public class ControllerMailer implements Initializable {
             }
             System.out.println("TOKEN testé : " + token);
             Context.setChallengeToken(token);
-            Context.SK = PkgHandler.getSkByValidation();
+            Context.Did = PkgHandler.getSecretKey();
 
-        } while(Context.SK == null);
-    }
-
-    private void initParams() { // POUR DEBUG
-        // Récupération de la clé secrète
-        mails = Mail.getMailList(Context.CONNECTION_STATE.get("email"));
-        String id = Context.CONNECTION_STATE.get("email");
-        Context.SK = PkgHandler.getSK(id);
-        System.out.println("Clé secrète: " + Context.SK);
+        } while(Context.Did == null);
     }
 
     @Override
@@ -121,7 +112,6 @@ public class ControllerMailer implements Initializable {
         Cipher.initCurve();
 
         initParamsByValidation();
-        //initParams();
 
 
         for (Mail mail : mails) {

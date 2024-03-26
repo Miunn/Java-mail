@@ -25,7 +25,7 @@ public class Cipher {
         PkgGenerator = P;
     }
 
-    public List<Element> getClient(String id) {
+    public static List<Element> getClient(String id) {
         if(Context.isConnected()) {
             return PkgHandler.getClient(id);
         } else {
@@ -43,26 +43,27 @@ public class Cipher {
     }
 
     public static FileDataSource encryptAttachment(String attachement_path, String fileName, String id) {
-        List<Element> client = new Cipher().getClient(id);
+        List<Element> client = Cipher.getClient(id);
         Element Qid = client.get(0);
-        Element pk = client.get(1);
+        Element Kpub = client.get(1);
 
-        if (pairing != null && pk != null && PkgGenerator != null) {
+        if (pairing != null && Kpub != null && PkgGenerator != null) {
             try {
-                // Get a random element r in Zp
+                // r = random in Zp
                 Element r = pairing.getZr().newRandomElement().getImmutable();
 
-                // Compute U = r*P
+                // U = r*P
                 Element U = PkgGenerator.duplicate().mulZn(r).getImmutable();
 
-                // Compute V = M xor H2(e(Qid, publicKey)^r)
-                // pair(e(id, publicKey), P)
-                Element e = pairing.pairing(Qid, pk).getImmutable();
+                //  -- V = M xor H2(e(Qid, Kpub)^r) --
+                // e(Qid, Kpub)
+                Element e = pairing.pairing(Qid, Kpub).getImmutable();
 
                 // Generate a random AES key in GT
                 byte[] aesKey = pairing.getGT().newRandomElement().getImmutable().toBytes();
+                System.out.println("Clé Aes générée: "+ Arrays.toString(aesKey));
 
-                // e(Qid, publicKey)^r
+                // e(Qid, Kpub)^r
                 byte[] V = XOR(aesKey, e.powZn(r).toBytes());
 
                 return AesFileCrypt.encryptAttachment(attachement_path, fileName, aesKey, U.toBytes(), V);
@@ -88,22 +89,20 @@ public class Cipher {
                 System.out.println("Le fichier ne contient pas de U et V, il est surement non chiffré ou corrompu.\n=> Enregistrement du fichier tel quel dans: "+ destinationPath+originalFileName);
                 AesFileCrypt.writeFile(destinationPath+originalFileName, AesFileCrypt.readFile(attachement_path+fileName));
 
-            } else if(Context.SK == null) {
+            } else if(Context.Did == null) {
                 System.out.println("Erreur: la clé privée SK n'a pas été récupérée");
 
             } else {
                 Element U = UV.get(0);
                 Element V = UV.get(1);
-                System.out.println("U': "+U);
-                System.out.println("V': "+V);
 
-                // Compute e(d_id, U) where d_id = s*Q_id, U = r*P
-                Element e = pairing.pairing(Context.SK, U).getImmutable();
+                // e(Did, U)
+                Element e = pairing.pairing(Context.Did, U).getImmutable();
 
-                // Get back AES key : V XOR H2(e(Q_id, publicKey)^r)
+                // AES key = V XOR H2(e(Q_id, publicKey)^r)
                 byte[] aesKey = XOR(V.toBytes(), e.toBytes());
 
-                System.out.println("K': "+ Arrays.toString(aesKey));
+                System.out.println("Clé Aes récupérée: "+ Arrays.toString(aesKey));
 
                 AesFileCrypt.decryptAttachment(attachement_path, fileName, destinationPath, aesKey);
             }

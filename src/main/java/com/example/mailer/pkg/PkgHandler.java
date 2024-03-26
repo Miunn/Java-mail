@@ -4,11 +4,11 @@ import com.example.mailer.Context;
 import com.example.mailer.crypto.Cipher;
 import com.example.mailer.utils.Constants;
 import it.unisa.dia.gas.jpbc.Element;
-import org.bouncycastle.util.encoders.Base64;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -50,9 +50,10 @@ public class PkgHandler {
                 JsonObject json = Objects.requireNonNull(requestPKG(Constants.PK_ENDPOINT+params, null, "GET"));
                 String Qid_b64 = json.get("Qid").toString();
                 String Kpub_b64 = json.get("Kpub").toString();
-                byte[] Qid_bytes = Base64.decode(Qid_b64);
-                byte[] Kpub_bytes = Base64.decode(Kpub_b64);
+                byte[] Qid_bytes = Base64.getDecoder().decode(Qid_b64);
+                byte[] Kpub_bytes = Base64.getDecoder().decode(Kpub_b64);
 
+                // Retourne [Qid, Kpub]
                 return List.of(Cipher.PkgGenerator.getField().newElementFromBytes(Qid_bytes), Cipher.pairing.getG1().newElementFromBytes(Kpub_bytes));
             } catch (NullPointerException e) {
                 System.out.println("Aucune clé PK récupérée");
@@ -63,28 +64,7 @@ public class PkgHandler {
         return null;
     }
 
-    // Pour le debug
-    public static Element getSK(String id) {
-        if(Context.isConnected()) {
-            String params = "?client="+id;
-
-            // récupération de SK:
-            try {
-                String sk_b64 = Objects.requireNonNull(requestPKG(Constants.SK_ENDPOINT+params, null, "GET")).get("sk").toString();
-                System.out.println(sk_b64);
-                byte[] sk_bytes = Base64.decode(sk_b64);
-
-                return Cipher.pairing.getZr().newElementFromBytes(sk_bytes);
-            } catch (NullPointerException e) {
-                System.out.println("Aucune clé SK récupérée");
-            }
-        } else {
-            notConnectedError();
-        }
-        return null;
-    }
-
-    public static Element getSkByValidation() {
+    public static Element getSecretKey() {
         if(Context.isConnected()) {
             JsonObject params = Json.createObjectBuilder()
                     .add("token", Context.CHALLENGE_TOKEN)
@@ -96,14 +76,14 @@ public class PkgHandler {
                 System.out.println(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"));
                 JsonObject json = Objects.requireNonNull(requestPKG(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"), params,"POST"));
 
-                String sk_b64 = json.get("sk").toString();
+                String Did_b64 = json.get("Qid").toString();
                 String P_b64 = json.get("P").toString();
-                byte[] sk_bytes = Base64.decode(sk_b64);
-                byte[] P_bytes = Base64.decode(P_b64);
+                byte[] Did_bytes = Base64.getDecoder().decode(Did_b64);
+                byte[] P_bytes = Base64.getDecoder().decode(P_b64);
 
                 Cipher.initPkgGenerator(Cipher.pairing.getG1().newElementFromBytes(P_bytes));
 
-                return Cipher.pairing.getZr().newElementFromBytes(sk_bytes);
+                return Cipher.pairing.getG1().newElementFromBytes(Did_bytes);
 
             } catch (NullPointerException e) {
                 System.out.println("Aucune clé SK récupérée");
