@@ -9,6 +9,9 @@ import java.util.Properties;
 
 public class Context {
     public static HashMap<String, String> CONNECTION_STATE = new HashMap<>();
+
+    public static Element CHALLENGE_PK = null;
+    public static Element CHALLENGE_SK = null;
     public static Session EMAIL_SESSION = null;
     public static Store STORE = null;
     public static Element Did = null;

@@ -25,6 +25,13 @@ public class Cipher {
         PkgGenerator = P;
     }
 
+
+    public static void generateKeyPair() {
+        Context.CHALLENGE_SK = pairing.getZr().newRandomElement().getImmutable();
+        Element G = pairing.getG1().newRandomElement().getImmutable();
+        Context.CHALLENGE_PK = G.duplicate().mulZn(Context.CHALLENGE_SK).getImmutable();
+    }
+
     public static List<Element> getClient(String id) {
         if(Context.isConnected()) {
             return PkgHandler.getClient(id);

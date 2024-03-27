@@ -66,24 +66,33 @@ public class PkgHandler {
 
     public static Element getSecretKey() {
         if(Context.isConnected()) {
+            Cipher.generateKeyPair();
             JsonObject params = Json.createObjectBuilder()
                     .add("token", Context.CHALLENGE_TOKEN)
+                    .add("pk", Base64.getEncoder().encodeToString(Context.CHALLENGE_PK.toBytes()))
                     .build();
 
-            System.out.println(params.toString());
             // récupération de SK:
             try {
                 System.out.println(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"));
                 JsonObject json = Objects.requireNonNull(requestPKG(Constants.VALIDATE_ENDPOINT+"?client="+Context.CONNECTION_STATE.get("email"), params,"POST"));
 
-                String Did_b64 = json.get("Qid").toString();
+                String U_b64 = json.get("U").toString();
+                String V_b64 = json.get("V").toString();
                 String P_b64 = json.get("P").toString();
-                byte[] Did_bytes = Base64.getDecoder().decode(Did_b64);
-                byte[] P_bytes = Base64.getDecoder().decode(P_b64);
+                Element U = Cipher.PkgGenerator.getField().newElementFromBytes(Base64.getDecoder().decode(U_b64));
+                Element V = Cipher.PkgGenerator.getField().newElementFromBytes(Base64.getDecoder().decode(V_b64));
 
+                System.out.println("U pour Did: "+U);
+                System.out.println("V pour Did: "+V);
+
+                Element u_p = U.mulZn(Context.CHALLENGE_SK).getImmutable();
+                Element Did = V.sub(u_p).getImmutable();
+
+                byte[] P_bytes = Base64.getDecoder().decode(P_b64);
                 Cipher.initPkgGenerator(Cipher.pairing.getG1().newElementFromBytes(P_bytes));
 
-                return Cipher.pairing.getG1().newElementFromBytes(Did_bytes);
+                return Did;
 
             } catch (NullPointerException e) {
                 System.out.println("Aucune clé SK récupérée");

@@ -105,6 +105,8 @@ public class ControllerMailer implements Initializable {
             Context.Did = PkgHandler.getSecretKey();
 
         } while(Context.Did == null);
+
+        System.out.println("Clé privée récupérée : " + Context.Did);
     }
 
     @Override
