@@ -82,7 +82,7 @@ public class ControllerMailer implements Initializable {
     private final Stage primaryStage = AppMailer.getMyStage();
 
 
-    private void initParamsByValidation() {
+    private void initParams() {
         // Récupération du token de validation
         System.out.println(PkgHandler.confirmIdentity());
         try {
@@ -115,8 +115,7 @@ public class ControllerMailer implements Initializable {
     public void loadData() {
         Cipher.initCurve();
 
-        initParamsByValidation();
-
+        initParams();
 
         for (Mail mail : mails) {
             VBox mailBox = createMailBox(mail);
